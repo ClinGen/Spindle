@@ -1,0 +1,61 @@
+extends curations_basic
+block curation_content
+		table.curationdata(border=1)
+			tr.curationdata
+				td(style="padding-left:10px")
+					a.obsvtnstudy(href="/Curations/Literaturesearch/#{data.HGNCSymbol}/#{data.ORDOID}" style) Literature Search
+				td
+					table(style="width:100%;border:none;font-size:13px")
+						tr
+							td(align="center") Date
+							td(align="center") Parameters
+							td(align="center") Returned Results
+							td(align="center") Relevant Results
+							td(align="center") Independent Clinical Reports
+							td(align="center") Time to Complete
+						tr
+							td(align="center") #{data.LiteratureSearch.Date}
+							td(align="center") #{data.LiteratureSearch.Parameters}
+							td(align="center") #{data.LiteratureSearch.ReturnedNumber}
+							td(align="center") #{data.LiteratureSearch.RelevantNumber}
+							td(align="center") #{data.LiteratureSearch.ClinicalReportNumber}
+							td(align="center") #{data.LiteratureSearch.TimeComplete}
+			tr.curationdata(style="height:500px")
+				td(style="padding-left:10px;padding-top:10px" valign="top")
+					span Observations
+					br
+					br
+					li(style="padding-left:10px;font-size:12px")
+
+						a.obsvtnstudy(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}') Case Group Studies
+										//-(#{data.Observations.CaseStudy.length})
+					br
+					li(style="padding-left:10px;font-size:12px")
+						a.obsvtnstudy(href="/Casecontrol/#{data.HGNCSymbol}/#{data.ORDOID}") Case Control Studies
+									//-(#{data.Observations.CaseControlStudy.length})
+					br
+					li(style="padding-left:10px;font-size:12px")
+						a.obsvtnstudy(href="/Functionaldata/#{data.HGNCSymbol}/#{data.ORDOID}") Functional Data Analysis
+										//-(#{data.Observations.FunctionalDataAnalysis.length})
+				td(style="vertical-align:top")
+					block observation_content
+			if data.Summary
+				tr.curationdata
+					td(style="padding-left:10px")
+						a.obsvtnstudy(href='Curations/Summary/#{data.HGNCSymbol}/#{data.ORDOID}') Summary
+					td &nbsp;
+			else
+				tr
+					td(style="color:grey;padding-left:10px") Summary
+					td &nbsp;
+			tr
+				td(style="color:grey;width:200px;padding-left:10px") Provisional Assertion
+				td &nbsp;
+			tr
+				td(style="color:grey;padding-left:10px") Final Assertion Draft
+				td &nbsp;
+			tr
+				td(style="color:grey;padding-left:10px") Final Assertion
+				td &nbsp;
+	#obsvtnwin(style="position:absolute;width:200px;border:solid #aaa 2px;z-index:10;display:none")
+	script(type="text/javascript" src="/javascripts/observationsView.js")

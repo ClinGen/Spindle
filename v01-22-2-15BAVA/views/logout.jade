@@ -1,0 +1,15 @@
+extends layout
+block content
+	#maincontent
+		if token == 'logout'
+			p Thank you. Click Spindle above to access again.
+		else if token == 'expired'
+			p(style="color:red") It is too long for waiting. For securaty reason, please click Spindle above and login again.
+		else if token == 'Not Match'
+			p(style="color:red") Invalid logname and password.
+			p Click Spindle above for login again.
+		else if token == 'Unknown err'
+			p(style="color:red") Error. Click Spindle above login again.
+		else
+			p(style="color:red") Click Spindle above to access login.
+	script(type="text/javascript" src='/javascripts/logoutView.js')

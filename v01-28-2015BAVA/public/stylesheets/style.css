@@ -1,0 +1,198 @@
+body {
+  background:#f0f0f0;
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+a {
+  color: #0062FF;
+}
+a.toplink {
+  display: none;
+}
+a:hover {
+  color: #ff6600;
+}
+a.this {
+  text-decoration:none;
+}
+span.inline {
+  display: inline;
+}
+#spindleLogo {
+  font-size:28px;
+  text-decoration:none;
+}
+#logolink {
+  margin: 0 auto;
+  padding: 0px 0 0px 20px;
+  vertical-align: middle;
+  line-height: 50px;
+  width: 120px;
+}
+#toplinks {
+  display: none;
+  vertical-align: text-bottom;
+  line-height: 50px;
+  width: 380px;
+  text-align: center;
+}
+#userinfo {
+  display: block;
+  vertical-align: text-bottom;
+  line-height: 50px;
+  text-align: right: ;
+  border: solid #f66 1px;
+}
+.floatleft {
+  float: left;
+}
+#head {
+  padding-top: 0px;
+  padding-left: 0px;
+  width: 100%;
+  height: 50px;
+  background: #cdcdcd;
+  position: fixed;
+  display: block;
+  z-index: 10;
+}
+#summarydataboard {
+  height: 70px;
+  width: 100%;
+  top: 50px;
+  padding-top: 0px;
+  padding-left: 30px;
+  padding-right: 30px;
+  position: fixed;
+  background: #dcdcdc;
+  display: block;
+  z-index: 10;
+}
+#genelist {
+  position: relative;
+  z-index:8; display:none;
+  margin-left:30px; margin-top:95px;
+  padding-top: 5px; padding-left:5px; padding-bottom: 100px;
+  float: left;
+  width:120px;
+  border:#bbb solid 1px;
+  color:#999;
+}
+#diseaselist {
+  position: relative;
+  z-index:8; display:none;
+  margin-left:168px; margin-top:95px;
+  padding-top:5px; padding-left:5px; padding-bottom: 100px;
+  float: left;
+  width:650px;
+  border:#bbb solid 1px;
+  color:#999;
+}
+#maincontent {
+  position: absolute;
+  padding-top: 120px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 150px;
+  z-index: 0;
+  display: block;
+}
+#foot {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 20px;
+  background: #cdcdcd;
+  text-align: center;
+  font: 12px;
+  padding: 20px 5px;
+  z-index: 10;
+}
+
+
+#pwdwin {
+  width:400px;
+  height:200px;
+  background:#ddd;
+  border:1px solid #999;
+  position:fixed;
+  top:150px;
+  left:400px;
+  margin:-100px -200px 0 0;
+  display:none;
+  filter:alpha(opacity=75);
+  -moz-opacity:0.75;
+  -khtml-opacity: 0.75;
+  opacity: 1;
+  z-index: 99;
+}
+#wincontent {
+  opacity: 1;
+  text-align:center;
+  padding-top:20px;
+  opacity: 1;
+}
+#closepoint {
+  position:absolute;
+  top:5px;
+  right:10px;
+  font:20px/1 Arial;
+  text-decoration:none;
+  opacity: 1;
+}
+#closelink {
+  text-decoration:none;
+  color:#F00;
+  font-size: 15px;
+}
+
+table{
+  border: 0px;
+}
+table#databoard {
+  top: 160px;
+  margin-top: 0px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 70px;
+  position: relative;
+  z-index: 1;
+  display: block;
+}
+#g_dPair {
+  position:;
+}
+table.curationdata {
+  margin: 0 auto;
+  width:100%;
+  border-collapse: collapse;;
+  border:solid #ababab 2px;
+}
+tr.curationdata {
+  font-size: 16px;
+  padding-left:10px;
+}
+tr.odd{
+  background-color: #9be;
+}
+tr.followcontent {
+  background: #eee;
+}
+td {
+  padding: 2px 5px 2px 5px;
+}
+td.title{
+  background-color: #2299ff;
+  color: #eee;
+  text-align: center;
+  height: 25px;
+}
+td.curariondata {
+
+}
+p {
+
+}

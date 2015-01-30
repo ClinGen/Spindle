@@ -1,0 +1,140 @@
+body {
+  margin: 0px;
+  padding: 0px;
+  width: 100%;
+  height: 100%;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #0062FF;
+}
+a:hover {
+  color: #ff6600;
+}
+a.this {
+  text-decoration:none;
+}
+#spindleLogo {
+  font-size:32px;
+  text-decoration:none;
+}
+#toplinks {
+  position: absolute;
+  top: 25px;
+  left: 180px;
+  position: fixed;
+  display: none;
+}
+
+#head {
+  top: 0px;
+  margin: 0px;
+  padding-top: 10px;
+  padding-left: 30px;
+  width: 100%;
+  height: 50px;
+  background: #eee;
+  border-bottom: #6af solid 1px;
+  position: fixed;
+}
+#summarydataboard {
+  height: 100px;
+  width: 100%;
+  top: 61px;
+  margin: 0;
+  padding-left: 30px;
+  padding-right: 30px;
+  position: fixed;
+  background: #fff;
+  display: block;
+}
+#maincontent {
+  top: 165px;
+  margin-top: 0px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 70px;
+  position: relative;
+  z-index: -1;
+}
+#foot {
+  position: fixed;
+  bottom: 0px;
+  width: 100%;
+  height: 30px;
+  background: #eee;
+  text-align: center;
+  font: 12px;
+  padding: 20px 5px;
+  border-top: #6af solid 1px;
+}
+
+#pwdwin {
+  width:400px;
+  height:200px;
+  background:#ddd;
+  border:1px solid #999;
+  position:fixed;
+  top:150px;
+  left:400px;
+  margin:-100px -200px 0 0;
+  display:none;
+  filter:alpha(opacity=75);
+  -moz-opacity:0.75;
+  -khtml-opacity: 0.75;
+  opacity: 1;
+  z-index: 99;
+}
+#wincontent {
+  opacity: 1;
+  text-align:center;
+  padding-top:20px;
+  opacity: 1;
+}
+#closepoint {
+  position:absolute;
+  top:5px;
+  right:10px;
+  font:20px/1 Arial;
+  text-decoration:none;
+  opacity: 1;
+}
+#closelink {
+  text-decoration:none;
+  color:#F00;
+  font-size: 15px;
+}
+
+table{
+  border: 0px;
+}
+table#databoard {
+  padding-left:50px;
+  position:absolute;
+  top:160px;
+  z-index:-1;
+  margin:;
+  bottom:50px
+  border-collapse:collapse;
+  border:none;
+}
+#g_dPair {
+  position:;
+}
+
+tr.odd{
+  background-color: lightgrey
+}
+tr.followcontent {
+  background: #eee;
+}
+td.title{
+  background-color: lightblue;
+  font: 125%;
+  text-align: center;
+  width: 200px;
+}
+p {
+
+}

@@ -1,0 +1,103 @@
+extends layout
+block content
+	//-a(href='/login?logname=#{data.LogName}&pwd=#{data.Password}' id="spindleLogo") SPINDLE
+	table(id="toplinks")
+		tr
+			td
+				a(href='/Curators') Curators
+			td
+				a.this(href='/Genes') Genes
+			td
+				a(href='/Diseases') Diseases
+			td
+				a(href='/Curation' style="color:grey") Curation
+			//-td(style="padding-left:150px")
+				a(href='/login?logname=#{data.LogName}&pwd=#{data.Password}' style="text-decoration:none") #{data.Name}
+			td(style="padding-left:300px")
+				a(href='/Logout') Logout
+	br
+	//-form(action='/Genes' method='get' id='searchfrom')
+	form(id='searchfrom' onsubmit='formtolink()')
+		table
+			tr
+				td(colspan=3) Total number of genes with HGNC ID : #{numbers[0]}
+			tr
+				td(colspan=3) Total number of genes with Entrez: #{numbers[1]}
+			tr
+				td(colspan=3) Total number of genes with OMIM ID: #{numbers[2]}
+			tr
+				td(colspan=3) &nbsp;
+			tr
+				td(colspan=3) Search HGNC gene data:
+			tr
+				td
+					select(name="idType" id="idType")
+						if search && search[0] == 'HGNCSymbol'
+							option(value="HGNCSymbol" id='genesymbol' selected) Gene Symbol
+						else
+							option(value="HGNCSymbol" id='genesymbol') Gene Symbol
+						if search && search[0] == 'Synonyms'
+							option(value="Synonyms" id='synonyms' selected) Synonyms
+						else
+							option(value='Synonyms' id='synonyms') Synonyms
+						if search && search[0] == 'EntrezID'
+							option(value="EntrezID" id='entrezid' selected) Entrez Gene ID
+						else
+							option(value="EntrezID" id='entrezid') Entrez Gene ID
+						if search &&search[0] == 'OMIMID'
+							option(value="OMIMID" id='omimid' selected) OMIM ID
+						else
+							option(value="OMIMID" id='omimid') OMIM ID
+				td
+						if search
+							input(type="text" name="idValue" id="idValue" value='#{search[1]}')
+						else
+							input(type="text" name="idValue" id="idValue")
+					//-input(type="text" name="idValue" id="idValue")
+				td
+					input(type="submit" value="Enter")
+	script(type='text/javascript' src='/javascripts/seachform.js')
+	if search
+		if gene.length > 0
+			br
+			table
+				tr
+					td(colspan=2) HGNC data matched: #{gene.length}
+				for g in gene
+					tr.odd
+						td Gene Symbol:
+						td #{g.HGNCSymbol}
+					tr
+						td HGNC ID:
+						td
+							a(href='http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=#{g.HGNCID}' target="_blank") #{g.HGNCID}
+					tr.odd
+						td HGNC Name:
+						td #{g.HGNCName}
+					tr
+						td HGNC Previous Symbol:
+						td #{g.PreviousSymbol}
+					tr.odd
+						td HGNC Previous Name:
+						td #{g.PreviousName}
+					tr
+						td Synonyms:
+						td #{g.Synonyms}
+					tr.odd
+						td Name Synonyms:
+						td #{g.NameSynonyms}
+					tr
+						td Chromosome:
+						td #{g.Chromosome}
+					tr.odd
+						td Entrez Gene ID:
+						td
+							a(href='http://www.ncbi.nlm.nih.gov/gene/#{g.EntrezID}' target='_blank') #{g.EntrezID}
+					tr
+						td OMIM ID:
+						td
+							a(href='http://omim.org/entry/#{g.OMIMID}' target='_blank') #{g.OMIMID}
+					tr
+						td(align="2") &nbsp;
+		else
+			p(style="color:red") Not found.

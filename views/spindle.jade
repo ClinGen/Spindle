@@ -1,0 +1,38 @@
+extends layout
+block content
+	unless data
+		p(style="font-size:175d%; color:red") Must enter log name and password to access.
+		p Click Spindle above to access login.
+	else
+		if data.Active === 'Yes'
+			#pwdwin
+				#closepoint(style="text-align:right")
+					a(href="javascript:void(0)" id="closelink" title="Close") X
+				span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
+				#wincontent(style="text-align:center;padding-top:15px")
+				span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
+			script(type="text/javascript" src="/javascripts/changepwd.js")
+			br
+			table(style="padding-left:50px; padding-top:50px;width:90%")
+					//-tr
+						td(colspan=3) #{data._id}
+					tr
+						td(colspan=3) #{data.Name}&nbsp;(#{data.Title}),&nbsp;&nbsp;#{data.WorkingInstitute},&nbsp;&nbsp;#{data.ContactInfo}
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td(colspan=3 style="font-size:150%") Curation Record
+					tr
+						td.title(style="font-size:125%" width="250px" height="25px") Log in
+						td.title(style="font-size:125%" width="250px" height="25px") Log Out
+						td.title(style="font-size:125%" height="25px") Curation Item
+							- var i = 0
+							for d in data.LoginRecord
+								- var log = d.split(', ');
+								- i++
+								tr(height="25px")
+									td #{log[0].split(' GMT-0800')[0]+log[0].split(' GMT-0800')[1]}
+									td #{log[1].split(' GMT-0800')[0]+log[1].split(' GMT-0800')[1]}
+									td(align="center")
+										a(href="#") #{log[2]}
+			script(type="text/javascript" src="/javascripts/spindleView.js")

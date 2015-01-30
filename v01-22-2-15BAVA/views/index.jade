@@ -1,0 +1,46 @@
+extends layout
+block content
+		#maincontent
+			br
+			br
+			p(style="font-size:150%") Please make sure cookie is acceptable in your browser.
+			br
+			p Enter your login name and password
+			//-form(action="/" method="post" id="loginform" name="loginform")
+			form(action="/login" method="post" id="loginform" name="loginform")
+				table
+					tr
+						td Log Name:
+						td
+							input(type="text", name="logname", id="logname")
+					tr
+						td Password:
+						td
+							input(type="password" name="pwd" id="pwd")
+					tr
+						td
+							input(type="submit" value="Enter" id="sendlogin" style="height:24px;font-size:18px")
+						td
+							input(type="reset" value="Reset" style="height:24px;font-size:18px")
+		script(type="text/javascript").
+			$(document).ready(function() {
+				$("#logname").focus();
+				$("#loginform").submit(function() {
+					if ($.trim($("#logname").val()) == "") {
+						alert('Enter a log name');
+						$("#logname").focus();
+						return false;
+					}
+					else if ($.trim($("#pwd").val()) == "") {
+						alert('Enter a password.');
+						$("#pwd").focus();
+						return false;
+					}
+					else {
+						$("#logname").val($("#logname").val().replace(/(^\s*)|(\s*$)/g, ''));
+						$("#pwd").val($("#pwd").val().replace(/(^\s*)|(\s*$)/g, ''));
+						return true;
+					}
+				});
+			});
+

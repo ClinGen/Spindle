@@ -1,0 +1,15 @@
+{
+	"users":
+	[
+		{
+			"name": "Kang Liu",
+			"logname": "kgliu",
+			"password": "1234",
+			"Authorication": "4",
+			"email": "kgliu@stanford.edu",
+			"DateCreated": "Nov 21, 2014",
+			"Status": "Active"
+		}
+	],
+	"DateLastEdit": "Nov 21, 2014"
+}

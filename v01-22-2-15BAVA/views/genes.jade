@@ -1,0 +1,89 @@
+extends layout
+block content
+	#pwdwin
+		#closepoint(style="text-align:right")
+			a(href="javascript:void(0)" id="closelink" title="Close") X
+		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
+		#wincontent(style="text-align:center;padding-top:15px")
+		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
+	script(type="text/javascript" src="/javascripts/changepwd.js")
+	#summarydataboard
+		table
+			tr
+				td
+					ul(style="font-size:110%")
+						li Total number of genes with HGNC ID : #{numbers[0]}
+						li Total number of genes with Entrez: #{numbers[1]}
+						li Total number of genes with OMIM ID: #{numbers[2]}
+				td(style="width:30px") &nbsp;
+				td
+					dl
+						dd Search HGNC gene data:
+						dd
+							form(id='searchfrom' onsubmit='formtolink()')
+								select(name="idType" id="idType")
+									if search && search[0] == 'HGNCSymbol+Synonyms'
+											option(value="HGNCSymbol+Synonyms" id='genesymbol' selected) Gene Symbol/Synonyms
+									else
+										option(value="HGNCSymbol+Synonyms" id='genesymbol') Gene Symbol/Synonyms
+									if search && search[0] == 'EntrezID'
+										option(value="EntrezID" id='entrezid' selected) Entrez Gene ID
+									else
+										option(value="EntrezID" id='entrezid') Entrez Gene ID
+									if search &&search[0] == 'OMIMID'
+										option(value="OMIMID" id='omimid' selected) OMIM ID
+									else
+										option(value="OMIMID" id='omimid') OMIM ID
+								span &nbsp;
+								if search
+									input(type="text" name="idValue" id="idValue" value='#{search[1]}')
+								else
+									input(type="text" name="idValue" id="idValue")
+								span &nbsp;
+								input(type="submit" value="Enter")
+	if search
+				if gene
+					#reporttitle(style="font-size:125%; position:fixed; top:140px; padding-left:60px")
+						span HGNC data matched: #{gene.length}
+						//-#maincontent
+					table(cellsace="0" cellpadding="0" style="position:absolute; top:160px; padding-left:60px")
+							for g in gene
+								tr.odd
+									td Gene Symbol:
+									td #{g.HGNCSymbol}
+								tr.followcontent
+									td HGNC ID:
+									td
+										a(href='http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=#{g.HGNCID}' target="_blank") #{g.HGNCID}
+								tr.followcontent
+									td HGNC Name:
+									td #{g.HGNCName}
+								tr.followcontent
+									td HGNC Previous Symbol:
+									td #{g.PreviousSymbol}
+								tr.followcontent
+									td HGNC Previous Name:
+									td #{g.PreviousName}
+								tr.followcontent
+									td Synonyms:
+									td #{g.Synonyms}
+								tr.followcontent
+									td Name Synonyms:
+									td #{g.NameSynonyms}
+								tr.followcontent
+									td Chromosome:
+									td #{g.Chromosome}
+								tr.followcontent
+									td Entrez Gene ID:
+									td
+										a(href='http://www.ncbi.nlm.nih.gov/gene/#{g.EntrezID}' target='_blank') #{g.EntrezID}
+								tr.followcontent
+									td OMIM ID:
+									td
+										a(href='http://omim.org/entry/#{g.OMIMID}' target='_blank') #{g.OMIMID}
+								tr
+									td(align="2") &nbsp;
+				else
+					p(style="color:red") Not found.
+	//-script(type='text/javascript' src='/javascripts/seachform.js')
+	script(type="text/javascript" src="/javascripts/genesView.js")

@@ -1,0 +1,115 @@
+extends casegroup
+block casegroup_content
+	- var n = parseInt(studyid) - 1
+	tr
+		td(style="font-size:18px")
+			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+			sapn &nbsp;>>&nbsp;
+			a(href='#' style='text-decoration:none') Study #{studyid}
+			sapn &nbsp;>> Segregation Analysis
+		td(style="text-align:right;font-size:12px")
+			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
+	tr
+		td(colspan=2) &nbsp;
+	tr
+		td(colspan=2)
+			form(action="/casegroupstudy/Segregation" method="post")
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type="hidden" name="id" value="#{studyid}")
+				table(style="width:100%")
+					tr
+						td Pedigree Name
+						td Pedigree Size
+						td Pedigree Population
+					if exist
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PedigreeName}
+							td #{casegroupstudy[n].Segregation.PedigreeSize}
+							td #{casegroupstudy[n].Segregation.PedigreePopulation}
+					tr
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="pname" name="pname")
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="psize" name="psize")
+						td
+							textarea(cols=50 rows=8 id="ppopulation" name="ppopulation")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td Pedigree Description
+						td Segregation Pattern
+						td Pheno Pos Geno Pos
+					if exist
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PedigreeDescription}
+							td #{casegroupstudy[n].Segregation.SegregationPattern}
+							td #{casegroupstudy[n].Segregation.PhPGenP}
+					tr
+						td
+							input(type="text" id="pdescription" name="pdescription")
+						td
+							input(type="text" id="spattern" name="spattern")
+						td
+							input(type="text" id="ppgp" name="ppgp")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td(style="width:150px") Pheno Pos Geno Neg
+						td(style="width:200px") Pheno Pos Geno Unknown
+						td Pheno Neg Geno Pos
+					if exist
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PhPGenN}
+							td #{casegroupstudy[n].Segregation.PhPGenU}
+							td #{casegroupstudy[n].Segregation.PhNGenP}
+					tr
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="ppgn" name="ppgn")
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="ppgu" name="ppgu")
+						td
+							input(type="text" id="pngp" name="pngp")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td Pheno Neg Geno Neg
+						td Pheno Neg Geno Unknown
+						td Pheno Unknown Geno Pos
+					if exist
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PhNGenN}
+							td #{casegroupstudy[n].Segregation.PhNGenU}
+							td #{casegroupstudy[n].Segregation.PhUGenP}
+					tr
+						td
+							input(type="text" id="pngn" name="pngn")
+						td
+							input(type="text" id="pngu" name="pngu")
+						td
+							input(type="text" id="pugp" name="pugp")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td Pheno Unknown Geno Neg
+						td Pheno Unknown  Geno Unknown
+						td Add Seg Info
+					if exist
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PhUGenN}
+							td #{casegroupstudy[n].Segregation.PhUGenU}
+							td #{casegroupstudy[n].Segregation.AddSegInfo}
+					tr
+						td
+							input(type="text" id="pugn" name="pugn")
+						td
+							input(type="text" id="pugu" name="pugu")
+						td
+							input(type="text" id="addseginfo" name="addseginfo")
+					tr
+						td(colspan=3)&nbsp;
+					tr
+						td(colspan=3)
+							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
+							span &nbsp;
+							input(type="reset" value="Reset" style="height:25px;font-size:18px")

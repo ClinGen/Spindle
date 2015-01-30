@@ -1,0 +1,116 @@
+extends casegroup
+block casegroup_content
+	tr
+		td(style="font-size:18px")
+			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+			sapn &nbsp;>>&nbsp;
+			a(href='#' style='text-decoration:none') Study #{studyid}
+			sapn &nbsp;>> Segregation Analysis
+		td(style="text-align:right;font-size:12px")
+			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
+	tr
+		td(colspan=2) &nbsp;
+	tr
+		td(colspan=2)
+			form(action="/Casegroupstudy/Segregation" method="post")
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type="hidden" name="id" value="#{studyid}")
+				table(style="width:100%")
+					tr
+						td(style="width:180px") Pedigree Name
+						td(style="width:180px") Pedigree Size
+						td(style="width:180px") Pedigree Population
+						td(style="width:200px") Pedigree Description
+					if exist
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PedigreeName}
+							td #{casegroupstudy[n].Segregation.PedigreeSize}
+							td #{casegroupstudy[n].Segregation.PedigreePopulation}
+							td #{casegroupstudy[n].Segregation.PedigreeDescription}
+					tr
+						td
+							input(type="text" id="pname" name="pname")
+						td
+							input(type="text" id="psize" name="psize")
+						td
+							input(type="text" id="ppopulation" name="ppopulation")
+						td
+							textarea(cols=40 rows=8 id="pdescription" name="pdescription")
+					tr
+						td(colspan=4) &nbsp;
+					tr
+						td Segregation Pattern
+						td Pheno Pos Geno Pos
+						td Pheno Pos Geno Neg
+						td Pheno Pos Geno Unknown
+					if exist
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.SegregationPattern}
+							td #{casegroupstudy[n].Segregation.PhPGenP}
+							td #{casegroupstudy[n].Segregation.PhPGenN}
+							td #{casegroupstudy[n].Segregation.PhPGenU}
+					tr
+						td(style="vertical-align:top")
+							input(type="text" id="spattern" name="spattern" valign="top")
+						td(style="vertical-align:top")
+							input(type="text" id="ppgp" name="ppgp" valign="top")
+						td
+							input(type="text" id="ppgn" name="ppgn")
+						td
+							input(type="text" id="ppgu" name="ppgu")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td Pheno Neg Geno Pos
+						td Pheno Neg Geno Neg
+						td Pheno Neg Geno Unknown
+						td Pheno Unknown Geno Pos
+					if exist
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PhNGenP}
+							td #{casegroupstudy[n].Segregation.PhNGenN}
+							td #{casegroupstudy[n].Segregation.PhNGenU}
+							td #{casegroupstudy[n].Segregation.PhUGenP}
+					tr
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="pngp" name="pngp")
+						td(style="vertical-align:top" valign="top")
+							input(type="text" id="pngn" name="pngn")
+						td
+							input(type="text" id="pngu" name="pngu")
+						td
+							input(type="text" id="pugp" name="pugp")
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td Pheno Unknown Geno Neg
+						td Pheno Unknown  Geno Unknown
+						td Add Seg Info
+						td Variant
+					if exist
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{casegroupstudy[n].Segregation.PhUGenN}
+							td #{casegroupstudy[n].Segregation.PhUGenU}
+							td #{casegroupstudy[n].Segregation.AddSegInfo}
+							td alll variant data here
+								for v in casegroupstudy[n].Segregation.Variant
+					tr
+						td
+							input(type="text" id="pugn" name="pugn")
+						td
+							input(type="text" id="pugu" name="pugu")
+						td
+							input(type="text" id="addseginfo" name="addseginfo")
+						td Clikc Variant to Edit
+					tr
+						td(colspan=3)&nbsp;
+					tr
+						td(colspan=3)
+							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
+							span &nbsp;
+							input(type="reset" value="Reset" style="height:25px;font-size:18px")

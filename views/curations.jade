@@ -1,0 +1,136 @@
+extends layout
+block content
+	#pwdwin
+		#closepoint(style="text-align:right")
+			a(href="javascript:void(0)" id="closelink" title="Close") X
+		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
+		#wincontent(style="text-align:center;padding-top:15px")
+		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
+	script(type="text/javascript" src="/javascripts/changepwd.js")
+	#summarydataboard(style="display:block;vertical-align:middle;line-height:40px;height:40px")
+		form#associateionentry(action="/Curations" method="post")
+			//-input(type="hidden" id="ordoid")
+			span
+				input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbbbbb;width:120px" value="Gene Symbol")
+			span(style="font-size:15px;font-weight:bold") &nbsp;:&nbsp;
+			span
+				input(type="textarea" id="diseaseterm" name="diseaseterm" style="width:650px;height:18px;font-size:13px;color:#bbbbbb" value="Phenotype Term")
+				//-textarea#diseaseterm(name="diseaseterm" rows=3 style="overflow:auto;resize:none;width:500px;font-size:14px;color:#bbbbbb" value="Disease Term")
+			span &nbsp;
+				//-select(id="diseaseterm" name="diseaseterm" style="font-size:120%;height:25px")
+					option(id="keyword" value="Keyword") Keyword in Disease Name/Synonym
+					option(id="ordoid" value="ORDOID") ORDO ID
+					option(id="omimid" value="OMIMID") OMIM ID
+			span
+				input(type="submit" value="Enter" id="enterbutton" style="height:20px;font-size:16px")
+	#genelist
+	#diseaselist
+	#mainboard(style="position:relative;margin:0 auto;padding-top:90px;padding-bottom:100px")
+		if status == 'exist'
+
+			br
+			span(style="font-size:20px") A new Gene:Phenotype Association is created.br
+			br
+			br
+			table(style="margin-left:30px" cellpadding='2' cellspacing='2' border=0)
+				tr
+					td Gene:
+					td #{data.HGNCSymbol} (#{data.HGNCID}, Entrez:#{data.EntrezID})
+				tr
+					td Phenotype:
+					td #{data.FullName} (ORDO:#{data.ORDOID}, OMIM:#{data.OMIMID})
+				tr
+					td Creator:
+					td #{data.Curators[0].Name} (#{data.Curators[0].LogName})
+				tr
+					td Date adn Time:
+					td #{data.Curators[0].DateTime}
+			br
+			br
+			br
+			form#propertyform(action="/Curations/Property" method="post")
+				//-input(type="hidden" id="_id" name="_id" value="#{data._id}")
+				input(type="hidden" id="symbol" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" id="ordoid" name="ordoid" value="#{data.ORDOID}")
+				table(style="margin-left:30px;border-collapse:collapse;border: solid #eeeeee 0px;font-size:16px" border="0" cellpadding="5" cellspacing="5")
+					tr
+							td(colspan=2 style="font-size:20px") Property data:
+					tr
+							td Date of Literature Search:
+							if (data.LiteratureSearch.Date == '')
+								td
+									input(type="text" id="dateliterature" name="dateliterature" autofocus)
+							else
+								td #{data.LiteratureSearch.Date}
+					tr
+							td Search Parameters:
+							if (data.LiteratureSearch.Parameters == '')
+								td
+									input(type="text" id="searchparamters" name="searchparamters")
+							else
+								td #{data.LiteratureSearch.Parameters}
+					tr
+							td Number of Returned Results:
+							if (data.LiteratureSearch.ReturnedNumber == '')
+								td
+									input(type="text" id="returnnumber" name="returnnumber")
+							else
+								td #{data.LiteratureSearch.ReturnedNumber}
+					tr
+							td Number of Releveant Results:
+							if (data.LiteratureSearch.RelevantNumber == '')
+								td
+									input(type="text" id="releventnumber" name="releventnumber")
+							else
+								td #{data.LiteratureSearch.RelevantNumber}
+					tr
+							td Nunber of Independent Clinical Reports:
+							if (data.LiteratureSearch.ClinicalReportNumber == '')
+								td
+									input(type="text" id="clinicalreportnumber" name="clinicalreportnumber")
+							else
+								td #{data.LiteratureSearch.ClinicalReportNumber}
+					tr
+							td Time of Complete:
+							if (data.LiteratureSearch.TimeComplete == '')
+								td
+									input(type="text" id="completetime" name="completetime")
+							else
+								td #{data.LiteratureSearch.TimeComplete}
+					tr
+						td(colspan=2)
+							input(type="submit" value="Enter" id="enterbutton" height="20px" style="font-size:14px")
+							span &nbsp;&nbsp;
+							input(type="reset" value="reset" height="20px" style="font-size:14px")
+							//-script(type="text/javascript").
+								$(document).ready(function() {
+									$("#enterform").submit(function() {
+										var noempty = false;
+										$.each($("input:text"), function(i, val) {
+											if (this.val() != '') {
+												this.val() = this.val().replace(/(^\s*)|(\s*$)/g, '');
+												noempty = true;
+											}
+										});
+										return nompty;
+									});
+								});
+		else
+			br
+			span(style="font-size:20px") Total number of gene:phenotype association: #{data}
+			br
+			br
+			span(style="font-size:16px") Enter gene symbol and keywoord of phenotype term above to access.
+	script(type="text/javascript").
+			function passterm(obj) {
+				$("#diseaseterm").css("color","#000000");
+				$("#diseaseterm").val(obj.text);
+				$("#diseaselist").css("display", "none");
+				$("#ordoid").val() = obj.title;
+			}
+			function passsymbol(obj) {
+				$("#genesymbol").css("color","#000000");
+				$("#genesymbol").val(obj.text);
+				$("#genelist").css("display", "none");
+			}
+	script(type="text/javascript" src="/javascripts/curationsView.js")

@@ -1,0 +1,18 @@
+extends layout
+block content
+	a(href='/login?logname=#{data.LogName}&pwd=#{data.Password}' id="spindleLogo") SPINDLE
+	table(id="toplinks")
+		tr
+			td
+				a(href='/Curators') Curators
+			td
+				a.this(href='/Genes') Genes
+			td
+				a(href='/Diseases') Diseases
+			td
+				a(href='/Curation') Curation
+			//-td(style="padding-left:150px")
+				a(href='/login?logname=#{data.LogName}&pwd=#{data.Password}' style="text-decoration:none") #{data.Name}
+			td(style="padding-left:300px")
+				a(href='/Logout') Logout
+	table(id='g_dPair')

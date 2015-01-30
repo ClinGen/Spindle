@@ -1,0 +1,76 @@
+extends casegroup
+block casegroup_content
+		span(style="font-size:18px") Enter Group Data
+		br
+		form(action="/Casestudy/Casegroup" method="post")
+			input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+			input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+			table(style="width:100%")
+				tr
+					td PM ID
+					td Case Group Name:&nbsp;
+					td Number of Case:&nbsp;
+				tr
+					td
+						input(type="text" id="pmid" name="pmid")
+					td
+						input(type="text" id="groupname" name="groupname")
+					td
+						input(type="text" id="numcase" name="numcase")
+				tr
+					td(colspan=3) &nbsp;
+				tr
+					td Number of Affected Alleles:&nbsp;
+					td Number of Probands:&nbsp;
+					td Mean Age of Cases:&nbsp;
+				tr
+					td
+						input(type="text" id="numaffall" name="numaffall")
+					td
+						input(type="text" id="numprob" name="numprob")
+					td
+						input(type="text" id="mage" name="mage")
+				tr
+					td(colspan=3) &nbsp;
+				tr
+					td Median Age of Cases
+					td Age of Onset
+					td Sex Ratio
+				tr
+					td
+						input(type="text" id="medage" name="medage")
+					td
+						input(type="text" id="ageonset" name="ageonset")
+					td
+						input(type="text" id="sexratio" name="sexratio")
+				tr
+					td(colspan=3) &nbsp;
+				tr
+					td Country of Origin
+					td Ethnicity
+					td Race
+				tr
+					td
+						input(type="text" id="country" name="country")
+					td
+						input(type="text" id="ethnicity" name="ethnicity")
+					td
+						input(type="text" id="race" name="race")
+				tr
+					td(colspan=3) &nbsp;
+				tr
+					td Sporadical Familial
+					td Primary Outcome
+					td Other Attributes
+				tr
+					td(style="vertical-align:top")
+						input(type="text" id="sporafamil" name="sporafamil")
+					td
+						textarea(cols=40 rows=5 id="outcome" name="outcome")
+					td
+						textarea(cols=40 rows=5 id="otherattr" name="otherattr")
+				tr
+					td(colspan=3)
+						input(type="submit" value="Enter" id="subbttn" style="height:20px;font-size:18px")
+						span &nbsp;
+						input(type="reset" value="Reset" style="height:20px;font-size:18px")

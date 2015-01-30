@@ -1,0 +1,57 @@
+extends casegroup
+block casegroup_content
+	- var n = parseInt(studyid) - 1
+	tr
+		td(style="font-size:18px")
+			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+			sapn &nbsp;>>&nbsp;
+			a(href='#' style='text-decoration:none') Study #{studyid}
+			sapn &nbsp;>> Assessment
+		td(style="text-align:right;font-size:12px")
+			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}" style='text-decoration:none') Add A New Study
+	tr
+		td(colspan=2) &nbsp;
+	tr
+		td(style="vertical-align:top")
+			if casegroupstudy[n].Assessments
+				table
+					for m, k in casegroupstudy[n].Assessments
+						tr
+							td(style="sont-size:13px") Assessment: #{k+1}
+						for val, key in m
+							tr
+								td(style="sont-size:12px") #{key}: #{val}
+						tr
+							td &nbsp;
+		td
+			form(action="/casegroupstudy/Assessment" method="post")
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type="hidden" name="id" value="#{studyid}")
+				table(style="width:100%")
+					tr
+						td(colspan=2 style="font-size:125%") Add a new assessment
+					tr
+						td Select:
+						td
+							span Strong Support
+								input(type="radio" id="lvl" name="lvl" value="Strong Support")
+							span &nbsp;&nbsp;&nbsp;Support
+								input(type="radio" id="lvl" name="lvl" value="Support")
+							sapn &nbsp;&nbsp;&nbsp;Neutral
+								input(type="radio" id="lvl" name="lvl" value="Neutro")
+							span &nbsp;&nbsp;&nbsp;Not Support
+								input(type="radio" id="lvl" name="lvl" value="Not Support")
+					tr
+						td(colspan=2) Reason
+					tr
+						td(colspan=2)
+							textarea(cols=70 rows=20 id="reason" name="reason")
+					tr
+						td(colspan=2) &nbsp;
+					tr
+						td(colspan=2)
+							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
+							span &nbsp;
+							input(type="reset" value="Reset" style="height:25px;font-size:18px")
+
