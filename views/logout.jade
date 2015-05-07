@@ -1,15 +1,62 @@
-extends layout
-block content
-	#summarydataboard
-		if token == 'logout'
-			p Thank you. Click Spindle above to access again.
-		else if token == 'expired'
-			p(style="color:red") It is too long for waiting. For securaty reason, please click Spindle above and login again.
-		else if token == 'Not Match'
-			p(style="color:red") Invalid logname and password.
-			p Click Spindle above for login again.
-		else if token == 'Unknown err'
-			p(style="color:red") Error. Click Spindle above login again.
-		else
-			p(style="color:red") Click Spindle above to access login.
+doctype html
+html
+	head
+		title Spindle
+		link(rel="shortcut icon" href="/images/favicon.ico")
+		link(rel='stylesheet', href='/stylesheets/style.css')
+		script(src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js")
+		script(type="text/javascript").
+			!window.jQuery && document.write("<script type='text/javascript' src='/javascripts/jquery-2.1.3.min.js'></scr"+"ipt>")
+	body
+		div(style="width:100%;height:5px;background:#159")
+		#head
+			img.floatleft(src="/images/spindle-logo-9.png" style="height:90px;margin:3px 0 0 10px;opacity:1")
+			#logolink.floatleft
+				a#spindleLogo(href='/') SPINDLE
+		div(style="padding:100px 0px 0px 80px;font-size:16px")
+			if token == 'logout'
+				p Thank you. Click Spindle above to access again.
+			else if token == 'expired'
+				p(style="color:red") It is too long since last action.
+				p For securaty reason, please click Spindle above and login again.
+				//-script(type="text/javascript").
+					$(document).ready(function() {
+						$.cookie('Spindle', null, { maxAge:0, path:'/' })
+					})
+			else if token == 'Not Match'
+				p(style="color:red") Invalid logname and password.
+				p Click Spindle above for login again.
+			else if token == 'Unknown err'
+				p(style="color:red") Error found.
+				p Click Spindle above to login again.
+			else
+				p(style="color:red") Click Spindle above to access login.
+			//-p token: #{token}
+		#ClinGen-Logo(style="position:fixed;top:55px;right:5px")
+			a(href="http://www.clinicalgenome.org/" target="_blank")
+				img(src="/images/ClinGenLogo-rainbow.png" style="width:100px;opacity:1")
+		#foot
+			table(style="width:100%;height:100%;border-collapse:collapse")
+				tr(style="height:100%")
+					td(style="padding-left:20px;vertical-align:middle;font-size:14px;color:#ddd")
+						a(href="http://www.stanford.edu/site/terms.html" target="_blank" style="cursor:pointer;text-decoration:none;color:#ddd") Terms of Use
+						br
+						span &copy; Stanford University, Stanford, CA 94305.
+					td(style="text-align:right;padding-right:20px;vertical-align:middle")
+						table(style="height:100%;float:right;border-collapse:collapse")
+							tr
+								td(style="vertical-align:bottom")
+									a(href="http://genetics.stanford.edu/" target="_blank")
+										img(src="/images/department-logo-white-small.png" alt="ClinGen-Logo" height="30")
+								td(style="vertical-align:bottom")
+									a(href="http://med.stanford.edu//" target="_blank")
+										img(src="/images/medicalschool-logo.png" alt="ClinGen-Logo" height="35")
+								td(style="text-align:center;vertical-align:bottom")
+									a(href="http://www.stanford.edu/" target="_blank" style="text-decoration:none;color:#ccb")
+										span(style="font-size:18px;vertical-align:bottom") Stanford
+										br
+										span(style="font-size:12px;vertical-align:top") University
+								//-td(style="vertical-align:bottom")
+									a(href="http://www.clinicalgenome.org/" target="_blank")
+										img(src="/images/ClinGen-Logo-White-Small.png" alt="ClinGen-Logo" height="35")
 	script(type="text/javascript" src='/javascripts/logoutView.js')

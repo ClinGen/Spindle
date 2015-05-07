@@ -1,0 +1,68 @@
+extends curations_basic
+block curation_content
+	div(style="width:100%;margin:0 auto")
+		#curation_content_box.floatleft(style="")
+			#literature_box.tab_content(style="padding:5px 10px 5px 10px")
+				p Literature search here.
+				p Hartwig, 90, and wife Violet, 89, died on Feb. 11 in their home in Easton, California, outside Fresno, their family said.
+				p The couple had known each other since they were children and married in 1947 while Floyd was on leave from the Navy, going on to settle in a ranch in Easton.
+				p "They enjoyed working side by side their entire lives," said daughter Donna Scharton. "They were very loving. Very hard-working. Not into materialistic things."
+				p Each had battled illnesses in recent years. Violet had dementia and had suffered strokes. Floyd, who survived bladder and colon cancer, had been diagnosed with kidney failure, family said.
+				p Floyd and Violet had been given hospice care in the last weeks of their lives, and with the end near, family members pushed their beds together, Scharton said.
+				p View galleryFamily photo of Floyd Hartwig and wife Violet who died&nbsp;&hellip;
+				p Floyd Hartwig and wife Violet are shown in this undated Hartwig family photo released to Reuters Feb …
+			#casegroup_box.tab_content(style="padding:5px 10px 5px 10px")
+				block casegroup_block
+			#casecontrol_box.tab_content(style="padding:5px 10px 5px 10px")
+				p Case Control Study here.
+				p Floyd died first, holding Violet's hand. She passed away five hours later, she said.
+				p "They were very devoted to each other and had a lot of respect for each other," Scharton said of their long marriage.
+				p The couple had three children, four grandchildren and 10 great-grandchildren, family said.
+				p Violet, known as "Vi," would wake up at 4 a.m. through much of her life to tend to her family and the ranch, "sewing, cooking, gardening, and volunteering for the PTA," according to her daughter and her obituary.
+				p Floyd spent six years in the Navy and served in World War Two, his obituary said.
+				p (Reporting by Victoria Cavaliere in Seattle; Editing by Eric Beech)
+				p Saudi Arabia on Thursday beheaded an Indian axe murderer and a Pakistani heroin trafficker, bringing to 34 the number of death sentences carried out this year.
+				p Vijay Kumar Saleem, of India, was convicted of killing a Yemeni by striking him in the head with the axe, an interior ministry statement carried by the official Saudi Press Agency said.
+			#functional_box.tab_content(style="padding:5px 10px 5px 10px")
+				p Functional Data Analysis here.
+				p The attack took place after a dispute at the farm where they worked, it said, adding that Saleem was executed in Riyadh.
+				p Authorities also carried out a death sentence against the Pakistani, Hafiz Wifaq Rasoul Shah, in the Muslim holy city of Medina.
+				p "Investigations led to his confession and he was tried and found guilty," a separate interior ministry statement said.
+				p The Pakistani city of Karachi is a key transit point for heroin from Afghanistan.
+				p According to the United Nations Office on Drugs and Crime, the Gulf has become an increasingly important market for illicit drugs in recent years.
+				p The Saudi government says it "is committed to fighting drugs of all kinds due to the physical and social harm they cause".
+			#on_construction_box.tab_content(style="text-align:center")
+				br
+				br
+				span(style="font-size:20px") This page is under construction and will come soon.
+				br
+				br
+				br
+				img(src="/images/under_construction.png" style="width:10%")
+		#tab_box(style="float:left;-webkit-transform:rotate(90deg);-moz-transform: rotate(90deg);border-spacing:1px;border:solid #000 1px")
+			div.tab_v(style="") Literature
+						//-table#tab_table(style="")
+							tr
+
+
+	script(type="text/javascript").
+		$(document).ready(function() {
+			var h = $(window).height() - 120 - $("#curation_basic_data").height()
+			var w = $(window).width() - 80
+			$("#curation_content_box").css('height', h)
+			$("#curation_content_box").css('width', w)
+			$("#tab_table").css('width', h+4)
+			$("#tab_box").css("height", h)
+			$("#tab_box").css('width', $("#tab_table").height()+5)
+
+			$(window).resize(function() {
+				var h = $(window).height() - 120 - $("#curation_basic_data").height()
+				var w = $(window).width() - 80
+				$("#curation_content_box").css('height', h)
+				$("#curation_content_box").css('width', w)
+				$("#tab_table").css('width', h+4)
+				$("#tab_box").css("height", h)
+				$("#tab_box").css('width', $("#tab_table").height()+5)
+
+			})
+		})

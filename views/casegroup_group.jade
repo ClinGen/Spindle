@@ -1,141 +1,293 @@
 extends casegroup
 block casegroup_content
-	tr
-		td(style="font-size:18px")
-			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
-			sapn &nbsp;>>&nbsp;
-			- var studycnt = studyid
-			if newstudy
-			-	studycnt = casegroupstudy.length + 1
-			a(href='#' style='text-decoration:none') Study #{studycnt}
-			sapn &nbsp;>> Group #{group}
-		td(style="text-align:right;font-size:12px;width:200px")
-			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
-	tr
-		td(colspan=2) &nbsp;
-	tr
-		td(colspan=2)
-			form(action="/Casegroupstudy/Group" method="post")
-				table(style="width:100%")
+		- var action = '/Casegroupstudy/Addnew'
+		if group
+			- action = '/Casegroupstudy/Group'
+		form(action="#{action}" method="post" id="groupform")
+			tr
+				td(style="font-size:18px")
+					a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+					sapn &nbsp;>>&nbsp;
+					if group && group.Curators[0] == user.LogName
+						sapn Group&nbsp;#{group.GroupID},&nbsp;
+						input(type="text" id="groupname" name="groupname" value="#{group.GroupData.GroupName}")
+					else if group
+						sapn Group&nbsp;#{group.GroupID},&nbsp;#{group.GroupData.GroupName}
+					else
+						span Group >> Add new
+				td(style="text-align:right;font-size:14px")
+					if group
+						if !group.Method && group.Curators[0] != user.LogName
+							span(style="color:#999") Method
+						else
+							a(href="/Casegroupstudy/Group/#{group.GroupID}/Method" style='text-decoration:none') Method
+						span &nbsp; | &nbsp;
+						select(id='segid' name='segid')
+							option(value='') Segregation
+							if group.Segregation && group.Segregation.length > 0
+								for seg in group.Segregation
+									if seg.Active == 'Yes'
+										option(value='#{seg.SegregationID}') #{seg.SegregationID}
+							option(value='Addnew') Add A New One
+						script(type="text/javascript").
+							$(document).ready(function(){
+								$("#segid").change(function() {
+									if ($(this).children('option:selected').val() != '')
+										$(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Segregation/' + $(this).children('option:selected').val())
+								})
+							})
+					else
+						span &nbsp;
+			
+				if group
+					- var dt = group.DateTime[0].split(' GMT-0800 ')
 					tr
-						td(style="width:300px") Case Group Name
-						td PM ID
-						td Number of Case
-					if group != 'Addnew'
-						- var n = parseInt(studyid) - 1
-						for c in casegroupstudy
-							for g in c.CaseGroup
-								if g.CaseGroupName == group
-									tr(style="font-size:80%")
-										td #{g.CaseGroupName}
-										td #{g.PMID}
-										td #{g.NumberOfCase}
-					tr
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="gname" name="gname")
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="pmid" name="pid")
-						td
-							input(type="text" id="numcase" name="numcase")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td Number of Affected Alleles
-						td Number of Probands
-						td Mean Age of Cases
-					if group != 'Addnew'
-						- var n = parseInt(studyid) - 1
-						for c in casegroupstudy
-							for g in c.CaseGroup
-								if g.CaseGroupName == group
+						td(colspan=2 style="padding-left:300px;font-size:13px;color:#999")
+							span Initialized by&nbsp;#{group.Curators[0]}
+							//-a(href='#')
+							span &nbsp;at #{dt[0]} #{dt[1]}
+				tr
+					td(colspan=2) &nbsp;
+				tr
+					td(colspan=2)
+						table(style="width:100%")
+							if !group
+								tr
+									td(colspan=3) Group Name:&nbsp;
+										input(type='text' id='groupname' name='groupname' style="width:300px")
+								tr
+									td(colspan=3) &nbsp;
+							tr
+								td(style="width:200px") PMID
+								td Number of Case(s)
+								td Number of Affected Alleles
+							if group
 								tr(style="font-size:80%")
-									td #{g.NumberOfAffectedAlleles}
-									td #{g.NumberOfProbands}
-									td #{g.MeanAgeOfCases}
-					tr
-						td
-							input(type="text" id="numaffall" name="numaffall")
-						td
-							input(type="text" id="numprob" name="numprob")
-						td
-							input(type="text" id="maenage" name="maenage")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td(style="width:150px") Median Age of Cases
-						td(style="width:200px") Age of Onset
-						td Sex Ratio
-					if group != 'Addnew'
-						- var n = parseInt(studyid) - 1
-						for c in casegroupstudy
-							for g in c.CaseGroup
-								if g.CaseGroupName == group
+									td
+										if group.PMID
+											a(href='http://www.ncbi.nlm.nih.gov/pubmed/#{group.GroupData.PMID}' target="_blank") #{group.GroupData.PMID}
+											span &nbsp;&nbsp;&nbsp;&nbsp;
+											a#pmidclick(style="text-decoration:none;cursor:pointer" title="More") =>
+									td #{group.GroupData.NumberOfCase}
+									td #{group.GroupData.NumberOfAffectedAlleles}
+							if groupid || group.Curators[0] == user.LogName
+								tr
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="pmid" name="pid" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="numcase" name="numcase" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+									td
+										input.numeric(type="text" id="numaffall" name="numaffall" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+							tr
+								td(colspan=3) &nbsp;
+							tr
+								td Number of Probands
+								td Mean Age of Cases
+								td Median Age of Cases
+							if group
 								tr(style="font-size:80%")
-									td #{g.MedianAgeOfCases}
-									td #{g.AgeOfOnset}
-									td #{g.SexRatio}
-					tr
-						td
-							input(type="text" id="medianage" name="medianage")
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="ageonset" name="ageonset")
-						td
-							input(type="text" id="sexratio" name="sexratio")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td Country of Origin
-						td Ethnicity
-						td Race
-					if group != 'Addnew'
-						- var n = parseInt(studyid) - 1
-						for c in casegroupstudy
-							for g in c.CaseGroup
-								if g.CaseGroupName == group
+									td #{group.GroupData.NumberOfProbands}
+									td #{group.GroupData.MeanAgeOfCases}
+									td #{group.GroupData.MedianAgeOfCases}
+							if groupid || group.Curators[0] == user.LogName
+								tr
+									td
+										input.numeric(type="text" id="numprob" name="numprob" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+									td
+										input.numeric(type="text" id="maenage" name="maenage" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+									td
+										input.numeric(type="text" id="medianage" name="medianage" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Digit)
+							tr
+								td(colspan=3) &nbsp;
+							tr
+								td(style="width:150px") Age of Onset
+								td(style="width:200px") Sex Ratio (Male:Female)
+								td Country of Origin
+							if group
 								tr(style="font-size:80%")
-									td #{g.CountryOfOrigin}
-									td #{g.Ethnicity}
-									td #{g.Race}
-					tr
-						td
-							input(type="text" id="countryorigin" name="countryorigin")
-						td
-							input(type="text" id="ethnicity" name="ethnicity")
-						td
-							input(type="text" id="race" name="race")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td Sporadical Familial
-						td Primary Outcome
-						td Other Attributes
-					if group != 'Addnew'
-						- var n = parseInt(studyid) - 1
-						for c in casegroupstudy
-							for g in c.CaseGroup
-								if g.CaseGroupName == group
+									td
+										if group.GroupData.AgeOfOnset
+											- var temp = group.GroupData.AgeOfOnset.split('(')
+											- var link = temp[1].replace(')', '')
+											span #{temp[0]}&nbsp;(
+											a(href="http://www.orpha.net/ORDO/#{link}" target="_blank")= link
+											span )
+									td #{group.GroupData.SexRatio}
+									td #{group.GroupData.CountryOfOrigin}
+							if groupid || group.Curators[0] == user.LogName
+								tr
+									td
+										select(id="ageonset" name="ageonset")
+											option(value="") Select below
+											option(value='Antenatal - Before delivery (Orphanet_409943)') Antenatal - Before delivery (Orphanet_409943)
+											option(value='Neonatal – From delivery to 4 weeks of life (Orphanet_409944)') Neonatal – From delivery to 4 weeks of life (Orphanet_409944)
+											option(value='Infancy - From 4 weeks to 2 years of life (Orphanet_409945)') Infancy - From 4 weeks to 2 years of life (Orphanet_409945)
+											option(value='Childhood – From 2 to 11 years of life (Orphanet_409946)') Childhood – From 2 to 11 years of life (Orphanet_409946)
+											option(value='Adolescent - From 12 to 18 years of life (Orphanet_409947)') Adolescent - From 12 to 18 years of life (Orphanet_409947)
+											option(value='Adult – From 19 to 65 years of life (Orphanet_409948)') Adult – From 19 to 65 years of life (Orphanet_409948)
+											option(value='Elderly - After 65 years of life (Orphanet_409949)') Elderly - After 65 years of life (Orphanet_409949)
+										//-input.numeric(type="text" id="ageonset" name="ageonset" style="width:70px")
+										//-span(style='font-size:12px') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+										input.ratio(type="text" id="sexratio" name="sexratio" style="width:70px")
+										span(style='font-size:12px') &nbsp;(Ratio like: 1:1)
+									td
+										input(type="text" id="countryorigin" name="countryorigin" style="width:70px")
+										span(style='font-size:12px') &nbsp;(String)
+							tr
+								td(colspan=3) &nbsp;
+							tr
+								td Ethnicity
+								td Race
+								td Sporadic or Familial
+							if group
 								tr(style="font-size:80%")
-									td #{g.SporadicalFamilial}
-									td #{g.PrimaryOutcome}
-									td #{g.OtherAttributes}
-					tr
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="sporfamil" name="sporfamil")
-						td
-							textarea(cols=50 rows=8 id="primaryoutcome" name="primaryoutcome")
-						td
-							textarea(cols=50 rows=8 id="otherattr" name="otherattr")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td(colspan=3)
-							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
-							span &nbsp;
-							input(type="reset" value="Reset" style="height:25px;font-size:18px")
-				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
-				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
-				input(type="hidden" name="group" value="#{group}")
-				if newstudy
-					- studyid = cnt + 1
-				input(type="hidden" name="id" value="#{studyid}")
+									td #{group.GroupData.Ethnicity}
+									td #{group.GroupData.Race}
+									td #{group.GroupData.SporadicalFamilial}
+							if groupid || group.Curators[0] == user.LogName
+								tr
+									td
+										select(id="ethnicity" name="ethnicity")
+											option(value='') Click to select
+											option(value='Hispanic or Latino') Hispanic or Latino
+											option(value='Not Hispanic or Latino') Not Hispanic or Latino
+									td
+										select(id="race" name="race")
+											option(value='') Click to select
+											option(value='American Indian') American Indian
+											option(value='Alaska Native') Alaska Native
+											option(value='Asian') Asian
+											option(value='Black') Black
+											option(value='Native Hawaiian') Native Hawaiian
+											option(value='Other Pacific Islander') Other Pacific Islander
+											option(value='White') White
+									td
+										select(id="sporfamil" name="sporfamil")
+											option(value='') Click to select
+											option(value="Sporadic") Sporadic
+											option(value="Familial") Familial
+							tr
+								td(colspan=3) &nbsp;
+							tr
+								td(colspan=3)
+									table
+										tr
+											td(style="width:200px") Primary Outcome
+											td(style="width:10px") &nbsp;
+											td(style="width:200px") Other Attributes
+										if group && group.Curators[0] == user.LogName
+											tr(style="font-size:80%")
+												td
+													textarea(cols=50 rows=8 id="primaryoutcome" name="primaryoutcome") #{group.GroupData.PrimaryOutcome}
+												td &nbsp;
+												td
+													textarea(cols=50 rows=8 id="otherattr" name="otherattr") #{group.GroupData.OtherAttributes}
+										else if groupid
+											tr
+												td
+													textarea(cols=50 rows=8 id="primaryoutcome" name="primaryoutcome")
+												td &nbsp;
+												td
+													textarea(cols=50 rows=8 id="otherattr" name="otherattr")
+										else if group
+											tr(style="font-size:80%")
+												td(style="width:300px") #{group.GroupData.PrimaryOutcome}
+												td &nbsp;
+												td(style="width:300px") #{group.GroupData.OtherAttributes}
+							tr
+								td(colspan=3) &nbsp;
+							if groupid || group.Curators[0] == user.LogName
+								tr
+									td(colspan=3 style='text-align:left')
+										input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px")
+										span &nbsp;
+										input(type="reset" value="Reset" style="height:25px;font-size:18px")
+						input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+						input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+						if group
+							input(type="hidden" name="groupid" value="#{group.GroupID}")
+						else
+							input(type="hidden" name="groupid" value="Addnew")
+			if group
+				#pmidbox(style="display:none;position:absolute;width:400px;height:500px;top:300px;right:10px;z-index:12;background:#369;opacity:0.8;box-shadow:10px 10px 5px #888;margin-right:30px")
+					div(style='width:390px;height:488px;margin:5px 4px 5px 4px;border:solid #bbb 1px')
+						span#pmid(style="floar:left;font-size:12px;color:#ff0;padding-left:5px")
+						div(style="float:right;padding:5px 5px 0px 0px")
+							a#pmidboxclose(style="text-decoration:none;cursor:pointer;font-size:16px;font-weight:bold;color:#ff0") X
+						br
+						div(style="padding: 0 10px 0 10px;color:#eee;font-size:13px")
+							br
+							dt Title:
+							dd#titlebox
+							br
+							dt Journal:
+							dd#journalbox
+							br
+							span Date:&nbsp;&nbsp;
+							span#datebox
+							br
+							br
+							span(style="width:90px") First Author:&nbsp;&nbsp;
+							span#authorbox
+							br
+							br
+							span Abstract:
+							#abstractbox(style="width:350px;height:218px;overflow:auto;margin:10px 5px 5px 5px;padding:5px 5px 5px 5px")
+				script(type="text/javascript").
+					$().ready(function(){
+						$("#pmidclick").on("click", function() {
+							$("#pmidbox").fadeIn(3000, function() {
+								var urlstr = '/Observations/pmid/' + '#{group.GroupData.PMID}'
+								$.get(urlstr, function(data) {
+									if (data.Error) {
+										$("#abstractbox").html(data.Error)
+										$("#abstractbox").css('color','#f83')
+										$("#abstractbox").css('font-size','16px')
+										$("#pmid").html('PMID: '+'<spam style="color:#f83">'+data.Pmid+'</sapm>')
+									}
+									else {
+										$("#pmid").html('PMID: ' + data.Pmid)
+										$("#titlebox").html(data.Title)
+										$("#journalbox").html(data.Journal.Title)
+										$("#datebox").html(data.Journal.PubDate.Month + " " + data.Journal.PubDate.Year)
+										$("#authorbox").html(data.FirstAuthor.LastName + " " + data.FirstAuthor.Initials)
+										$("#abstractbox").html(data.Abstract)
+									}
+								})
+							})
+						})
+						$("#pmidboxclose").on("click", function() {
+							$("#pmidbox").fadeOut()
+						})
+						$("#pmidbox").on("mouseenter", function() {
+							$("#pmidbox").css('opacity', 1)
+						})
+						$("#pmidbox").on("mouseleave", function() {
+							$("#pmidbox").css('opacity', 0.8)
+						})
 
+						$("#groupform").submit(function() {
+							var no_err = true
+							$("input.numeric").each(function() {
+								if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+									alert('Please enter positive number.')
+									$(this).focus()
+									no_err = false
+								}
+							})
+							var pttn = /^\d+:\d+$/
+							if ($("input.ratio").val() != '' && !pttn.test($("input.ratio").val())) {
+								alert('Plese enter a ratio like 1:1')
+								$("input.ratio").focus()
+								no_err = false
+							}
+							return no_err
+						})
+					})

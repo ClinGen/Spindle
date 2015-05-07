@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Spindle</title>
+		<link rel="shortcut icon" href="/images/favicon.ico">
+		<link rel="stylesheet" href="/stylesheets/style.css" />
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script type="text/javascript">
+			!window.jQuery && document.write("<script type='text/javascript' src='/javascripts/jquery-2.1.3.min.js'></scr"+"ipt>")
+		</script>
+	</head>
+	<body>
+		<div style="position:fixed;width:100%;height:5px;background:#159"></div>
+		<div id="head" style="position:fixed;top:5px;width:100%;height:100px">
+			<a href="http://www.clinicalgenome.org/" target="_blank">
+				<img src="/images/ClinGenLogo-rainbow.png" style="padding:10px 0 0 30px;width:100px;opacity:1" />
+			</a>
+		<!--
+			<a id="spindleLogo" href="/">
+				<div class="floatleft" style="padding-left:10px"><img src="/images/spindle-logo-9.png" style="height:80px;margin:3px 0 0 10px;opacity:1" /></div>
+				<div class="floatleft" style="vertical-align:middle;line-height:45px;padding-left:10px">SPINDLE</div>
+			</a>
+			-->
+		</div>
+
+		<br />
+		<div style="padding:100px 0 0 100px">
+			<!--<div><img src="/images/ClinGenLogo.png" style="background-repeat:no-repeat;opacity:0.1" /></div>-->
+			<!--
+				<p style="font-size:150%">Please make sure your browser accepts cookies.</p>
+				<p>Google Chrome is recommanded.&nbsp;
+					<a href="https://support.google.com/chrome/answer/95346?hl=en" target="_blank" style="text-decoration:none">Download</a>
+					<span>&nbsp;|&nbsp;</span>
+					<a herf="https://support.google.com/chrome/answer/95647?hl=en" target="_blank" style="text-decoration:none">Cookie Setup</a>
+					<span>.</span>
+					<span style="width:100px">&nbsp;</span>
+					<a id="statiscic_link" style="cursor:pointer">Click</a>
+				</p>
+				<br />
+				<p>Enter your login name and password</p>
+				-->
+				<form action="/login" method="post" id="loginform" name="loginform">
+				<table>
+					<tr>
+						<td colspan=2 style="font-size:30px;text-align:center">
+							ClinGen Gene Curation Login
+							<br />
+							Welcome!
+						</td>
+					</tr>
+					<tr><td colspan=2>&nbsp;</td></tr>
+					<tr>
+						<td style="text-align:right">Log Name:</td>
+						<td><input type="text" id="logname" name="logname" style="width:200px;height:20px;font-size:16px;border-radius:8px" /></td>
+					</tr>
+					<tr>
+						<td style="text-align:right">Password:</td>
+						<td><input type="password" name="pwd" id="pwd" style="width:200px;height:20px;font-size:16px;border-radius:8px" /></td>
+					</tr>
+					<tr>
+						<td style="text-align:right">
+							<input type="submit" value="Submit" id="sendlogin" style="width:70px;height:30px;font-size:18px" /></td>
+						<td>
+							<input type="reset" value="Reset" style="width:70px;height:30px;font-size:18px" /></td>
+					</tr>
+					<tr><td colspan=2>&nbsp;</td></tr>
+					<tr><td colspan=2 style="font-size:12px">Please make sure your browser accepts cookies.</td></tr>
+					<tr><td colspan=2 style="font-size:12px">Google Chrome is recommanded.&nbsp;
+							<a href="https://support.google.com/chrome/answer/95346?hl=en" target="_blank" style="text-decoration:none">Download</a>
+							<span>&nbsp;|&nbsp;</span>
+							<a herf="https://support.google.com/chrome/answer/95647?hl=en" target="_blank" style="text-decoration:none">Cookie Setup</a>
+							<span>.</span>
+					<tr>
+						<td colspan=2 style="font-size:12px">
+							<br />
+							Please contact&nbsp;
+							<a href="#" style="text-decoration:none">Tam Sneddon</a>&nbsp;to create an account.</td></tr>
+						</td>
+					</tr>
+				</table>
+				</form>
+		</div>
+		<!--
+		<div style="position:fixed;top:55px;right:5px">
+			<a href="http://www.clinicalgenome.org/" target="_blank">
+				<img src="/images/ClinGenLogo-rainbow.png" style="width:100px;opacity:1" />
+			</a>
+		</div>
+		<div style="position:fixed;top:50px;left:30px"><img src="/images/ClinGenLogo-rainbow.png" style="width:500px;opacity:0.1" /></div>
+		<div id="statistic_diagram_box" style="display:none;position:absolute;top:330px;left:50px">
+			<div id="diagram_control_box" style="background-color:#fff">
+				<select id="filter_selection" style="float:right;font-size:12px">
+					<option value="Both">Both</option>
+					<option value="Overall">Overall</option>
+					<option value="Pathogenic">Pathogenic Only</option>
+				</select>
+			</div>
+			<canvas id="statistic_diagram" width="500" height="500" style="background-color:#fff">Not support canvas</canvas>
+		</div>-->
+		<div id="foot">
+			<table style="width:100%;height:100%;border-collapse:collapse">
+				<tr style="height:100%">
+					<td style="padding-left:20px;vertical-align:middle;font-size:14px;color:#ddd">
+						<a href="http://www.stanford.edu/site/terms.html" target="_blank" style="cursor:pointer;text-decoration:none;color:#ddd">Terms of Use</a>
+						<br />
+						<span>&copy; Stanford University, Stanford, CA 94305.</span>
+					</td>
+					<td style="text-align:right;padding-right:20px;vertical-align:middle">
+						<table style="height:100%;float:right;border-collapse:collapse">
+							<tr>
+								<td style="vertical-align:bottom">
+									<a href="http://genetics.stanford.edu/" target="_blank">
+										<img src="/images/department-logo-white-small.png" alt="ClinGen-Logo" height="30" />
+									</a>
+								</td>
+								<td style="vertical-align:bottom">
+									<a href="http://med.stanford.edu//" target="_blank">
+										<img src="/images/medicalschool-logo.png" alt="ClinGen-Logo" height="35" />
+									</a>
+								</td>
+								<td style="text-align:center;vertical-align:bottom">
+									<a href="http://www.stanford.edu/" target="_blank" style="text-decoration:none;color:#ccb">
+										<span style="font-size:14px;vertical-align:bottom">Stanford</span>
+										<br />
+										<span style="font-size:10px;vertical-align:top">University</span>
+									</a>
+								</td>
+								<!--
+								<td style="vertical-align:bottom">
+									<a href="http://www.clinicalgenome.org/" target="_blank">
+										<img src="/images/ClinGen-Logo-White-Small.png" alt="ClinGen-Logo" height="35" />
+									</a>
+								</td>
+								-->
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<script type="text/javascript">
+			$(function() {
+				var w = $(window).width() - 160
+				var h = $(window).height() - 430
+				$("#diagram_control_box").attr('width', w)
+				$("#statistic_diagram").attr('width', w).attr('height', h)
+				var ctx = $('#statistic_diagram')[0].getContext("2d")
+				var top_margin = 50
+				var bottom_margin = 70
+				var ori_x = 50
+				var ori_y = h-top_margin
+				var x_interval = Math.round((w - ori_x - 50)/24)
+				var y_axis_length = h-top_margin-bottom_margin
+				var dot_top_margin = 100
+				var dot_bottom_margin = 50
+				var dot_y_range = h - top_margin - dot_top_margin - dot_bottom_margin - bottom_margin
+				var color = ["#ee3333", "#33ee33", "#6633ff", "#bbcc33", "#cc66dd", "#33aaaa"]
+				var variant_count = [10564, 13366, 7815, 4253, 7160, 4782, 7894, 4560, 5020, 5261, 9336, 7031, 8825, 4178, 4060, 7243, 10584, 2153, 5177, 2192, 1536, 9316, 3456]
+				var max = Math.max.apply(null, variant_count)
+				var min = Math.min.apply(null, variant_count)
+				var pathogenic_count = [2562, 2918, 2721, 843, 1431, 867, 1845, 919, 1113, 999, 2536, 1533, 1987, 918, 1169, 1229, 2989, 612, 1170, 585, 377, 3825, 93]
+				var max_path = Math.max.apply(null, pathogenic_count)
+				var min_path = Math.min.apply(null, pathogenic_count)
+				var radia = 10
+
+				function set_basic() {
+					//the Title and Axies
+					ctx.fillStyle = '#000000'
+					ctx.font = '22px Arial'
+					ctx.beginPath()
+					ctx.fillText('Variant Distribution vs Chromosomes', 100, top_margin)
+					ctx.rect(ori_x, h-bottom_margin, 23*x_interval+ori_x, 2)
+					ctx.rect(ori_x, top_margin, 2, y_axis_length)
+					ctx.closePath()
+					ctx.fill()
+
+					ctx.font = '16px Arial'
+					ctx.beginPath()
+					ctx.fillText('All', w-250, 65+top_margin)
+					ctx.fillText('Pathogenic', w-150, 65+top_margin)
+					ctx.closePath()
+					ctx.fill()
+
+					ctx.fillStyle = color[2]
+					ctx.beginPath()
+					ctx.arc(w-270, 60+top_margin, radia, 0, Math.PI*2, true)
+					ctx.closePath()
+					ctx.fill()
+
+					ctx.strokeStyle = color[2]
+					ctx.beginPath()
+					ctx.arc(w-170, 60+top_margin, radia, 0, Math.PI*2, true)
+					ctx.closePath()
+					ctx.stroke()
+
+					ctx.strokeStyle = "#000"
+					ctx.beginPath()
+					ctx.strokeRect(w-300, 35+top_margin, 250, 50)
+					ctx.closePath()
+					ctx.stroke()
+
+					for (var i=1; i<=23; i++) {
+						var chr_str
+						if (i == 22) chr_str = 'X'
+						else if (i == 23) chr_str = 'Y'
+						else chr_str = i + ''
+						ctx.font = '18px Arial'
+						ctx.fillStyle = color[(i-1)%color.length]
+						ctx.beginPath()
+						ctx.fillText(chr_str, ori_x+x_interval*i, h-bottom_margin+20)
+						ctx.closePath()
+						ctx.fill()
+					}
+
+
+				}
+				function set_pathogenic() {
+						for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-pathogenic_count[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(pathogenic_count[i-1], ori_x+x_interval*i, dot_y_start-13)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.lineWidth = 1
+							ctx.beginPath()
+							ctx.strokeStyle = color[(i-1)%color.length]
+							ctx.arc(ori_x+radia+x_interval*i, dot_y_start, radia, 0, Math.PI*2, true)
+							ctx.closePath()
+							ctx.stroke()
+						}
+				}
+
+				function set_total() {
+						for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-variant_count[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(variant_count[i-1], ori_x+x_interval*i, dot_y_start-13)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.beginPath()
+							ctx.fillStyle = color[(i-1)%color.length]
+							ctx.arc(ori_x+radia+x_interval*i, dot_y_start, radia, 0, Math.PI*2, true)
+							ctx.closePath()
+							ctx.fill()
+						}
+				}
+
+				$("#statiscic_link").on('click', function() {
+					$("#statistic_diagram_box").fadeToggle()
+					ctx.clearRect(0, 0, w, h)
+					set_basic()
+					if ($("#filter_selection").val() == 'Both') {
+						set_pathogenic()
+						set_total()
+					}
+					else if ($("#filter_selection").val() == 'Overall') set_total()
+					else if ($("#filter_selection").val() == 'Pathogenic') set_pathogenic()
+				})
+
+				$("#filter_selection").on('change', function() {
+					ctx.clearRect(0, 0, w, h)
+					set_basic()
+					if ($("#filter_selection").val() == 'Both') {
+						set_pathogenic()
+						set_total()
+					}
+					else if ($("#filter_selection").val() == 'Overall') set_total()
+					else if ($("#filter_selection").val() == 'Pathogenic') set_pathogenic()
+				})
+			})
+		</script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$("#logname").focus()
+				$("#loginform").submit(function() {
+					if ($.trim($("#logname").val()) == "") {
+						alert('Enter a log name')
+						$("#logname").focus()
+						return false
+					}
+					else if ($.trim($("#pwd").val()) == "") {
+						alert('Enter a password.')
+						$("#pwd").focus()
+						return false
+					}
+					else {
+						$("#logname").val($("#logname").val().replace(/(^\s*)|(\s*$)/g, ''))
+						$("#pwd").val($("#pwd").val().replace(/(^\s*)|(\s*$)/g, ''))
+						return true
+					}
+				})
+
+				$("td.tab").on('click', function() {
+					var the_tab = $(this)
+					$("td.tab").each(function() {
+						$(this).css('color', '#efefef').css('background', '#048').css('border-left', 'solid #efefef 1px').css('border-right', 'solid #efefef 1px').css('border-bottom', 'solid #408 1px')
+					})
+					the_tab.css('color', '#000').css('background', '#efefef').css('border-left', 'solid #048 1px').css('border-top', 'solid #048 1px').css('border-right', 'solid #048 1px').css('border-bottom', 'solid #efefef 1px')
+
+				})
+			})
+		</script>
+	</body>
+</html>

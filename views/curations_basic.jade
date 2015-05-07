@@ -1,112 +1,223 @@
 extends layout
 block content
-	#pwdwin
-		#closepoint(style="text-align:right")
-			a(href="javascript:void(0)" id="closelink" title="Close") X
-		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
-		#wincontent(style="text-align:center;padding-top:15px")
-		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
-	script(type="text/javascript" src="/javascripts/changepwd.js")
-	#summarydataboard(style="display:block;vertical-align:middle;line-height:40px;height:40px")
-		form#associateionentry(action="/Curations" method="post")
-			//-input(type="hidden" id="ordoid")
-			span
-				input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbbbbb;width:120px" value="Gene Symbol")
-			span(style="font-size:15px;font-weight:bold") &nbsp;:&nbsp;
-			span
-				input(type="textarea" id="diseaseterm" name="diseaseterm" style="width:650px;height:18px;font-size:13px;color:#bbbbbb" value="Phenotype Term")
-				//-textarea#diseaseterm(name="diseaseterm" rows=3 style="overflow:auto;resize:none;width:500px;font-size:14px;color:#bbbbbb" value="Disease Term")
-			span &nbsp;
-				//-select(id="diseaseterm" name="diseaseterm" style="font-size:120%;height:25px")
-					option(id="keyword" value="Keyword") Keyword in Disease Name/Synonym
-					option(id="ordoid" value="ORDOID") ORDO ID
-					option(id="omimid" value="OMIMID") OMIM ID
-			span
-				input(type="submit" value="Enter" id="enterbutton" style="height:20px;font-size:16px")
-	#genelist
-	#diseaselist
-	#mainboard(style="position:relative;margin:0 auto;padding:90px 30px 100px 30px")
+	#mainboard(style="position:fixed;margin:0 auto;padding:22px 0px 55px 30px;width:100%")
 		if data
-			table(style="border:none;width:0%;margin:0")
+			table(style="width:100%" cellpadding=0 cellspacing=0 border=0)
 				tr
-					td
-						span(style="font-size:26px") #{data.HGNCSymbol}&nbsp;
-						span(style="font-size:32px;font-weight:bold") :
-						span(style="font-size:26px;margin-left:10px") #{data.FullName}
-				tr
-					td
-						table(style="width:100%")
+					td#curation_basic_data
+						table(style="")
 							tr
-								td(style="text-align:right" valign="top") GENE:
-								td(style="padding-left:10px" valign="top")
-									- var hgncid = data.HGNCID.split('HGNC:')[1]
-									span
-										a(href="http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=#{hgncid}" target="_blank") #{data.HGNCID}
-									br
-									span Entrez:
-									span
-										a(href="http://www.ncbi.nlm.nih.gov/gene/#{data.EntrezID}" target="_blank") #{data.EntrezID}
-								td(style="width:20px") &nbsp;
-								td(style="text-align:right" valign="top") PHENOTYPE:
-								td(style="padding-left:10px" valign="top")
-									span ORDO ID:
-									span
-										a(href="http://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=EN&Expert=#{data.ORDOID}" target="_blank") ORPHA#{data.ORDOID}
-									br
-									span OMIM ID:
-										if data.OMIMID.length > 0
-											for i in data.OMIMID
+								td
+									table
+										tr
+											td(style="font-size:26px;vertical-align:top") #{data.HGNCSymbol}
+											td(style="font-size:26px;font-weight:bold;vertical-align:top") :
+											td(style="font-size:26px;margin-left:10px;vertical-align:top") #{data.FullName}
+											//-td(style="width:200px;text-align:right")
+							tr
+								td
+									table(style="width:100%;font-size:12px" border=0)
+										tr
+											td(style="text-align:right;vertical-align:top;width:40px") GENE:
+											td(style="padding-left:5pxpx;vertical-align:top;width:100px")
+												- var hgncid = data.HGNCID.split('HGNC:')[1]
 												span
-													a(href="http://http://omim.org/entry/#{data.OMIMID[i]}" target="_blank") #{data.OMIMID}
-												if i < data.OMIMID.length
-													span ;&nbsp;&nbsp;
-									br
-									span Type: #{data.DisorderType}
-									br
-									span Ontology: OrphaNet
-								td(style="width:20px") &nbsp;
-								td(style="padding-left:30px" valign="top")
-									span Creation: #{data.Curators[0].Name} @ #{data.Curators[0].DateTime}
-									- var date = data.DateTime.split(' GMT-0800 ');
-									span at #{date[0]}, #{date[1]}
-									br
-									span Curation Status: #{data.Status}
-									br
-									span Curator(s) Involved:&nbsp;
-										for i in data.Curators
-											span
-												a(href="/") #{i.Name}
-												span ,&nbsp;&nbsp;&nbsp;
-									br
-									- var lastjob = data.Curators.pop()
-									- var lasttime = lastjob.DateTime.split(' GMT-0800 ')
-									span Last Edited: #{lastjob.Contribution} by #{lastjob.Name} at #{lasttime[0]} #{lasttime[1]}
-			span(style="font-size:22px;margin-left:50px") Curation:
-			br
+													a(href="http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=#{hgncid}" target="_blank") #{data.HGNCID}
+												br
+												span Entrez:&nbsp;
+												span
+													a(href="http://www.ncbi.nlm.nih.gov/gene/#{data.EntrezID}" target="_blank") #{data.EntrezID}
+											td(rowspan=2 style="text-align:right;vertical-align:top;border-left:solid #ddd 1px;width:40px") DISEASE:
+											td(rowspan=2 style="padding-left:5px;vertical-align:top;border-right:solid #ddd 1px;width:250px")
+												span Orphanet ID:&nbsp;
+												span
+													a(href="http://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=EN&Expert=#{data.ORDOID}" target="_blank") ORPHA#{data.ORDOID}
+												br
+												span OMIM ID:&nbsp;
+													if data.OMIMID && data.OMIMID.length > 0
+														- var j = 0
+														for om, i in data.OMIMID
+															if i < 3
+																span
+																	a(href="http://omim.org/entry/#{om}" target="_blank") #{om}
+															else
+																span(style="padding-left:22px")
+																	a(href="http://omim.org/entry/#{om}" target="_blank") #{om}
+															- j = i + 1
+															if j%3 == 0 & j < data.OMIMID.length
+																br
+															else
+																span &nbsp;&nbsp;
+												br
+												span Type: #{data.DisorderType}
+												br
+												span Ontology: ORDO
+											td(style="vertical-align:top;width:70px;text-align:right") OVERVIEW:
+											td(style="vertical-align:top")
+												span(style="") Curator(s) Involved:&nbsp;&nbsp;
+												- var crtr = []
+												for c in data.Curators
+													if crtr.indexOf(c.LogName) == -1
+														- crtr.push(c.LogName)
+												each name, i in crtr
+													span= name
+													if i < crtr.length-1
+														span ,&nbsp;
+												div(style="width:100%;padding-top:5px")
+													if data.LiteratureSearch
+														a#literature_link(style="text-decoration:none;cursor:pointer") Literature Search
+														span :&nbsp;
+														if data.LiteratureSearch.RelevantNumber
+															span(style="margin-left:15px") &nbsp;#{data.LiteratureSearch.ReturnedNumber} Returned&nbsp;
+														if data.LiteratureSearch.RelevantNumber
+															span(style="margin-left:15px") &nbsp;#{data.LiteratureSearch.RelevantNumber} Releavant&nbsp;
+														if data.LiteratureSearch.ClinicalReportNumber
+															span(style="margin-left:15px") &nbsp;#{data.LiteratureSearch.ClinicalReportNumber} Clinical Report(s)&nbsp;
+													if data.Observations
+														br
+														span Observations:
+														if data.Observations.CaseStudy && data.Observations.CaseStudy.length > 0
+															span(style="margin-left:15px") #{data.Observations.CaseStudy.length}&nbsp;
+															if data.Observations.CaseStudy.length == 1
+																a.link_to_tab Case Group Study
+															else
+																a.link_to_tab Case Group Studies
+														if data.Observations.CaseControl && data.Observations.CaseControl.length > 0
+															span(style="margin-left:15px") #{data.Observations.CaseControl.length}&nbsp;
+															if data.Observations.CaseControl.length == 1
+																a.link_to_tab Case Control Study
+															else
+																a.link_to_tab Case Control Studies
+														if data.Observations.FunctionalData && data.Observations.FunctionalData.length > 0
+															- functionaldata_exist = "Yes"
+															span(style="margin-left:15px") #{data.Observations.FunctionalData.length}&nbsp;
+															if data.Observations.FunctionalData.length == 1
+																a.link_to_tab Functional Data Analysis
+															else
+																a.link_to_tab Functional Data Analyses
+													br
+													span(style="color:#999") Summary:
+													br
+													span(style="color:#999") Assertions:
+												//-table(style="width:100%" cellpadding=0 cellspacing=0 border=0)
+													tr(style="height:12px")
+														td
+														td
+
+													tr(style="height:12px")
+														td(style="vertical-align:top")
+														td(style="vertical-align:top")
+															table
+																tr
+																	td
+																		if data.Observations && data.Observations.CaseStudy && data.Observations.CaseStudy.length > 0
+																			span Case Group Study: #{data.Observations.CaseStudy.length}
+																		if data.Observations && data.Observations.FunctionalData && data.Observations.FunctionalData.length > 0
+																			br
+																			span Functional Data Analysis: #{data.Observations.FunctionalData.length}
+
+																	td(style="vertical-align:top") Summary:
+																	td(style="vertical-align:top") Assertion(s)
+													//-tr
+														td(style="width:115px")
+															a#history_link(style="text-decoration:none;cursor:pointer") Curation History
+															//-a(href="/Curations/#{data.HGNCSymbol}/#{data.ORDOID}/History" style="text-decoration:none") Curation History
+															span :
+														td
+															span Creation >&nbsp;
+															if data.LiteratureSearch
+																a#literature_link(style="text-decoration:none;cursor:pointer") Literature Search
+																//-a(href="/Curations/#{data.HGNCSymbol}/#{data.ORDOID}/Literature" style="text-decoration:none") Literature Search
+															if data.Observations
+																span &nbsp;>&nbsp;
+																a(href="/Curations/#{data.HGNCSymbol}/#{data.ORDOID}/Observations" style="text-decoration:none") Observation
+
+				tr(style="height:5px")
+					td
+						input(type="hidden" id="target_tab" value="#{target_tab}")
+						input(type="hidden" id="symbol" value="#{data.HGNCSymbol}")
+						input(type="hidden" id="ordoid" value="#{data.ORDOID}")
+						input(type="hidden" id="loginuser" value="#{user.LogName}")
+			#all_pair(style="display:none;position:absolute;top:177px;right:60px;width:600px;height:300px;padding:5px 5px 5px 5px;overflow:auto;background-color:#fff;border:solid #bbb 1px;z-index:5;font-size:11px")
 			block curation_content
-		else 
+			script(type="text/javascript" src="/javascripts/curation_basic_tabs_View.js")
+			script(type="text/javascript").
+				$(function() {
+					$("#all_pair_link").on('click', function() {
+						//var w = ($(window).width() - 600)/2
+						//var left = ($(this).offset().left - $("#variant_addnew_box").offset().left - 2).toString() + 'px'
+						var htmlstr = ''
+						$.get('/Curations/All', function(cData) {
+							if (cData && cData.length>0) {
+								//htmlstr += cData.length
+								for (var i=0; i<cData.length; i++) {
+									htmlstr += '<div class="pair_lane" style="line-height:20px;vertical-align:middle;cursor:pointer">'
+									htmlstr += cData[i].Symbol + " : " + cData[i].Disease + " (Orphanet ID " + cData[i].ORDOID + ")</div>"
+									if (i < cData.length-1) htmlstr += '<br />'
+								}
+							}
+							else htmlstr += '<span style="color:red">Failed to get curation records.</span>'
+							$("#all_pair").html(htmlstr).fadeToggle() //.css('left', w)
+						})
+					})
+
+					$("#all_pair")
+					.on('mouseover', 'div.pair_lane', function() {
+						$(this).css('background-color', '#cef')
+					})
+					.on('mouseout', 'div.pair_lane', function() {
+						$(this).css('background-color', '#fff')
+					})
+					.on('click', 'div.pair_lane', function() {
+						var symbol = $(this).text().split(' :')[0]
+						var ordoid = $(this).text().split('Orphanet ID ')[1].replace(')', '')
+						//alert(symbol+', '+ordoid)
+						$("#all_pair").css('display', 'none')
+						$(location).attr('href', '/Curations/'+symbol+'/'+ordoid)
+
+					})
+				})
+		else if input
 			br
-			span(style="font-size:20px") Total number of gene:phenotype association: #{pair.length}
+			br
+			span(style="font-size:18px;padding-left:50px") Error at entered data:
+			br
+			br
+			span(style="font-size:18px;padding-left:80px") Gene Symbol:&nbsp;
+			if input.InvalidSymbol == 'Yes'
+				span(style='color:red') #{input.Symbol}
+			else
+				span #{input.Symbol}
+				script(type="text/javascript").
+					$(function() {
+						$("#genesymbol").val("#{input.Symbol}")
+						$("#genesymbol").css('color', '#000')
+					})
+			br
+			span(style="font-size:18px;padding-left:80px") Disease Term:&nbsp;
+			if input.InvalidTerm == 'Yes'
+				span(style='color:red') #{input.Term}
+			else
+				span #{input.Term}
+				script(type="text/javascript").
+					$(function() {
+						$("#diseaseterm").val("#{input.Term}")
+						$("#diseaseterm").css('color', '#000')
+					})
+			br
+			br
+		else
+			p(style="padding-left:50px;width:800px;font-size:16px")
+				span This page is used to create a Gene:Disease record using an HGNC Gene Symbol and the Orphanet Disease Name. As you begin&nbsp;
+				span typing the HGNC symbol or the Orphanet disease name, faceted searching will appear to allow you to select the correct&nbsp;
+				span gene or term name. Additionally, the Orphanet ID will be associated with the disease term name. Once you have selected&nbsp;
+				span the correct HGNC gene symbol and Orphanet term, click "Enter" to create the record.
+			br
+			span(style="font-size:18px;padding-left:50px") Total number of gene:disease association: #{cnt}
+			br
+			br
 			if pair
-				span ,&nbsp;&nbsp;
-					for p in pair
-						- p = p.split(':')
-						- ordoid = p[1].split('ORPHA')[1]
-						a(href='/Curations/#{p[0]}/#{ordoid}') #{p[0]}:#{p[1]}
-						span ,&nbsp;&nbsp;
-			br
-			br
-			span(style="font-size:16px") Enter gene symbol and keywoord of phenotype term above to access.
-	script(type="text/javascript").
-			function passterm(obj) {
-				$("#diseaseterm").css("color","#000000");
-				$("#diseaseterm").val(obj.text);
-				$("#diseaselist").css("display", "none");
-				$("#ordoid").val() = obj.title;
-			}
-			function passsymbol(obj) {
-				$("#genesymbol").css("color","#000000");
-				$("#genesymbol").val(obj.text);
-				$("#genelist").css("display", "none");
-			}
-	script(type="text/javascript" src="/javascripts/curationsView.js")
+				for p in pair
+					li(style="padding-left:50px")
+						a(href='/Curations/#{p.HGNCSymbol}/#{p.ORDOID}' style="font-size:14px;text-decoration:none") #{p.HGNCSymbol}:#{p.FullName}
+					br

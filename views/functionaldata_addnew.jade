@@ -1,0 +1,80 @@
+extends curation_all_tab
+block functional_block
+	form(id="functionalform" action="/Functionaldataanalysis/Addnew" method="post")
+		input(type='hidden' name='symbol' value="#{data.HGNCSymbol}")
+		input(type='hidden' name='ordoid' value="#{data.ORDOID}")
+		table(style="width:100%;border-collapse:collapse")
+			tr
+				td(style="font-size:18px" colspan=3)
+					a(href='/Functionaldataanalysis/#{data.HGNCSymbol}/#{data.ORDOID}' style="text-decoration:none") Functional Data Analysis
+					span &nbsp;>> Add New
+			tr
+				td(colspan=3) &nbsp;
+			tr
+				td(style="width:390px;vertical-align:top")
+					table(style="width:100%;font-size:13px")
+						tr
+							td(style='text-align:right;width:70px') Analysis Name:
+							td(style='width:200px')
+								input(type='text' name='sname' id='sname')
+								span(style="font-size:80%") &nbsp;(String)
+						tr
+							td(style='text-align:right;width:120px') PMID:
+							td
+								input(type='text' name='pmid' id='pmid' style="width:70px")
+								span(style="font-size:80%") &nbsp;(Digit)
+						tr
+							td(style='text-align:right;width:120px') Type:
+							td
+								select(name='type' id='type')
+									option(value='') Select
+									option(value='Biochemical function') Biochemical function
+									option(value='Experimental protein Interactions') Experimental protein Interactions
+									option(value='Expression') Expression
+									option(value='Gene disruption') Gene disruption
+									option(value='Model systems') Model systems
+									option(value='Rescue') Rescue
+						tr
+							td(style='text-align:right;vertical-align:top') Description:
+							td
+								textarea(cols=40 rows=10 id='desc' name='desc')
+				td(style="") &nbsp;
+			tr
+				td(colspan=3)
+					input(type="submit" value="Submit" style="font-size:125%")
+					span &nbsp;&nbsp;
+					input(type="reset" value="Reset" style="font-size:125%")
+		script(type="text/javascript").
+			$().ready(function() {
+				$("#functionalform").submit(function() {
+					var data_entered = false
+					var temp
+					if ($("#sname").val() == '') {
+						alert('Please enter Section Name.')
+						$("#sname").focus()
+						return false
+					}
+					if ($("#pmid").val() != '') {
+						temp = $("#pmid").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '')
+						if (!$.isNumeric(temp)) {
+							alert('Please enter positive integer.')
+							$("#pmid").focus()
+							return false
+						}
+						else {
+							data_entered = true
+							$("#pmid").val(temp)
+						}
+					}
+					if ($("#sname").val() != '') {
+							data_entered = true
+							$("#sname").val($("#sname").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, ''))
+					}
+					if ($("#desc").val() != '') {
+						data_entered = true
+						$("#desc").val($("#desc").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, ''))
+					}
+					if (!data_entered) alert('Please enter data')
+					return data_entered
+				})
+			})

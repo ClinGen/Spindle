@@ -1,0 +1,166 @@
+extends casegroup
+block casegroup_content
+	tr
+		td(style="font-size:18px")
+			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+			sapn &nbsp;>>&nbsp;Group #{group.GroupID},&nbsp;
+			a(href='/Casegroupstudy/Group/#{group.GroupID}/Group' style='text-decoration:none') #{group.GroupData.GroupName}
+			sapn &nbsp;>> Segregation >> Add New
+		td(style="text-align:right;font-size:14px")
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Method" style='text-decoration:none') Method
+			span &nbsp; | &nbsp;
+			select(id='segid' name='segid')
+				option(value='') Segregation
+				if item != "Addnew"
+					for s in group.Segregation
+						if s.SegregationID != item.SegregationID
+							option(value='#{s.SegregationID}') #{s.SegregationID}
+				option(value='Addnew') Add A New One
+			script(type="text/javascript").
+				$(document).ready(function(){
+					$("#segid").change(function() {
+						if ($(this).children('option:selected').val() != '')
+							$(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Segregation/' + $(this).children('option:selected').val())
+					})
+				})
+	tr
+		td(colspan=2) &nbsp;
+	tr
+		td(colspan=2 style="width:100%")
+			form(action="/casegroupstudy/Segregation/Addnew" method="post" id="segreform")
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type='hidden' name='groupid' value='#{group.GroupID}')
+				input(type='hidden' name='sid' value='Addnew')
+				table
+					tr
+						td
+							table
+								tr
+									td Pedigree Name
+									td Pedigree Size
+									td Pedigree Population
+								tr
+									td(style="vertical-align:top")
+											input(type="text" id="pname" name="pname" style="width:50px")
+											span(style='font-size:80%') &nbsp;(String)
+									td(style="vertical-align:top")
+											input.numeric(type="text" id="psize" name="psize" style="width:50px")
+											span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top")
+											input(type="text" id="ppopulation" name="ppopulation" style="width:50px")
+											span(style='font-size:80%') &nbsp;(String)
+										//-td(style="vertical-align:top" rowspan=5)
+											textarea(cols=30 rows=6 id="pdescription" name="pdescription")
+								tr
+									td(colspan=3) &nbsp;
+								tr
+									td(colspan=3) Segregation Pattern
+								tr
+									td(style="vertical-align:top" colspan=3)
+											select(id="spattern" name="spattern" valign="top")
+												option(value='') Click to select
+												option(value='Autosomal dominant inheritance (HP:0000006)') Autosomal dominant inheritance (HP:0000006)
+												option(value='Autosomal dominant inheritance with maternal imprinting (HP:0012275)') Autosomal dominant inheritance with maternal imprinting (HP:0012275)
+												option(value='Autosomal dominant inheritance with paternal imprinting (HP:0012274)') Autosomal dominant inheritance with paternal imprinting (HP:0012274)
+												option(value='Autosomal recessive inheritance (HP:0000007)') Autosomal recessive inheritance (HP:0000007)
+												option(value='Autosomal unknown') Autosomal unknown
+												option(value='Codominant') Codominant
+												option(value='Genetic anticipation (HP:0003743)') Genetic anticipation (HP:0003743)
+												option(value='Mitochondrial inheritance (HP:0001427)') Mitochondrial inheritance (HP:0001427)
+												option(value='Multifactorial inheritance (HP:0001426)') Multifactorial inheritance (HP:0001426)
+												option(value='Oligogenic inheritance (HP:0010983)') Oligogenic inheritance (HP:0010983)
+												option(value='Sex-limited autosomal dominant (HP:0001470)') Sex-limited autosomal dominant (HP:0001470)
+												option(value='Somatic mutation (HP:0001428)') Somatic mutation (HP:0001428)
+												option(value='Sporadic (HP:0003745)') Sporadic (HP:0003745)
+												option(value='X-linked dominant inheritance (HP:0001423)') X-linked dominant inheritance (HP:0001423)
+												option(value='X-linked inheritance (HP:0001417)') X-linked inheritance (HP:0001417)
+												option(value='X-linked recessive inheritance (HP:0001419)') X-linked recessive inheritance (HP:0001419)
+												option(value='Y-linked inheritance (HP:0001450)') Y-linked inheritance (HP:0001450)
+												option(value='Other') Other
+								tr
+									td(colspan=3) &nbsp;
+								tr
+									td Pheno Pos Geno Pos
+									td Pheno Pos Geno Neg
+									td Pheno Pos Geno Unknown
+								tr
+									td(style="vertical-align:top")
+											input.numeric(type="text" id="ppgp" name="ppgp" valign="top" style="width:50px")
+											span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+											input.numeric(type="text" id="ppgn;text-align:center" name="ppgn" style="width:50px")
+											span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+											input.numeric(type="text" id="ppgu" name="ppgu" style="width:50px")
+											span(style='font-size:80%') &nbsp;(Digit)
+								tr
+									td(colspan=4) &nbsp;
+								tr
+									td Pheno Neg Geno Pos
+									td Pheno Neg Geno Neg
+									td Pheno Neg Geno Unknown
+								tr
+									td(style="vertical-align" valign="top")
+										input.numeric(type="text" id="pngp" name="pngp" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="pngn" name="pngn" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="pngu" name="pngu" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+								tr
+									td(colspan=4) &nbsp;
+								tr
+									td Pheno Unknown Geno Pos
+									td Pheno Unknown Geno Neg
+									td Pheno Unknown  Geno Unknown
+								tr
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="pugp" name="pugp" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top" valign="top")
+										input.numeric(type="text" id="pugn" name="pugn" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+									td(style="vertical-align:top")
+										input.numeric(type="text" id="pugu" name="pugu" style="width:50px")
+										span(style='font-size:80%') &nbsp;(Digit)
+						td(style="vertical-align:top")
+							table
+								tr
+									td Pedigree Description
+								tr
+									td
+										textarea(cols=40 rows=10 id="pdescription" name="pdescription")
+								tr(style="height:40px")
+									td &nbsp;
+								tr
+									td Add Seg Info
+								tr
+									td
+										textarea(cols=40 rows=10 id="addseginfo" name="addseginfo")
+					tr
+							td(colspan=5) &nbsp;
+					tr
+							td(colspan=5 style="text-align:left")
+								input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px")
+								span &nbsp;
+								input(type="reset" value="Reset" style="height:25px;font-size:18px")
+					script(type="text/javascript").
+							$(document).ready(function() {
+								$("#segreform").submit(function() {
+									var no_err = true
+									$("input.numeric").each(function() {
+										if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+											no_err = false
+											alert('Please enter positive integer.')
+											$(this).focus()
+										}
+									})
+									return no_err
+								})
+							})
+
+
+

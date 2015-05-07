@@ -1,101 +1,186 @@
-var express = require('express');
-var router = express.Router();
-//var token = require('../private/js/token.js');
-var settoken = require('../private/js/settoken.js');
-//var getClientIP = require('../private/js/getClientIP.js');
+var express = require('express')
+var router = express.Router()
+var settoken = require('../private/js/settoken.js')
+var key_data = require('../private/js/key_data.js')
 
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser')
+var cookieParser = require('cookie-parser')
 
-router.use(cookieParser('Spindle'));
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
+router.use(cookieParser('Spindle'))
+router.use(bodyParser.json())
+router.use(bodyParser.urlencoded({ extended: false }))
 
-var cookie_life = 5*3600000; // 5 hours to expire
-
+var cookie_life = key_data.Cookie_Life
+//var cookie_life = 10*3600000; // 10 hours to expire
+/*
 router.get('/', function(req, res) {
-    var db = req.db;
-    db.bind('Curator');
+    var db = req.db
+    //db.bind('Curator')
     if (req.cookies.Spindle) {
-        db.Curator.find({"Token":req.cookies.Spindle}).toArray(function(err, user) {
-            if (err) console.log(err);
-            res.render('spindle', {login:true, data:user[0]});
+        db.collection('Curator').find({"Token":req.cookies.Spindle}).toArray(function(err, user) {
+            if (err) {
+                throw err
+                return
+            }
+            if (user && user.length == 1) {
+                res.render('spindle', {login:true, user:user[0]})
+            }
+            else res.render('logout', { token:'expired' })
         });
     }
-    else res.render('index');
-});
-
+    else {
+        res.sendFile(process.cwd() + '/views/index.html')
+    }
+})
+*/
 router.post('/login', function(req, res) {
-    var db = req.db;
-    db.bind('Curator');
-    db.Curator.count({"LogName":req.body.logname}, function(err, cnt) {
-        if (err) console.log(err);
+    var db = req.db
+    //db.bind('Curator');
+    db.collection('Curator').count({"LogName":req.body.logname}, function(err, cnt) {
+        if (err) {
+            console.log(err)
+            throw err
+            return
+        }
         if (cnt == 1) {
-            db.Curator.find({"LogName":req.body.logname}).toArray(function(err, user) {
-                if (err) console.log(err);
+            db.collection('Curator').find({"LogName":req.body.logname}).toArray(function(err, user) {
+                if (err) {
+                    throw err
+                    return
+                }
                 if (user[0].Password != req.body.pwd) { // invalid password
-                            res.render('logout', { token:"Not Match" });
+                    res.cookie("Spindle",null, {maxAge:0,path:"/"})
+                    res.render('logout', { token:"Not Match" })
+                }
+                else if (user[0].Active != 'Yes') {
+                    res.cookie("Spindle",null, {maxAge:0,path:"/"})
+                    res.render('logout', { token:"Not Active" })
                 }
                 else { // Good log name and password
                     // setup token and cookie
-                    var savetoken = settoken(req, user[0]);
-                    var today = new Date();
-                    var thisMS = today.getTime();
-                    user[0].LoginRecord.push(Date().toString() + ", " + thisMS.toString());
-                    db.Curator.update({"LogName":user[0].LogName}, {$set:{"Token":savetoken, "LoginRecord":user[0].LoginRecord}}, function(err) {
-                        if (err) console.log(err);
-                        res.cookie('Spindle', savetoken, { maxAge:cookie_life, httpOnly:true, path:'/' });
-                        res.render('spindle', { login:true, data:user[0] });
-                    });
-                }
-            });
-        }
-        else res.render('logout');
-    });
-});
+                    var savetoken = settoken(req, user[0])
+                    var today = new Date()
+                    var thisMS = today.getTime()
+                    //user[0].LoginRecord.push(Date().toString() + ", " + thisMS.toString());
+                    var newrecord = {
+                        "Login": Date().toString(),
+                        "Logout": thisMS.toString(),
+                        "Action":[]
+                    }
+                    //user[0].LoginRecord.push(newrecord)
+                    db.collection('Curator').update({"LogName":user[0].LogName}, {$set:{"Token":savetoken}}, function(err) {
+                        if (err) {
+                            throw err
+                            return
+                        }
+                        db.collection('Curator').update({"LogName":user[0].LogName},{$push:{"LoginRecord":newrecord}}, function(err) {
+                            if (err) {
+                                throw err
+                                return
+                            }
+                        })
+                        res.cookie('Spindle', savetoken, { httpOnly:true, path:'/' })
 
-router.get('/logout', function(req, res) {
-    var db = req.db;
-    db.bind('Curator');
+                        /*action = false
+                        for (var i=user[0].LoginRecord.length-1; i>=0; i--) {
+                            if (user[0].LoginRecord[i].Action.length > 0 ) {
+                                action = true
+                                break
+                            }
+                        }*/
+                        res.render('spindle', { login:true, user:user[0] })
+                    })
+                }
+            })
+        }
+        else res.render('logout', {token:'Not Match'});
+    })
+})
 /*
-    var cookie = 'No Cookie';
-    for ( var c in req.cookies ) {
-            if (c == 'Spindle' && req.cookies[c] != '') { // found a Spindle cookie in browser
-                cookie = req.cookies[c];
-                break;
+router.get('/logout/:reason?', function(req, res) {
+log("read in: ", req.url)
+    if (req.params.reason == 'expired') res.render('logout', {token:'expired'})
+    else if (req.params.reason == 'error') res.render('logout', {token:"Unknown err"})
+    else if (req.cookies.Spindle) {
+        var db = req.db
+        var login_user = req.cookies.Spindle.split('-')[0]
+        db.collection('Curator').find({"Token":req.cookies.Spindle, "LogName":login_user}).toArray(function(err, user) {
+            if (err) {
+                throw err
+                return
             }
+            if (user) {
+                var newrecord = user[0].LoginRecord.pop()
+                var lastaction = newrecord.Action[newrecord.Action.length-1]
+                newrecord.Logout = Date().toString()
+                //newrecord.Action.push('Logout')
+                db.collection('Curator').update({"LogName":user[0].LogName}, {$set:{"Token":""}}, function(err) {
+                    if (err) {
+                        throw err
+                        return
+                    }
+                })
+                db.collection("Curator").update({"LogName":user[0].LogName},{$pop:{"LoginRecord":1}}, function(err) {
+                    if (err) {
+                        throw err
+                        return
+                    }
+                    db.collection('Curator').update({"LogName":user[0].LogName},{$push:{"LoginRecord":newrecord}}, function(err) {
+                        if (err) {
+                            throw err
+                            return
+                        }
+                        res.clearCookie('Spindle',null, {maxAge:0, httpOnly:true, path:'/'}) // Delete cookie in browser
+                        //res.clearCookie('genesymbol',null, {path:'/'})
+                        //res.clearCookie('diseaseterm',null, {path:'/'})
+                        res.render('logout', {token:'logout'})
+                    })
+                })
+            }
+            else {
+                res.render('logout', {token:'Unknown err'})
+            }
+        })
     }
-    if (cookie != 'No Cookie') {
+    else res.render('logout')
+})
 */
-        db.Curator.find({"Token":req.cookies.Spindle}).toArray(function(err, user) {
-            if (err) console.log(err);
-/*
-            if (user.length == 1 && user[0].Token == req.cookies['Spindle']) { // good
-                user[0].LoginRecord.push(user[0].LoginRecord.pop().split(', ')[0] + ", " + Date().toString());
-                db.Curator.update({"Token":cookie}, {$set: {"Token":"", "LoginRecord":user[0].LoginRecord}}, function(err) {
-                    res.clearCookie('Spindle','', {maxAge:0,path:'/'}); // Delete cookie in browser
-                    res.render('logout', {token:'logout'});
-                });
+router.get('/Lastcuration', function(req, res) {
+    var db = req.db
+    db.collection('Curator').find({"LogName":req.cookies.Spindle.split('-')[0]}).toArray(function(err, user) {
+        if (err) {
+            throw err
+            return
+        }
+        var lastaction, str=''
+        for (var i=user[0].LoginRecord.length-1; i>=0; i--) {
+            if (user[0].LoginRecord[i].Action.length > 0 ) {
+                lastaction = user[0].LoginRecord[i].Action.pop()
+                break
             }
-            else if (user.length > 1) {
-                console.log('Important Err: Identical token "'+req.cookies.Spindle+'" is used in '+user.length+' users.');
-                res.render('logout');
+        }
+        if (lastaction.indexOf('Create Gene_Disease pair') > -1 || lastaction.indexOf('Literature Search') > -1) {
+            str = '/Curations/'
+            if (lastaction.indexOf('Literature Search') > -1) {
+                    str += 'Literaturesearch/'
+                    var temp = lastaction.match(/\s\w+:\w+/)[0].split(' ')[1].split(':')
+                    str += temp[0] + '/' + temp[1]
             }
-            else { // cookie/token not match each other
-                res.clearCookie('Spindle','', {maxAge:0,path:'/'}); // Delete cookie in browser
-                res.render('logout');
-            }
-        });
-    }
-*/
-        var newrecord = user[0].LoginRecord.pop().split(', ')[0] + ', ' + Date().toString() + ', ' + 'Actions changing data in DB';
-        user[0].LoginRecord.push(newrecord);
-        db.Curator.update({"Token":req.cookies.Spindle}, {$set: {"Token":"", "LoginRecord":user[0].LoginRecord}}, function(err) {
-            res.clearCookie('Spindle','', {maxAge:0,path:'/'}); // Delete cookie in browser
-            res.render('logout', {token:'logout'});
-        });
-    });
-});
+        }
+        else {
+                    if (lastaction.indexOf('Case Group Study') > -1) str = '/Casegroupstudy'
+                    else if (lastaction.indexOf('Case Control Study') > -1) str = '/Casecontrolstudy'
+                    else if (lastaction.indexOf('Functional Data Analysis') > -1) str = '/Functionaldataanalysis'
+                    str += '/Group/' + lastaction.match(/Group \d+/)[0].split(' ')[1]
+                    if (lastaction.indexOf('group data') > -1) str += '/Group'
+                    else if (lastaction.indexOf('method') > -1) str += '/Method'
+                    else if (lastaction.indexOf('Segregation') > -1) str += '/Segregation/' + lastaction.match(/Segregation \d+/)[0].split(' ')[1]
+        }
+    //console.log(str);
+        if (str != '') res.redirect(str)
+        else res.render('spindle', { login:true, action:false, user:user[0] })
+    })
+})
 
 router.post('/changepassword', function(req, res) {
     var db = req.db;

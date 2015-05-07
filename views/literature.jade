@@ -1,58 +1,114 @@
 extends curations_basic
 block curation_content
-	table.curationdata(border=1)
-			tr.curationdata(style="height:200px")
-				td(style="padding-left:10px") Literature Search
-				td
-					table(style="width:100%;border:none;font-size:13px")
-						tr
-							td(align="center") Date
-							td(align="center") Parameters
-							td(align="center") Returned Results
-							td(align="center") Relevant Results
-							td(align="center") Independent Clinical Reports
-							td(align="center") Time to Complete
-						tr
-							if data.LiteratureSearch.Date
-								td(align="center") #{data.LiteratureSearch.Date}
-							if data.LiteratureSearch.Parameters
-								td(align="center") #{data.LiteratureSearch.Parameters}
-							if data.LiteratureSearch.ReturnedNumber
-								td(align="center") #{data.LiteratureSearch.ReturnedNumber}
-							if data.LiteratureSearch.RelevantNumber
-								td(align="center") #{data.LiteratureSearch.RelevantNumber}
-							if data.LiteratureSearch.ClinicalReportNumber
-								td(align="center") #{data.LiteratureSearch.ClinicalReportNumber}
-							if data.LiteratureSearch.TimeComplete
-								td(align="center") #{data.LiteratureSearch.TimeComplete}
-						form(action="/Curations/Literature" method="post" id="litdataform")
-							input(type='hidden' id='symbol' name="symbol" value='#{data.HGNCSymbol}')
-							input(type='hidden' id='ordoid' name="ordoid" value='#{data.ORDOID}')
-							tr(style="text-align:center")
-								td
-									input(type="text" id="dateliterature" name="dateliterature")
-								td
-									input(type="text" id="searchparamters" name="searchparamters")
-								td
-									input(type="text" id="returnnumber" name="returnnumber")
-								td
-									input(type="text" id="releventnumber" name="releventnumber")
-								td
-									input(type="text" id="clinicalreportnumber" name="clinicalreportnumber")
-								td
-									input(type="text" id="completetime" name="completetime")
-							tr
-								td(colspan=6)
-									input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:16px")
-									span &nbsp;&nbsp;
-									input(type="reset" value="Reset" style="height:25px;font-size:16px")
+	table.curationdata(border=1 style="margin-right:10px;width:98%")
 			tr.curationdata
-				if data.Status == 'Creation'
-					td(style="color:grey;width:200px;padding-left:10px") Observations
-				else
-					td(style="padding-left:10px;padding-top:10px")
+				td(style="padding-left:10px") Literature Search
+				td(style="text-align:center;vertical-align:top")
+					table(style="width:100%;border:none")
+						tr
+							td(style="text-align:center;font-size:16px") Date
+							td(style="text-align:center;font-size:16px") Parameters
+							td(style="text-align:center;font-size:16px") Returned Results
+							td(style="text-align:center;font-size:16px") Relevant Results
+							td(style="text-align:center;font-size:16px") Independent Clinical Reports
+							td(style="text-align:center;font-size:16px") Time to Complete
+						if data.LiteratureSearch
+							tr
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.Date
+										span #{data.LiteratureSearch.Date}
+									else
+										span &nbsp;
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.Parameters
+										span #{data.LiteratureSearch.Parameters}
+									else
+										snap &nbsp;
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.ReturnedNumber
+										span #{data.LiteratureSearch.ReturnedNumber}
+									else
+										span &nbsp;
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.RelevantNumber
+										span #{data.LiteratureSearch.RelevantNumber}
+									else
+										span &nbsp;
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.ClinicalReportNumber
+										span #{data.LiteratureSearch.ClinicalReportNumber}
+									else
+										span &nbsp;
+								td(style="text-align:center;font-size:13px")
+									if data.LiteratureSearch.TimeComplete
+										span #{data.LiteratureSearch.TimeComplete}
+									else
+										span &nsbp;
+						if !data.LiteratureSearch || data.Curators[0].LogName == user.LogName
+							form(action="/Curations/Literature" method="post" id="litdataform")
+								input(type='hidden' id='symbol' name="symbol" value='#{data.HGNCSymbol}')
+								input(type='hidden' id='ordoid' name="ordoid" value='#{data.ORDOID}')
+								tr(style="text-align:center")
+									td(style="text-align:center;font-size:13px")
+										input.date(type="text" id="dateliterature" name="dateliterature" style="width:70px")
+										span (MM/DD/YYYY)
+									td(style="text-align:center;font-size:13px")
+										input(type="text" id="searchparamters" name="searchparamters" style="width:70px")
+										span (String)
+									td(style="text-align:center;font-size:13px")
+										input.numeric(type="text" id="returnnumber" name="returnnumber" style="width:70px")
+										span (Digits)
+									td(style="text-align:center;font-size:13px")
+										input.numeric(type="text" id="releventnumber" name="releventnumber" style="width:70px")
+										span (Digits)
+									td(style="text-align:center;font-size:13px")
+										input.numeric(type="text" id="clinicalreportnumber" name="clinicalreportnumber" style="width:70px")
+										span (Digits)
+									td(style="vertical-align:top;text-align:center;font-size:13px")
+										//-input(type="text" id="completetime" name="completetime")
+										select(name="completetime" id="completetime")
+											option(value='') Select below
+											option(value="< 1 hr" style="font-size:18px;height:25px") < 1 hr
+											option(value='1 - 2 hr' style="font-size:18px;height:25px") 1 - 2 hr
+											option(value="2 - 3 hr" style="font-size:18px;height:25px")  2 - 3 hr
+											option(value='3 - 4 hr' style="font-size:18px;height:25px") 3 - 4 hr
+											option(value="4 - 5 hr" style="font-size:18px;height:25px")  4 - 5 hr
+											option(value='> 5 hr' style="font-size:18px;height:25px") > 5 hr
+								tr
+									td(colspan=6 style="text-align:left")
+										input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:16px")
+										span &nbsp;&nbsp;
+										input(type="reset" value="Reset" style="height:25px;font-size:16px")
+								script(type="text/javascript").
+									$(document).ready(function() {
+										$("#litdataform").submit(function() {
+											//alert('On submit.');
+											var no_err = true
+											var pttn = /^\d+\d\/\d\d\/\d\d\d\d$/
+											if ($("input.date").val() != '' && !pttn.test($("input.date").val())) {
+												$("input.date").focus()
+												alert('Plese enter a date with format DD/MM/YYYY')
+												no_err = false
+											}
+											$("input.numeric").each(function() {
+												if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+													$(this).focus()
+													alert('Please enter positive integer.')
+													no_err = false
+												}
+											})
+											return no_err
+										})
+									})
+			tr.curationdata
+				if data.LiteratureSearch
+					td(style="width:200px;padding-left:10px")
 						span
-							a.obsvtnstudy(href="/Observations/#{data.HGNCSymbol}/#{data.ORDOID}") Observations
+							a.obsvtnstudy(href="/Curations/Observations/#{data.HGNCSymbol}/#{data.ORDOID}") Observations
+					td &nbsp;
+				else
+					td(style="color:grey;padding-left:10px;padding-top:10px") Observations
+					td &nbsp;
 				tr
 					td(style="color:grey;padding-left:10px") Summary
 					td &nbsp;
@@ -65,6 +121,4 @@ block curation_content
 			tr
 				td(style="color:grey;padding-left:10px") Final Assertion
 				td &nbsp;
-	#obsvtnwin(style="position:absolute;width:200px;border:solid #aaa 2px;z-index:10;display:none")
-	script(type="text/javascript" src="/javascripts/curationsView.js")
-	script(type="text/javascript" src="/javascripts/observationsView.js")
+

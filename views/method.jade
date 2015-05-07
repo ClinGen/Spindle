@@ -3,11 +3,26 @@ block casegroup_content
 	tr
 		td(style="font-size:18px")
 			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
-			sapn &nbsp;>>&nbsp;
-			a(href='#' style='text-decoration:none') Study #{studyid}
+			sapn &nbsp;>>&nbsp;Group #{group.GroupID},&nbsp;
+			a(href='/Casegroupstudy/Group/#{group.GroupID}/Group' style='text-decoration:none') #{group.GroupData.GroupName}
 			sapn &nbsp;>> Method
-		td(style="text-align:right;font-size:12px")
-			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
+		td(style="text-align:right;font-size:14px")
+			select(id='segid' name='segid')
+				option(value='') Segregation
+				if group.Segregation && group.Segregation.length > 0
+					for seg in group.Segregation
+						if seg.Active == 'Yes'
+							option(value='#{seg.SegregationID}') #{seg.SegregationID}
+				option(value='Addnew') Add A New One
+			script(type="text/javascript").
+							$(document).ready(function(){
+								$("#segid").change(function() {
+									if ($(this).children('option:selected').val() != '') $(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Segregation/' + $(this).children('option:selected').val())
+								})
+								/*$("#noteid").change(function() {
+									$(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Note/' + $(this).childre('option:selected').val())
+								})*/
+							})
 	tr
 		td(colspan=2) &nbsp;
 	tr
@@ -15,86 +30,144 @@ block casegroup_content
 			form(action="/casegroupstudy/Method" method="post")
 				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
 				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
-				input(type="hidden" name="id" value="#{studyid}")
+				input(type='hidden' name='groupid' value='#{group.GroupID}')
 				table(style="width:100%")
 					tr
-						td Group Name (Study # ?)
 						td Previous Testing
-						td Previous Test Description
-					if exist
-						- var n = parseInt(studyid) - 1
+						td(colspan=2) Previous Test Description
+					if group.Method && group.Curators[0] == user.LogName
 						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Method.GroupName}
-							td #{casegroupstudy[n].Method.PrevTest}
-							td #{casegroupstudy[n].Method.PrevTestDescription}
-					tr
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="gname" name="gname")
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="ptext" name="ptext")
-						td
-							textarea(cols=50 rows=8 id="ptestdesc" name="ptestdesc")
+							td(style="vertical-align:top") #{group.Method.PrevTest}
+							td(colspan=2 rowspan=2)
+								textarea(cols=120 rows=5 id="ptestdesc" name="ptestdesc") #{group.Method.PrevTestDescription}
+						tr
+							td(style="vertical-align:top")
+								select(id="ptext" name="ptext")
+										option(value="") Click to select
+										option(value="Yes") Yes
+										option(value="No") No
+					else if group.Curators[0] == user.LogName
+						tr
+							td(style="vertical-align:top")
+								select(id="ptext" name="ptext")
+										option(value="") Click to select
+										option(value="Yes") Yes
+										option(value="No") No
+							td(colspan=2 rowspan=2)
+								textarea(cols=120 rows=5 id="ptestdesc" name="ptestdesc")
+					else if group.Curators[0] != user.LogName && group.Method
+						tr(style="font-size:80%")
+							td(style="vertical-align:top") #{group.Method.PrevTest}
+							td(colspan=2 rowspan=2) #{group.Method.PrevTestDescription}
 					tr
 						td(colspan=3) &nbsp;
 					tr
-						td Genome Wide Study
-						td Genotyping Method
+						td(style="width:200px") Genome Wide Study
+						td(style="width:250px") Genotyping Method
 						td Entire Gene Sequenced
-					if exist
-						- var n = parseInt(studyid) - 1
+					if group.Method
 						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Method.GenomeWideStudy}
-							td #{casegroupstudy[n].Method.GenotypingMethod}
-							td #{casegroupstudy[n].Method.EntireGeneSequencing}
-					tr
-						td
-							input(type="text" id="gwstudy" name="gwstudy")
-						td
-							input(type="text" id="gmethod" name="gmethod")
-						td
-							input(type="text" id="gsequenced" name="gsequenced")
+							td #{group.Method.GenomeWideStudy}
+							td #{group.Method.GenotypingMethod}
+							td #{group.Method.EntireGeneSequencing}
+					if group.Curators[0] == user.LogName
+						tr
+							td
+								select(id="gwstudy" name="gwstudy")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
+							td
+								select(id="gmethod" name="gmethod")
+									option(value="") Click to select
+									option(value="PCR") PCR
+									option(value="WGS") WGS
+									option(value="WES") WES
+							td
+								select(id="gsequenced" name="gsequenced")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
 					tr
 						td(colspan=3) &nbsp;
 					tr
 						td(style="width:150px") Copy Number Assessed
 						td(style="width:200px") Specific Mutations Genotyped
 						td Specific Mutations Genotyped Method
-					if exist
-						- var n = parseInt(studyid) - 1
+					if group.Method && group.Curators[0] == user.LogName
 						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Method.CopyNumberAssessed}
-							td #{casegroupstudy[n].Method.SpecMutationsGenotyped}
-							td #{casegroupstudy[n].Method.SpecMutationsGenotypedMethod}
-					tr
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="copynum" name="copynum")
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="mutategenotype" name="mutategenotype")
-						td
-							textarea(cols=50 rows=8 id="mutatemethod" name="mutatemethod")
+							td #{group.Method.CopyNumberAssessed}
+							td #{group.Method.SpecMutationsGenotyped}
+							td(rowspan=2)
+								textarea(cols=76 rows=3 id="mutatemethod" name="mutatemethod") #{group.Method.SpecMutationsGenotypedMethod}
+					else if group.Curators[0] == user.LogName
+						tr
+							td(style="vertical-align:top" valign="top")
+								select(id="copynum" name="copynum")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
+							td(style="vertical-align:top" valign="top")
+								select(id="mutategenotype" name="mutategenotype")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
+							td(rowspan=2)
+								textarea(cols=76 rows=3 id="mutatemethod" name="mutatemethod")
+					else if group.Curators[0] != user.LogName && group.Method
+						tr(style="font-size:80%")
+							td #{group.Method.CopyNumberAssessed}
+							td #{group.Method.SpecMutationsGenotyped}
+							td #{group.Method.SpecMutationsGenotypedMethod}
 					tr
 						td(colspan=3) &nbsp;
 					tr
 						td Germline Data
 						td Tumor Data
 						td Family History
-					if exist
-						- var n = parseInt(studyid) - 1
+					if group.Method
 						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Method.GermlineData}
-							td #{casegroupstudy[n].Method.TumorData}
-							td #{casegroupstudy[n].Method.FamilyHistory}
-					tr
-						td
-							input(type="text" id="germline" name="germline")
-						td
-							input(type="text" id="tumor" name="tumor")
-						td
-							input(type="text" id="familyhistory" name="familyhistory")
+							td #{group.Method.GermlineData}
+							td #{group.Method.TumorData}
+							td #{group.Method.FamilyHistory}
+					if group.Curators[0] == user.LogName
+						tr
+							td
+								select(id="germline" name="germline")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
+							td
+								select(id="tumor" name="tumor")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
+							td
+								select(id="familyhistory" name="familyhistory")
+									option(value="") Click to select
+									option(value="Yes") Yes
+									option(value="No") No
 					tr
 						td(colspan=3) &nbsp;
-					tr
-						td(colspan=3)
-							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
-							span &nbsp;
-							input(type="reset" value="Reset" style="height:25px;font-size:18px")
+					if group.Curators[0] == user.LogName
+						tr
+							td(colspan=3)
+								input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px;cursor:pointer")
+								span &nbsp;
+								input(type="reset" value="Reset" style="height:25px;font-size:18px;cursor:pointer")
+								span &nbsp;
+								input(type="button" value="Delete" id="deletebutton" style="height:25px;font-size:18px;cursor:pointer")
+						script(type='text/javascript').
+							$().ready(function() {
+								$("#deletebutton").click(function(err) {
+									if (confirm('Delete the method?')) {
+										var datastr = {
+											"GroupID": "#{group.GroupID}",
+											$.post('/CaseStudy/Group/Delete/Method', datastr, function(data) {
+												if (data) $(location).attr('href', '/Casestudy/Group/#{group.GroupID}/Group')
+											})
+										}
+									}
+								})
+							})
+

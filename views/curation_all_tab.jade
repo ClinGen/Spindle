@@ -1,0 +1,78 @@
+extends curations_basic
+block curation_content
+	-var creator = data.Curators[0].LogName
+	table#tab_table(style="border-spacing:1px" cellpadding=0 border=0)
+		tr
+			td#history_tab.tab History
+			td#literature_tab.tab Literature
+			td.tab Case Group
+			td.tab(style="background:#666") Case Control
+			td#functional_tab.tab Functional
+			td.tab(style="background:#666") Summary
+			td.tab(style="background:#666") Assertions
+			//-td.tab Variant
+			td(style="border-bottom:solid #048 1px;text-align:right;font-size:12px")
+				a#all_pair_link(style="text-decoration:none;cursor:pointer;font-size:12px") List Gene:Disease Records
+	#curation_content_box(style="margin-left:1px;z-index:5")
+		#history_box.tab_content(style="padding:5px 10px 5px 10px;width:100%")
+			include tab_includes/history_included
+		#literature_box.tab_content(style="padding:5px 10px 5px 10px")
+			include tab_includes/literature_included
+		#casegroup_box.tab_content(style="padding:5px 10px 5px 10px")
+			p Case Group Study here.
+			p The attack took place after a dispute at the farm where they worked, it said, adding that Saleem was executed in Riyadh.
+			p Authorities also carried out a death sentence against the Pakistani, Hafiz Wifaq Rasoul Shah, in the Muslim holy city of Medina.
+			p "Investigations led to his confession and he was tried and found guilty," a separate interior ministry statement said.
+			p The Pakistani city of Karachi is a key transit point for heroin from Afghanistan.
+			p According to the United Nations Office on Drugs and Crime, the Gulf has become an increasingly important market for illicit drugs in recent years.
+			p The Saudi government says it "is committed to fighting drugs of all kinds due to the physical and social harm they cause".
+
+		#casecontrol_box.tab_content(style="padding:5px 10px 5px 10px")
+		#functionaldata_box.tab_content(style="padding:0px 10px 5px 10px")
+			#functional_Addnew_box.add_edit(style="width:720px;height:520px;margin:0;padding:5px 7px 5px 7px;text-align:left;background-color:#3dd")
+				include tab_includes/functional_addnew_included
+			//-#functional_edit_box.add_edit(style="width:720px;height:500px;margin:0;padding:5px 10px 10px 10px;text-align:left;background-color:#3dd")
+				include tab_includes/functional_Addnew_included
+			include tab_includes/functional_all_included
+		//-#variant_all_box.tab_content(style="padding:5px 10px 5px 10px")
+			include tab_includes/variant_all_included
+		#variant_addnew_box.add_edit(style="display:none;position:absolute;width:450px;padding:5px 7px 5px 7px;top:250px;right:220px;background:#c77;box-shadow:10px 10px 5px #888")
+			include tab_includes/variant_add_edit_included
+		#article_pmid_box.add_edit(style="display:none;position:absolute;width:400px;height:500px;top:250px;right:10px;z-index:12;background:#369;opacity:1;box-shadow:10px 10px 5px #888;margin-right:80px")
+			include tab_includes/article_present_included
+		#on_construction_box.tab_content(style="text-align:center")
+			br
+			br
+			span(style="font-size:20px") This page is under construction and will come soon.
+			br
+			br
+			br
+			img(src="/images/under_construction.png" style="width:10%")
+	script(type='text/javascript').
+		$(function() {
+			$(".pmidclick").on("click", function() {
+							$("#article_pmid_box").css('display', 'block')
+								var urlstr = '/Observations/pmid/' + $(this).attr('title')
+								$.get(urlstr, function(data) {
+									if (data.Error) {
+										$("#abstractbox").html(data.Error)
+										$("#abstractbox").css('color','#f83')
+										$("#abstractbox").css('font-size','16px')
+										$("#pmid_from_NCBI").html('PMID: '+'<spam style="color:#f83">'+data.Pmid+'</sapm>')
+									}
+									else {
+										$("#pmid_from_NCBI").html('PMID: ' + data.Pmid)
+										$("#titlebox").html(data.Title)
+										$("#journalbox").html(data.Journal.Title)
+										$("#datebox").html(data.Journal.PubDate.Month + " " + data.Journal.PubDate.Year)
+										$("#authorbox").html(data.FirstAuthor.LastName + " " + data.FirstAuthor.Initials)
+										$("#abstractbox").html(data.Abstract)
+									}
+								})
+							//})
+			})
+			$("#pmidboxclose").on("click", function() {
+				$("#article_pmid_box").css('display', 'none')
+			})
+
+		})

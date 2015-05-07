@@ -3,114 +3,292 @@ block casegroup_content
 	tr
 		td(style="font-size:18px")
 			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
-			sapn &nbsp;>>&nbsp;
-			a(href='#' style='text-decoration:none') Study #{studyid}
-			sapn &nbsp;>> Segregation Analysis
-		td(style="text-align:right;font-size:12px")
-			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
+			sapn &nbsp;>>&nbsp;Group #{group.GroupID},&nbsp;
+			a(href='/Casegroupstudy/Group/#{group.GroupID}/Group' style='text-decoration:none') #{group.GroupData.GroupName}
+			sapn &nbsp;>> Segregation&nbsp;
+			span #{item.SegregationID},&nbsp;&nbsp;
+			span(style="font-size:80%;color:#aaa") Data entered by&nbsp;#{item.LogName}
+		td(style="text-align:right;font-size:14px")
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Method" style='text-decoration:none') Method
+			span &nbsp; | &nbsp;
+			select(id='segid' name='segid')
+				option(value='') Segregation
+				for s in group.Segregation
+					if s != null && s.SegregationID != item.SegregationID && s.Active == 'Yes'
+						option(value='#{s.SegregationID}') #{s.SegregationID}
+				option(value='Addnew') Add A New One
 	tr
 		td(colspan=2) &nbsp;
-	tr
-		td(colspan=2)
-			form(action="/Casegroupstudy/Segregation" method="post")
-				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
-				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
-				input(type="hidden" name="id" value="#{studyid}")
-				table(style="width:100%")
-					tr
-						td(style="width:180px") Pedigree Name
-						td(style="width:180px") Pedigree Size
-						td(style="width:180px") Pedigree Population
-						td(style="width:200px") Pedigree Description
-					if exist
-						- var n = parseInt(studyid) - 1
-						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Segregation.PedigreeName}
-							td #{casegroupstudy[n].Segregation.PedigreeSize}
-							td #{casegroupstudy[n].Segregation.PedigreePopulation}
-							td #{casegroupstudy[n].Segregation.PedigreeDescription}
-					tr
-						td
-							input(type="text" id="pname" name="pname")
-						td
-							input(type="text" id="psize" name="psize")
-						td
-							input(type="text" id="ppopulation" name="ppopulation")
-						td
-							textarea(cols=40 rows=8 id="pdescription" name="pdescription")
-					tr
-						td(colspan=4) &nbsp;
-					tr
-						td Segregation Pattern
-						td Pheno Pos Geno Pos
-						td Pheno Pos Geno Neg
-						td Pheno Pos Geno Unknown
-					if exist
-						- var n = parseInt(studyid) - 1
-						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Segregation.SegregationPattern}
-							td #{casegroupstudy[n].Segregation.PhPGenP}
-							td #{casegroupstudy[n].Segregation.PhPGenN}
-							td #{casegroupstudy[n].Segregation.PhPGenU}
-					tr
-						td(style="vertical-align:top")
-							input(type="text" id="spattern" name="spattern" valign="top")
-						td(style="vertical-align:top")
-							input(type="text" id="ppgp" name="ppgp" valign="top")
-						td
-							input(type="text" id="ppgn" name="ppgn")
-						td
-							input(type="text" id="ppgu" name="ppgu")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td Pheno Neg Geno Pos
-						td Pheno Neg Geno Neg
-						td Pheno Neg Geno Unknown
-						td Pheno Unknown Geno Pos
-					if exist
-						- var n = parseInt(studyid) - 1
-						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Segregation.PhNGenP}
-							td #{casegroupstudy[n].Segregation.PhNGenN}
-							td #{casegroupstudy[n].Segregation.PhNGenU}
-							td #{casegroupstudy[n].Segregation.PhUGenP}
-					tr
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="pngp" name="pngp")
-						td(style="vertical-align:top" valign="top")
-							input(type="text" id="pngn" name="pngn")
-						td
-							input(type="text" id="pngu" name="pngu")
-						td
-							input(type="text" id="pugp" name="pugp")
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td Pheno Unknown Geno Neg
-						td Pheno Unknown  Geno Unknown
-						td Add Seg Info
-						td Variant
-					if exist
-						- var n = parseInt(studyid) - 1
-						tr(style="font-size:80%")
-							td #{casegroupstudy[n].Segregation.PhUGenN}
-							td #{casegroupstudy[n].Segregation.PhUGenU}
-							td #{casegroupstudy[n].Segregation.AddSegInfo}
-							td alll variant data here
-								for v in casegroupstudy[n].Segregation.Variant
-					tr
-						td
-							input(type="text" id="pugn" name="pugn")
-						td
-							input(type="text" id="pugu" name="pugu")
-						td
-							input(type="text" id="addseginfo" name="addseginfo")
-						td Clikc Variant to Edit
-					tr
-						td(colspan=3)&nbsp;
-					tr
-						td(colspan=3)
-							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
-							span &nbsp;
-							input(type="reset" value="Reset" style="height:25px;font-size:18px")
+	if item.Active == 'Yes'
+		tr
+			td#segregationbox(colspan=2 style="width:100%;font-size:13px")
+				form(action="/casegroupstudy/Segregation/Edit" method="post" id="segreform")
+					input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+					input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+					input(type='hidden' name='groupid' value='#{group.GroupID}')
+					input(type='hidden' name='sid' value='#{item.SegregationID}')
+					table(style="width:100%")
+						tr
+							td
+								table(style="width:100%")
+									tr
+											td Pedigree Name
+											td Pedigree Size
+											td Pedigree Population
+									tr(style="font-size:80%")
+												td #{item.PedigreeName}
+												td #{item.PedigreeSize}
+												td #{item.PedigreePopulation}
+									if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+										tr
+											td(style="vertical-align:top")
+												input(type="text" id="pname" name="pname" style="width:50px")
+												span(style='font-size:80%') &nbsp;(String)
+											td(style="vertical-align:top")
+												input.numeric(type="text" id="psize" name="psize" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top")
+												input(type="text" id="ppopulation" name="ppopulation" style="width:50px")
+												span(style='font-size:80%') &nbsp;(String)
+									tr
+										td(colspan=3) &nbsp;
+									tr
+										td(colspan=3) Segregation Pattern
+									tr(style="font-size:80%")
+										td(colspan=3)
+											if item.SegregationPattern != ''
+												if item.SegregationPattern.indexOf('(') > -1
+													- var link =  item.SegregationPattern.split('(')
+													span #{link[0]}&nbsp;(
+													a(href="http://www.human-phenotype-ontology.org/hpoweb/showterm?id=#{link[1].replace(')','')}" target="_blank") #{link[1].replace(')','')}
+													span )
+												else
+														span= item.SegregationPattern
+									if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+										tr
+											td(style="vertical-align:top" colspan=3)
+												select(id="spattern" name="spattern" valign="top")
+													option(value='') Click to select
+													option(value='Autosomal dominant inheritance (HP:0000006)') Autosomal dominant inheritance (HP:0000006)
+													option(value='Autosomal dominant inheritance with maternal imprinting (HP:0012275)') Autosomal dominant inheritance with maternal imprinting (HP:0012275)
+													option(value='Autosomal dominant inheritance with paternal imprinting (HP:0012274)') Autosomal dominant inheritance with paternal imprinting (HP:0012274)
+													option(value='Autosomal recessive inheritance (HP:0000007)') Autosomal recessive inheritance (HP:0000007)
+													option(value='Autosomal unknown') Autosomal unknown
+													option(value='Codominant') Codominant
+													option(value='Genetic anticipation (HP:0003743)') Genetic anticipation (HP:0003743)
+													option(value='Mitochondrial inheritance (HP:0001427)') Mitochondrial inheritance (HP:0001427)
+													option(value='Multifactorial inheritance (HP:0001426)') Multifactorial inheritance (HP:0001426)
+													option(value='Oligogenic inheritance (HP:0010983)') Oligogenic inheritance (HP:0010983)
+													option(value='Sex-limited autosomal dominant (HP:0001470)') Sex-limited autosomal dominant (HP:0001470)
+													option(value='Somatic mutation (HP:0001428)') Somatic mutation (HP:0001428)
+													option(value='Sporadic (HP:0003745)') Sporadic (HP:0003745)
+													option(value='X-linked dominant inheritance (HP:0001423)') X-linked dominant inheritance (HP:0001423)
+													option(value='X-linked inheritance (HP:0001417)') X-linked inheritance (HP:0001417)
+													option(value='X-linked recessive inheritance (HP:0001419)') X-linked recessive inheritance (HP:0001419)
+													option(value='Y-linked inheritance (HP:0001450)') Y-linked inheritance (HP:0001450)
+													option(value='Other') Other
+									tr
+										td(colspan=3) &nbsp;
+									tr
+										td(style="border-right:solid #aaa 1px") Pheno Pos Geno Pos
+										td(style="border-right:solid #aaa 1px") Pheno Pos Geno Neg
+										td Pheno Pos Geno Unk
+									tr(style="font-size:80%")
+											td #{item.PhPGenP}
+											td #{item.PhPGenN}
+											td #{item.PhPGenU}
+									if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+										tr
+											td(style="vertical-align:top")
+												input.numeric(type="text" id="ppgp" name="ppgp" valign="top" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="ppgn;text-align:center" name="ppgn" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="ppgu" name="ppgu" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+									tr
+										td(colspan=4) &nbsp;
+									tr
+										td(style="border-right:solid #aaa 1px") Pheno Neg Geno Pos
+										td(style="border-right:solid #aaa 1px") Pheno Neg Geno Neg
+										td Pheno Neg Geno Unk
+									tr(style="font-size:80%")
+											td #{item.PhNGenP}
+											td #{item.PhNGenN}
+											td #{item.PhNGenU}
+									if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+										tr
+											td(style="vertical-align" valign="top")
+												input.numeric(type="text" id="pngp" name="pngp" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="pngn" name="pngn" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="pngu" name="pngu" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+									tr
+										td(colspan=4) &nbsp;
+									tr
+										td(style="border-right:solid #aaa 1px") Pheno Unk Geno Pos
+										td(style="border-right:solid #aaa 1px") Pheno Unk Geno Neg
+										td Pheno Unk Geno Unk
+									tr(style="font-size:80%")
+										td #{item.PhUGenP}
+										td #{item.PhUGenN}
+										td #{item.PhUGenU}
+									if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+										tr
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="pugp" name="pugp" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top" valign="top")
+												input.numeric(type="text" id="pugn" name="pugn" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+											td(style="vertical-align:top")
+												input.numeric(type="text" id="pugu" name="pugu" style="width:50px")
+												span(style='font-size:80%') &nbsp;(Digit)
+							td(style="vertical-align:top")
+								table(style="width:100%")
+									tr
+										td(style="") Pedigree Description
+										td(rowspan=5 style="text-align:left;vertical-align:top;border-left:solid #ccc 1px;width:230px")
+											- var assessable = true
+											if item.Assessment
+												each assess in item.Assessment
+													if assess && assess.LogName == user.LogName
+														- assessable = false
+											if assessable
+												select(id="assessment" name="assessment")
+													option(value='') Add Assessment
+													option(value='Strongly Supports') Strongly Supports
+													option(value='Moderately Supports') Moderately Supports
+													option(value='Weakly Supports') Weakly Supports
+													option(value='Contradictory') Contradictory
+											else
+												span Assessment
+											br
+											br
+											#assessmentbox
+													if item.Assessment
+														each a in item.Assessment
+															if a && a.LogName == user.LogName
+																span(style='font-size:12px') #{a.Level}&nbsp;&nbsp;
+																a#deleteassessment(style="text-decoration:none;cursor:pointer") Delete
+															else if a
+																span(style='font-size:12px') #{a.Level}
+																span(style="font-size:12px;color:#999") &nbsp;&nbsp;#{a.LogName}
+															br
+															br
+											script(type='text/javascript').
+													$(document).ready(function() {
+														$("#assessment").change(function() {
+															if ($(this).children('option:selected').val() != '') {
+																var datastr = {
+																	"symbol":"#{group.HGNCSymbol}",
+																	"ordoid":"#{group.ORDOID}",
+																	"groupid":"#{group.GroupID}",
+																	"sid":"#{item.SegregationID}",
+																	"item":"segregation",
+																	"assessment":$(this).children('option:selected').val()
+																}
+																//$.post('/Casegroupstudy/Assessment', datastr)
+																$.post('/Casegroupstudy/Assessment', datastr, function(data) {
+																	if (data) window.location.reload()
+																})
+															}
+														})
+														$("#deleteassessment").click(function() {
+																	var datastr = {
+																			"symbol":"#{group.HGNCSymbol}",
+																			"ordoid":"#{group.ORDOID}",
+																			"groupid":"#{group.GroupID}",
+																			"sid":"#{item.SegregationID}",
+																			"item":"segregation"
+																	}
+																	//$.post('/Casegroupstudy/Assessment/Delete', datastr)
+																	$.post('/Casegroupstudy/Assessment/Delete', datastr, function(data) {
+																		if (data) window.location.reload()
+																	})
+														})
+													})
+									tr
+										//-if item.LogName != user.LogName
+										if  item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+											td
+												textarea(cols=35 rows=10 id="pdescription" name="pdescription") #{item.PedigreeDescription}
+										else
+											td(style="font-size:80%") #{item.PedigreeDescription}
+									tr(style="height:40px")
+										td &nbsp;
+									tr
+										td Add Seg Info
+									tr
+										if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+											td
+												textarea(cols=35 rows=10 id="addseginfo" name="addseginfo") #{item.AddSegInfo}
+										else
+											td(style="font-size:80%") #{item.AddSegInfo}
+						tr
+							td(colspan=4) &nbsp;
+						if item.LogName == user.LogName && (!item.Assessment || item.Assessment.length == 0)
+							tr
+								td(colspan=5 style="text-align:left")
+									input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px;cursor:pointer")
+									span &nbsp;
+									input(type="reset" value="Reset" style="height:25px;font-size:18px;cursor:pointer")
+									- var deletable = true
+									if item.LogName != user.LogName
+										- deletable = false
+									else if item.Assessment && item.Assessment.length > 0
+										- deletable = false
+									else if item.Variant && item.Variant.Assessment && item.Variant.Assessment.length > 0
+										- deletable = false
+									else
+										if item.Assessment
+											each assess in item.Assessment
+												if assess.LogName != user.LogName
+													- deletable = false
+										if item.Variant && item.Variant.Assessment
+											each vass in item.Variant.Assessment
+												if vass.LogName == user.LogName
+													- deletable = false
+									if deletable
+										span &nbsp;
+										input#deletebutton(type="button" value="Delete" style="height:25px;font-size:18px;cursor:pointer")
+									if !item.Variant || item.Variant.Active == 'No'
+											a#addvariantlink(style="cursor:pointer;float:right;text-decoration:underline") Add Variant
+						tr
+							td(colspan=4) &nbsp;
+				script(type="text/javascript").
+					$(document).ready(function(){
+						$("#segid").change(function() {
+							if ($(this).children('option:selected').val() != '')
+								$(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Segregation/' + $(this).children('option:selected').val())
+						})
+						$("#deletebutton").click(function(err) {
+							if (confirm('Delete the current segregation?')) {
+									var datastr = {
+										"symbol":"#{group.HGNCSymbol}",
+										"ordoid":"#{group.ORDOID}",
+										"groupid":"#{group.GroupID}",
+										"sid":"#{item.SegregationID}",
+										"item":"segregation",
+									}
+									$.post('/Casegroupstudy/Delete', datastr, function(data) {
+										if (data) $(location).attr('href', '/Casegroupstudy/Group/'+"#{group.GroupID}"+'/Group')
+									})
+							}
+						})
+						$("#addvariantlink").click(function() {
+							var url = '/Casegroupstudy/Group/#{group.GroupID}/Segregation/#{item.SegregationID}/Variant/Addnew'
+							$(location).attr('href', url)
+						})
+					})
+		block segregation_variant_content
+	else
+		span(style="font-size:20px;color:red") This segregation was set as Inactive by #{item.LogName}.
+
+

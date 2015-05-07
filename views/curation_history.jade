@@ -1,0 +1,40 @@
+extends curations_basic
+block curation_content
+	table(style="margin-right:10px;width:98%;border-collapse:collapse")
+			tr
+				td(colspan=3) &nbsp;
+			tr
+				td(colspan=3 style="font-size:20px") Curation History
+			tr
+				td.title(style="width:150px") Curator
+				td.title(style="width:300px") Date/Time
+				td.title Action
+			while data.Curators.length > 0
+				- var curator = data.Curators.pop()
+				tr(style="border-bottom:solid #ddd 1px;line-height:30px")
+					td(style="text-align:center")= curator.LogName
+					td(style="text-align:center")= curator.DateTime.split('GMT-0800 ')[0]+'PST'
+					td(style="text-align:center")
+						if curator.Action && curator.Action.indexOf('Delete') == -1 && curator.Action.indexOf('Inactive') == -1 && curator.Action.indexOf('inactive') == -1
+							- var link
+							if curator.Action.indexOf('Create Gene_Disease pair') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID
+							else if curator.Action.indexOf('Literature Search') > -1
+								- link = '/Curations/Literaturesearch/' + data.HGNCSymbol + '/' + data.ORDOID
+							else if curator.Action.indexOf('Case Group Study') > -1
+								- link = '/Casegroupstudy/Group/'
+								- link += curator.Action.match(/Group \d+/)[0].split(' ')[1]
+								if curator.Action.indexOf('group data') > -1
+									- link += '/Group'
+								else if curator.Action.indexOf('method') > -1
+									- link += '/Method'
+								else if curator.Action.indexOf('Segregation') > -1
+									- link += '/Segregation/' + curator.Action.match(/Segregation \d+/)[0].split(' ')[1]
+							else if curator.Action.indexOf('Functional Data') > -1 || curator.Action.indexOf('functional data') > -1 || curator.Action.indexOf('Analysis') > -1
+								if (/Analysis \d+/).test(curator.Action)
+									- link = '/Functionaldataanalysis/Analysis/' + curator.Action.match(/Analysis \d+/)[0].split(' ')[1]
+							//-else if curator.Action.indexOf('Case Control Study') > -1
+							a(href="#{link}" style="text-decoration:none") #{curator.Action}
+						else
+							sapn= curator.Action
+						br

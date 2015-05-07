@@ -1,6 +1,4 @@
 $(document).ready(function() {
-	$("#summarydataboard").css('display','block');
-	$("#toplinks").css('display', 'none');
-
-	setTimeout(function () { $(location).attr('href', '/'); }, 60000);
+	//$("#summarydataboard").css('display','block');
+	setTimeout(function () { $(location).attr('href', '/'); }, 10000);
 });

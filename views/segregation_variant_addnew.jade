@@ -1,0 +1,152 @@
+
+extends segregation
+block segregation_variant_content
+		tr
+			td(colspan=2) &nbsp;
+		tr
+			td(colspan=2 style="width:100%;background:#ddd")
+				form#variantform(action='/Casegroupstudy/Variant/Addnew' method='post')
+					input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+					input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+					input(type='hidden' name='groupid' value='#{group.GroupID}')
+					input(type='hidden' name='sid' value='#{item.SegregationID}')
+					input(type='hidden' name='vid' value='')
+					table(style="border-top:solid #ddd 1px;font-size:13px;width:100%")
+							tr
+								td(colspan=2 style="font-size:14px") VARIANT:
+								td(style="width:200px") &nbsp;
+							tr
+								td(style="width:480px")
+									table(style="")
+										tr
+											td(style="vertical-align:top;text-align:right;width:180px")
+												a(href="http://www.ncbi.nlm.nih.gov/clinvar/" target="_blank") ClinVar
+												span &nbsp;ID:
+											td(style="")
+												input(type="text" id="clinvarid" name="clinvarid" style="width:160px")
+										tr
+											td(style="vertical-align:top;text-align:right")
+												a(href="http://www.ncbi.nlm.nih.gov/SNP/" target="_blank") dbSNP
+												span &nbsp;ID:
+											td
+												input(type="text" id="dbsnpid" name="dbsnpid" style="width:160px")
+										tr
+											td(style="vertical-align:top;text-align:right")
+												span Variant&nbsp;
+												a(href="http://www.hgvs.org/mutnomen/" target="_blank") HGVS
+												span :
+											td
+												textarea(cols=40 rows=2 id="varianthgvs" name="varianthgvs")
+										tr
+											td(style="vertical-align:top;text-align:right") Variant Type:
+											td
+												select(id="varianttype" name="varianttype")
+																	option(value='') Select
+																	option(value='Complex SO:0001784') Complex SO:0001784
+																	option(value='Complex chromosomal mutation SO:1000146') Complex chromosomal mutation SO:1000146
+																	option(value='Copy number gain SO:0001742') Copy number gain SO:0001742
+																	option(value='Copy number loss SO:0001743') Copy number loss SO:0001743
+																	option(value='Copy number variation SO:0001019') Copy number variation SO:0001019
+																	option(value='Deletion SO:0000159') Deletion SO:0000159
+																	option(value='Duplication SO:1000035') Duplication SO:1000035
+																	option(value='Indel SO:1000032') Indel SO:1000032
+																	option(value='Insertion SO:0000667') Insertion SO:0000667
+																	option(value='Interchromosomal breakpoint SO:0001873') Interchromosomal breakpoint SO:0001873
+																	option(value='Intrachromosomal breakpoint SO:0001874') Intrachromosomal breakpoint SO:0001874
+																	option(value='Inversion SO:1000036') Inversion SO:1000036
+																	option(value='Microsatellite SO:0000289') Microsatellite SO:0000289
+																	option(value='Mobile element insertion SO:1001837') Mobile element insertion SO:1001837
+																	option(value='Monomeric repeat SO:0001934') Monomeric repeat SO:0001934
+																	option(value='Multiple nucleotide polymorphism SO:0001013') Multiple nucleotide polymorphism SO:0001013
+																	option(value='Novel sequence insertion SO:1001838') Novel sequence insertion SO:1001838
+																	option(value='Sequence alteration SO:0001059') Sequence alteration SO:0001059
+																	option(value='Single nucleotide variant SO:0001483') Single nucleotide variant SO:0001483
+																	option(value='Tandem duplication SO:1000173') Tandem duplication SO:1000173
+																	option(value='Translocation SO:0000199') Translocation SO:0000199
+										tr
+											td(style="vertical-align:top;text-align:right") Molecular Consequence:
+											td
+												select(id="mconsequence" name="mconsequence")
+																	option(value='') Select
+																	option(value='Frameshift variant SO:0001589') Frameshift variant SO:0001589
+																	option(value='Intron SO:0001627') Intron SO:0001627
+																	option(value='Missense variant SO:0001583') Missense variant SO:0001583
+																	option(value='Nonsense SO:0001587') Nonsense SO:0001587
+																	option(value='Splice acceptor variant SO:0001574') Splice acceptor variant SO:0001574
+																	option(value='Splice donor variant SO:0001575') Splice donor variant SO:0001575
+																	option(value='Stop lost SO:0001578') Stop lost SO:0001578
+																	option(value='Synonymous variant SO:0001819') Synonymous variant SO:0001819
+																	option(value='5 prime UTR variant SO:0001623') 5 prime UTR variant SO:0001623
+																	option(value='3 prime UTR variant SO:0001624') 3 prime UTR variant SO:0001624
+																	option(value='2KB upstream variant SO:0001636') 2KB upstream variant SO:0001636
+																	option(value='500B downstream variant SO:0001634') 500B downstream variant SO:0001634
+								td(style="border-left:solid #ddd 1px;vertical-align:top;width:400px")
+									table(style="100%")
+																tr
+																	td(colspan=3) Pathogenic Evidence:
+																tr
+																	td(colspan=3) &nbsp;
+																tr(style="font-size:80%")
+																		td(style="text-align:right;width:150px") Simple Case Report&nbsp;
+																			input(type="checkbox" name="pathevidence" value='Simple Case Report')
+																		td(style="text-align:right") Case w/ Control&nbsp;
+																			input(type="checkbox" name="pathevidence" value='Case w/ Control')
+																		td(style="text-align:right") Functional&nbsp;
+																			input(type="checkbox" name="pathevidence" value='Functional')
+																tr(style="font-size:80%")
+																		td(style="text-align:right") In Silico Prediction
+																			input(type="checkbox" name="pathevidence" value='In Silico Prediction')
+																		td(style="text-align:right") Gene Region
+																			input(type="checkbox" name="pathevidence" value='Gene Region')
+																		td(style="text-align:right") Type of Variant
+																			input(type="checkbox" name="pathevidence" value='Type of Variant')
+																tr(style="font-size:80%")
+																		td(style="text-align:right") Segregation Data
+																			input(type="checkbox" name="pathevidence" value='Segregation Data')
+																		td(style="text-align:right" colspan=2) Lack of Variant(s) in Controls
+																			input(type="checkbox" name="pathevidence" value='Lack of Variant(s) in Controls')
+								td(rowspan=3 style='vertical-align:top') &nbsp;
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(colspan=2 style="text-align:left")
+													input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px;cursor:pointer")
+													span &nbsp;
+													input(type="reset" value="Reset" style="height:25px;font-size:18px;cursor:pointer")
+				script(type="text/javascript").
+								$(document).ready(function() {
+									//$("#addvariantlink").attr('text', 'Dismiss Variant')
+									$("#addvariantlink").css('display', 'none')
+									$("#segreform").submit(function() {
+													var no_err = true
+													$("input.numeric").each(function() {
+														if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+															no_err = false
+															alert('Please enter positive integer.')
+															$(this).focus()
+														}
+													})
+													return no_err
+									})
+
+									$("#variantform").submit(function() {
+										var data_entered = false
+										if($("#clinvarid").val() != '') {
+											data_entered = true
+											$("#clinvarid").val($("#clinvarid").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '').replace(/(\s+)/g, ''))
+											//$("#clinvarid").focus()
+										}
+										if ($("#dbsnpid").val() != '') {
+											data_entered = true
+											$("#dbsnpid").val($("#dbsnpid").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '').replace(/(\s+)/g, ''))
+											//$("#dbsnpid").focus()
+										}
+										if ($("#varianthgvs").val() != '') {
+											data_entered = true
+											$("#varianthgvs").val($("#varianthgvs").val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '').replace(/(\s+)/g, ''))
+											//$("#varianthgvs").focus()
+										}
+										if (!data_entered) alert('Please enter data.')
+										return data_entered
+									})
+								})

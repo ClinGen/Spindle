@@ -1,0 +1,126 @@
+if data.Curators
+	div(style="position:fixed;width:100%")
+		div(style="float:right;margin-right:80px")
+			span(style="font-size:12px") Present&nbsp;
+			select(id="history_filter")
+				option(value='All') All
+				option(value='Mine') My actions only
+				option(value='Not') Not my actions
+	- var temp = data.Curators.reverse()
+	table#overall.history_filtered(style="width:100%;font-size:11px")
+		each curator in temp
+			if curator.Action
+				- var timestr = curator.DateTime.split('GMT-0800 (')[0]
+				- timestr = timestr.split('GMT-0700 (')[0]
+				if curator.DateTime.indexOf('PST') > -1
+					- timestr += 'PST'
+				else if curator.DateTime.indexOf('PDT') > -1
+					- timestr += 'PDT'
+				tr(style="line-height:30px")
+					td(style="border-bottom:solid #ddd 1px;width:100px")= curator.LogName
+					td(style="border-bottom:solid #ddd 1px;width:300px")= timestr
+					td(style="border-bottom:solid #ddd 1px")
+						if curator.Action && curator.Action.indexOf('Delete') == -1 && curator.Action.indexOf('Inactive') == -1 && curator.Action.indexOf('inactive') == -1
+							- var link
+							if curator.Action.indexOf('Create Gene_Disease pair') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/History'
+							else if curator.Action.indexOf('Literature Search') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/Literature'
+							else if curator.Action.indexOf('Case Group Study') > -1
+								- link = '/Casegroupstudy/Group/'
+								- link += curator.Action.match(/Group \d+/)[0].split(' ')[1]
+								if curator.Action.indexOf('group data') > -1
+									- link += '/Group'
+								else if curator.Action.indexOf('method') > -1
+									- link += '/Method'
+								else if curator.Action.indexOf('Segregation') > -1
+									- link += '/Segregation/' + curator.Action.match(/Segregation \d+/)[0].split(' ')[1]
+							else if curator.Action.indexOf('Functional Data') > -1 || curator.Action.indexOf('functional data') > -1 || curator.Action.indexOf('Analysis') > -1
+								if (/Analysis \d+/).test(curator.Action)
+									- link = '/Functionaldataanalysis/Analysis/' + curator.Action.match(/Analysis \d+/)[0].split(' ')[1]
+										//-a.history_links(href="#{link}" style="text-decoration:none") #{curator.Action}
+							a.links_in_history(style="text-decoration:none;cursor:pointer") #{curator.Action}
+						else
+							sapn= curator.Action
+	table#myaction.history_filtered(style="display:none;width:100%;font-size:11px")
+		each curator in temp
+			if curator.LogName == user.LogName && curator.Action
+				- var timestr = curator.DateTime.split('GMT-0800 (')[0]
+				- timestr = timestr.split('GMT-0700 (')[0]
+				if curator.DateTime.indexOf('PST') > -1
+					- timestr += 'PST'
+				else if curator.DateTime.indexOf('PDT') > -1
+					- timestr += 'PDT'
+				tr(style="line-height:30px")
+					td(style="border-bottom:solid #ddd 1px;width:100px")= curator.LogName
+					td(style="border-bottom:solid #ddd 1px;width:300px")= timestr
+					td(style="border-bottom:solid #ddd 1px")
+						if curator.Action && curator.Action.indexOf('Delete') == -1 && curator.Action.indexOf('Inactive') == -1 && curator.Action.indexOf('inactive') == -1
+							- var link
+							if curator.Action.indexOf('Create Gene_Disease pair') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/History'
+							else if curator.Action.indexOf('Literature Search') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/Literature'
+							else if curator.Action.indexOf('Case Group Study') > -1
+								- link = '/Casegroupstudy/Group/'
+								- link += curator.Action.match(/Group \d+/)[0].split(' ')[1]
+								if curator.Action.indexOf('group data') > -1
+									- link += '/Group'
+								else if curator.Action.indexOf('method') > -1
+									- link += '/Method'
+								else if curator.Action.indexOf('Segregation') > -1
+									- link += '/Segregation/' + curator.Action.match(/Segregation \d+/)[0].split(' ')[1]
+							else if curator.Action.indexOf('Functional Data') > -1 || curator.Action.indexOf('functional data') > -1 || curator.Action.indexOf('Analysis') > -1
+								if (/Analysis \d+/).test(curator.Action)
+									- link = '/Functionaldataanalysis/Analysis/' + curator.Action.match(/Analysis \d+/)[0].split(' ')[1]
+										//-a.history_links(href="#{link}" style="text-decoration:none") #{curator.Action}
+							a.links_in_history(style="text-decoration:none;cursor:pointer") #{curator.Action}
+						else
+							sapn= curator.Action
+	table#notmine.history_filtered(style="display:none;width:100%;font-size:11px")
+		each curator in temp
+			if curator.LogName != user.LogName
+				- var timestr = curator.DateTime.split('GMT-0800 (')[0]
+				- timestr = timestr.split('GMT-0700 (')[0]
+				if curator.DateTime.indexOf('PST') > -1
+					- timestr += 'PST'
+				else if curator.DateTime.indexOf('PDT') > -1
+					- timestr += 'PDT'
+				tr(style="line-height:30px")
+					td(style="border-bottom:solid #ddd 1px;width:100px")= curator.LogName
+					td(style="border-bottom:solid #ddd 1px;width:300px")= timestr
+					td(style="border-bottom:solid #ddd 1px")
+						if curator.Action && curator.Action.indexOf('Delete') == -1 && curator.Action.indexOf('Inactive') == -1 && curator.Action.indexOf('inactive') == -1
+							- var link
+							if curator.Action.indexOf('Create Gene_Disease pair') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/History'
+							else if curator.Action.indexOf('Literature Search') > -1
+								- link = '/Curations/' + data.HGNCSymbol + '/' + data.ORDOID + '/Literature'
+							else if curator.Action.indexOf('Case Group Study') > -1
+								- link = '/Casegroupstudy/Group/'
+								- link += curator.Action.match(/Group \d+/)[0].split(' ')[1]
+								if curator.Action.indexOf('group data') > -1
+									- link += '/Group'
+								else if curator.Action.indexOf('method') > -1
+									- link += '/Method'
+								else if curator.Action.indexOf('Segregation') > -1
+									- link += '/Segregation/' + curator.Action.match(/Segregation \d+/)[0].split(' ')[1]
+							else if curator.Action.indexOf('Functional Data') > -1 || curator.Action.indexOf('functional data') > -1 || curator.Action.indexOf('Analysis') > -1
+								if (/Analysis \d+/).test(curator.Action)
+									- link = '/Functionaldataanalysis/Analysis/' + curator.Action.match(/Analysis \d+/)[0].split(' ')[1]
+										//-a.history_links(href="#{link}" style="text-decoration:none") #{curator.Action}
+							a.links_in_history(style="text-decoration:none;cursor:pointer") #{curator.Action}
+						else
+							sapn= curator.Action
+
+	script(type="text/javascript").
+		$(function() {
+			$("#history_filter").on('change', function() {
+				$("table.history_filtered").css('display', 'none')
+				if ($(this).val() == 'All') $("#overall").css('display', 'block')
+				else if ($(this).val() == 'Mine') {
+					$("#myaction").css('display', 'block')
+				}
+				else if ($(this).val() == 'Not') $("#notmine").css('display', 'block')
+			})
+		})

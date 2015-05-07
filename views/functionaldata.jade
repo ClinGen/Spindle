@@ -1,0 +1,60 @@
+extends curation_all_tab
+block functionaldata_content
+		table(style="width:100%;border-collapse:collapse;border:none")
+			tr
+				td(style="font-size:18px") Functional Data Analysis >> General Info
+				td(style="text-align:right;font-size:13px")
+					a(href="/Functionaldataanalysis/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}") Add New Analysis
+			unless fdata
+				tr
+					td(colspan=2) &nbsp;
+				tr
+					td(colspan=2)
+						span No Functional Data Analysis. Click&nbsp;
+						a(href='/Functionaldataanalysis/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}') Add New Analysis
+						span &nbsp;to enter new data.
+			else
+				tr
+					td(colspan=2) &nbsp;
+				tr
+					td(colspan=2) &nbsp;
+						table(style="width:100%;border-collapse:collapse;font-size:13px")
+							each f in fdata
+								tr(style='background:#dcdcdc')
+									td(style="width:100px;text-align:right") Analysis Name:
+									td
+										a(href="/Functionaldataanalysis/Analysis/#{f.AnalysisID}" style="font-size:12px;text-decoration:none")= f.SectionName
+								tr(style='background:#dcdcdc')
+									td(style="width:100px;text-align:right") PMID:
+									td(style="font-size:12px")= f.PMID
+								tr(style='background:#dcdcdc')
+									td(style="width:100px;text-align:right") Type:
+									td(style="font-size:12px")= f.Type
+								tr(style='background:#dcdcdc')
+									td(style="vertical-align:top;text-align:right") Description
+									td(style="font-size:12px")= f.Description
+								tr(style='background:#dcdcdc')
+									td(style="width:100px;text-align:right") Variant:
+									td(style="font-size:12px")
+										if f.Variant && f.Variant.length > 0
+											each v, i in f.Variant
+												if v.Active == "Yes"
+													if v.dbSNPID != ''
+														span dbSNP ID: #{v.dbSNPID}
+													else if v.ClinVarID != ''
+														span ClinVar ID: #{v.ClinVarID}
+													else if v.VariantHGVS != ''
+														span Variant HGVS: #{v.VariantHGVS}
+													if i<f.Variant.length-1
+														span ,&nbsp;&nbsp;
+								tr(style='background:#dcdcdc')
+									td(style="width:100px;text-align:right") Assessment:
+									td
+										if f.Assessment && f.Assessment.length > 0
+											each a, i in f.Assessment
+												span(style="font-size:80%")= a.Level
+												if i<f.Assessment.length-1
+													span ,&nbsp;
+								tr
+									td(colspan=2) &nbsp;
+

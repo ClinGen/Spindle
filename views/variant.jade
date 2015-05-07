@@ -1,0 +1,84 @@
+extends casegroup
+block casegroup_content
+	tr
+		td(style="font-size:18px")
+			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
+			sapn &nbsp;>>&nbsp;Group #{group.GroupID},&nbsp;
+			a(href='/Casegroupstudy/Group/#{group.GroupID}/Group' style='text-decoration:none') #{group.GroupData.CaseGroupName}
+			sapn &nbsp;>> Variant
+		td(style="text-align:right;font-size:14px")
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Method") Method
+			span &nbsp; | &nbsp;
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Segregation") Segregation
+			span &nbsp; | &nbsp;
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Assessment") Assessment
+	tr
+		td(colspan=2) &nbsp;
+	tr
+		td(colspan=2)
+			form(action="/casegroupstudy/Variant" method="post")
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type='hidden' name='gid' value='#{group.GroupID}')
+				table(style="width:100%")
+					tr
+						td ClinVar ID
+						td dbSNP ID
+						td Variant HGVS
+					if group.Variant
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{group.Variant.ClinVarID}
+							td #{group.Variant.dbSNPID}
+							td #{group.Variant.HGVS}
+					tr
+						td(style="vertical-align:top" valign="top")
+							input(type='text' id='clinvarid' name='clinvarid')
+						td(style="vertical-align:top" valign="top")
+							input(type='text' id='dbsnpid' name='dbsnpid')
+						td(style="vertical-align:top" valign="top")
+							textarea(cols=50 rows=10 id='hgvs' name='hgvs')
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td(style="width:200px") Variant Type
+						td(style="width:250px") Pathogenic Evidence
+						td Assessment
+					if group.Variant
+						- var n = parseInt(studyid) - 1
+						tr(style="font-size:80%")
+							td #{group.Variant.VariantType}
+							td #{group.Variant.PathEvidence}
+							td #{group.Variant.Assessment}
+					tr
+						td(style="vertical-align:top" valign="top")
+							select(id='type' name='type')
+								option(value='') Click to select
+								option(value='Missesense (SO:0001583)') Missesense (SO:0001583)
+								option(value='Nonsense (SO:0001587)') Nonsense (SO:0001587)
+								option(value='Frameshift (SO:0000865)') Frameshift (SO:0000865)
+						td(style="vertical-align:top" valign="top")
+							select(id="pevidence" name="pevidence")
+								option(value='') Click to select
+								option(value='Simple Case Report') Simple Case Report
+								option(value='Case w/ Control') Case w/ Control
+								option(value='Functional') Functional
+								option(value='In Silico Prediction') In Silico Prediction
+								option(value='Gene Region') Gene Region
+								option(value='Type of Variant') Type of Variant
+								option(value='Segregation Data') Segregation Data
+								option(value='Lack of Variant(s) in Controls') Lack of Variant(s) in Controls
+						td(style="vertical-align:top" valign="top")
+							select(id="assessment" name="assessment")
+								option(value='') Click to select
+								option(value='Strongly Supports') Strongly Supports
+								option(value='Moderately Supports') Moderately Supports
+								option(value='Weakly Supports') Weakly Supports
+								option(value='Contradictory') Contradictory
+					tr
+						td(colspan=3) &nbsp;
+					tr
+						td(colspan=3)
+							input(type="submit" value="Enter" id="subbttn" style="height:25px;font-size:18px")
+							span &nbsp;
+							input(type="reset" value="Reset" style="height:25px;font-size:18px")

@@ -1,0 +1,76 @@
+include functional_addnew_included
+script(type="text/javascript").
+	$(function() {
+		$("#functionalform").submit(function() {
+							//alert($("#evid_type").val())
+							/*$("input.text").each(function() {
+								$(this).val() = $(this).val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '')
+							})
+							$("textarea").each(function() {
+								$(this).val() = $(this).val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '')
+							})*/
+
+							//var no_err = true
+							if ($("#evid_type").val() == 'Biochemical Function') {
+								if ($("#identifiedfunction").val() == '') {
+													alert('Please enter data.')
+													$("#identifiedfunction").focus()
+													return false
+								}
+								else if ($("#evidencefunction").val() == '') {
+													alert('Please enter data.')
+													$("#evidencefunction").focus()
+													return false
+								}
+								else if (($("#geneHGNC").val() == '' || $("#shareddisease").val() == '') && ($("#phenotype_text").val() == '' || $("#phenotype_hpo").val() == '' || $("#explanation").val() == '')) {
+													alert('Must enter data at A or B')
+													return false
+								}
+							}
+							else if ($("#evid_type").val() == 'Protein Interactions') {
+								$(".evid_type_2").each(function() {
+									if ($(this).val() == '') {
+										alert('Please enter data.')
+										$(this).focus()
+										return false
+									}
+								})
+							}
+							else if ($("#evid_type").val() == 'Expression') {
+								if ($("#diseasetissue").val() == '') {
+									alert('Please enter data.')
+									$("#diseasetissue").focus()
+									return false
+								}
+								else if ($("#uniqueExpressed").val() == '' && !$("#alteredexpression").prop("checked")) {
+									alert('Must enter data at A or B')
+									return false
+								}
+								else if ($("#alteredexpression").prop("checked") && $("#comment_alteredexpression").val() == '') {
+									alert('Please enter Conmments for Altered Expression.')
+									$("#comment_alteredexpression").focus()
+									return false
+								}
+							}
+							else if ($("#evid_type").val() == 'Gene Disruption') {
+								if ($("#experiment_patientcell").prop('checked') && $("#description_patientcell").val() == '') {
+									alert('Please enter Protein Cell Type.')
+									$("#description_patientcell").focus()
+									return false
+								}
+								else if ($("#normalfunction_geneprotein").val() == '') {
+									alert('Please enter Normal Function data.')
+									$("#normalfunction_geneprotein").focus()
+									return false
+								}
+								else if ($("#evidence_altertedfunction").val() == '') {
+									alert('Please enter evidence data for Altered Function.')
+									$("#evidence_altertedfunction").focus()
+									return false
+								}
+							}
+
+							$("#functionalform").attr("action", "/Functionaldataanalysis/Edit")
+							return true
+		})
+	})

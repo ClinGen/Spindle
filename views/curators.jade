@@ -1,34 +1,29 @@
 extends layout
 block content
-	#pwdwin
-		#closepoint(style="text-align:right")
-			a(href="javascript:void(0)" id="closelink" title="Close") X
-		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
-		#wincontent(style="text-align:center;padding-top:15px")
-		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
-	script(type="text/javascript" src="/javascripts/changepwd.js")
-	#summarydataboard(style="vertical:midlle")
+	//-#summarydataboard
 			li(style="font-size:110%;padding-left:50px") Total number of External curators: #{exp}
 			li(style="font-size:110%;padding-left:50px") Total number of ClinGen curators: #{cg}
 			li(style="font-size:110%;padding-left:50px") Total number of Expert curators: #{ec}
 	#maincontent
-		table(style="margin-left:100px;margin-top:20px;margin-bottom:150px;width:900px")
+		table(style="padding:150px 0px 50px 100px;width:900px")
 			tr
 				td.title Name
 				td.title Working Institue
 				td.title Email
 				td.title ClinGen Title
 			for d, i in data
-				if i%2 == 0
-					tr(style="height:25px")
-						td #{d.Name}
-						td #{d.WorkingInstitute}
-						td #{d.ContactInfo}
-						td #{d.Title}
-				else
-					tr.odd(style="height:25px")
-						td #{d.Name}
-						td #{d.WorkingInstitute}
-						td #{d.ContactInfo}
-						td #{d.Title}
-	script(type="text/javascript" src="/javascripts/curatorsView.js")
+				if d.LogName.indexOf('kgliu') == -1
+					if i%2 == 0
+						tr(style="height:25px")
+							td #{d.Name}
+							td #{d.WorkingInstitute}
+							td #{d.ContactInfo}
+							td #{d.Title}
+					else
+						tr.odd(style="height:25px")
+							td #{d.Name}
+							td #{d.WorkingInstitute}
+							td #{d.ContactInfo}
+							td #{d.Title}
+
+	//-script(type="text/javascript" src="/javascripts/curatorsView.js")

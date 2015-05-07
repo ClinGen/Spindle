@@ -1,92 +1,268 @@
 extends layout
 block content
-	#pwdwin
-		#closepoint(style="text-align:right")
-			a(href="javascript:void(0)" id="closelink" title="Close") X
-		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
-		#wincontent(style="text-align:center;padding-top:15px")
-		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
-	script(type="text/javascript" src="/javascripts/changepwd.js")
-	#summarydataboard
-		table
-			tr
-				td(style="font-size:110%")
-					li Total number of genes with HGNC ID : #{numbers[0]}
-					li Total number of genes with Entrez: #{numbers[1]}
-					li Total number of genes with OMIM ID: #{numbers[2]}
-				td(style="width:30px") &nbsp;
-				td
-					span Search HGNC gene data:
-					br
-					span
-						form(id='searchfrom' onsubmit='formtolink()')
-							select(name="idType" id="idType")
-									if search && search[0] == 'HGNCSymbol+Synonyms'
-											option(value="HGNCSymbol+Synonyms" id='genesymbol' selected) Gene Symbol/Synonyms
-									else
-										option(value="HGNCSymbol+Synonyms" id='genesymbol') Gene Symbol/Synonyms
-									if search && search[0] == 'EntrezID'
-										option(value="EntrezID" id='entrezid' selected) Entrez Gene ID
-									else
-										option(value="EntrezID" id='entrezid') Entrez Gene ID
-									if search &&search[0] == 'OMIMID'
-										option(value="OMIMID" id='omimid' selected) OMIM ID
-									else
-										option(value="OMIMID" id='omimid') OMIM ID
-								span &nbsp;
-								if search
-									input(type="text" name="idValue" id="idValue" value='#{search[1]}')
-								else
-									input(type="text" name="idValue" id="idValue")
-								span &nbsp;
-								input(type="submit" value="Enter")
-		#reporttitle(style="font-size:125%; bottom:0px" valign="botto")
-	#maincontent
-		if search
-				if gene
-					table(style="z-index:10;margin-left:50px;margin-top:0px;margin-bottom:150px")
-						tr(Style='border:solid #999 1px')
-							td(colspan=3 style='font-size:120%') HGNC data matched: #{gene.length}
-						for g in gene
-							- var i = 1
-							tr.odd
-								td(rowspan=10) #{i}
-								td Gene Symbol:
-								td #{g.HGNCSymbol}
+	div(style="width:100%;background-color:#f0f0f0")
+		#summary_box(style="position:fixed;top:50px;left:50px;border:solid #000 0px;z-index:3;background-color:#f0f0f0")
+			table#summary_table(style="position:relative;font-size:12px;border-collapse:collapse;border:none" border=0)
+				tr(style="height:30px")
+					td(colspan=4 style="font-size:12px;vertical-align:text-bottom")
+						sapn#total_gene_count_box(style="font-size:20px") Gene
+						span &nbsp; imported from&nbsp;
+						a(href="http://www.genenames.org/" target="_blank") HGNC
+						span . Lasted updated at 04/17/2015.
+					td(colspan=2)
+						a#statiscic_link(style="text-decortion:none;cursor:pointer") Statistics
+				tr
+					td(style="width:100px;text-align:center;vertical-align:top;border-right:solid #bbb 1px;padding-left:30px") # of Approved
+					td(style="width:100px;text-align:center;vertical-align:top;border-right:solid #bbb 1px") # of Pseudogene
+					td(style="width:130px;text-align:center;vertical-align:top;border-right:solid #bbb 1px") # of Protein Product
+					td(style="width:130px;text-align:center;vertical-align:top") # of Non-coding RNA
+					td(rowspan=3 style="width:500px;vertical-align:bottom")
+						table(style="width:100%;border-collapse:collapse" border=0)
 							tr
-								td HGNC ID:
+								td(style="width:300px;padding-left:20px;font-size:12px") Select item and enter key words.
+								td(style="width:100px;font-size:12px") Status
+								td(style="width:100px;font-size:12px") Locus Group
+							tr
+								td(style="padding-left:10px")
+									select(name="idType" id="idType" style="float:left")
+										option(value="HGNCSymbol+Synonyms") Gene Symbol/Synonyms
+										option(value="EntrezID") Entrez Gene ID
+										option(value="OMIMID") OMIM ID
+									span(style="float:left") &nbsp;
+									input(type="text" name="idValue" id="idValue" style="width:70px;float:left")
 								td
-									a(href="http://www.genenames.org/cgi-bin/gene_symbol_report?hgnc_id=#{g.HGNCID}" target="_blank") #{g.HGNCID}
-							tr
-								td HGNC Name:
-								td #{g.HGNCName}
-							tr
-								td HGNC Previous Symbol:
-								td #{g.PreviousSymbol}
-							tr
-								td HGNC Previous Name:
-								td #{g.PreviousName}
-							tr
-								td Synonyms:
-								td #{g.Synonyms}
-							tr
-								td Name Synonyms:
-								td #{g.NameSynonyms}
-							tr
-								td Chromosome:
-								td #{g.Chromosome}
-							tr
-								td Entrez Gene ID:
+									select.data_filter(id="status_filter" name="status_filter" style="display:none;float:left")
+										option(value="All") All
+										option(value="Approved") Approved
+										option(value="others") Others
 								td
-									a(href="http://www.ncbi.nlm.nih.gov/gene/#{g.EntrezID}" target="_blank") #{g.EntrezID}
-							tr
-								td OMIM ID:
-								td
-									a(href="http://omim.org/entry/#{g.OMIMID}" target="_blank") #{g.OMIMID}
-							tr
-								td(align="2") &nbsp;
-							- i += 1
-				else
-					p(style="color:red") Not found.
-	//-script(type='text/javascript' src='/javascripts/seachform.js')
+									select.data_filter(id="locusgroup_filter" name="locusgroup_filter" style="display:none;float:left")
+										option(value="All") All
+										option(value="protein-coding gene") Protein Coding
+										option(value="non-coding RNA") Non-coding RNA
+										option(value="pseudogene") Pseudogene
+										option(value="others") Others
+					td#matching_number_box(rowspan=3 style="text-align:right;vertical-align:bottom") &nbsp;
+				tr
+					td#overall_count_box(style="text-align:center;border-right:solid #bbb 1px")
+					td#seudo_count_box(style="text-align:center;border-right:solid #bbb 1px")
+					td#protein_product_count_box(style="text-align:center;border-right:solid #bbb 1px")
+					td#rna_count_box(style="text-align:center")
+				tr
+					td(colspan=4)
+		#gene_data_box(style="display:none;position:absolute;top:135px;left:50px;z-index:2;background-color:#fff")
+			table#gene_data_table(style="border-collapse:collapse;font-size:12px")
+		#statistic_diagram_box(style="display:none;position:absolute;top:180px;left:50px;z-index:2")
+			#diagram_control_box
+				select#filter_selection(style="float:right;font-size:12px")
+					option(value="All") All Together
+					option(value="Approved") Approved
+					option(value="Protein-Coding") Protein-Coding
+					option(value="Non-Coding RNA") Non-Coding RNA
+					option(value="Pseudogene") Pseudogene
+				span(style="float:right") X-axis:&nbsp;
+			canvas#statistic_diagram(style="background-color:#fff") No support canvas
 	script(type="text/javascript" src="/javascripts/genesView.js")
+	script(type="text/javascript").
+		$(function() {
+			var w = $(window).width() - 140
+			var h = $(window).height() - 280
+			$("#diagram_control_box").attr('width', w)
+			$("#statistic_diagram").attr('width', w).attr('height', h)
+			var ctx = $('#statistic_diagram')[0].getContext("2d")
+			var top_margin = 50
+			var bottom_margin = 70
+			var ori_x = 20
+			var ori_y = h-top_margin
+			var x_interval = Math.round((w - ori_x - 50)/24)
+			var y_axis_length = h-top_margin-bottom_margin
+			var dot_top_margin = 100
+			var dot_bottom_margin = 50
+			var dot_y_range = h - top_margin - dot_top_margin - bottom_margin
+			var color = ["#ee3333", "#00aa00", "#6633ff", "#aa9933", "#cc66dd", "#00aaee"]
+			var gene_active = [3562, 3478, 2216, 2617, 2543, 1422, 2465, 1248, 2133, 1137, 1373, 1194, 1069, 1541, 1243, 548, 1219, 416, 1158, 608, 475, 1077, 353]
+			var gene_coding = [1978, 1864, 855, 1095, 1211, 776, 1394, 588, 1322, 557, 827, 718, 309, 590, 558, 359, 803, 194, 786, 344, 209, 489, 35]
+			var gene_rna = [384, 296, 450, 287, 329, 110, 200, 151, 251, 123, 91, 89, 273, 202, 204, 43, 107, 51, 141, 89, 94, 128, 22]
+			var gene_seudo = [1109, 1163, 862, 956, 861, 483, 732, 469, 503, 425, 416, 360, 468, 498, 428, 131, 286, 158, 204, 158, 163, 396, 289]
+			var max = Math.max.apply(null, gene_active)
+			var radius = 7
+
+			function set_basic() {
+					//the Title and Axies
+					ctx.fillStyle = '#000000'
+					ctx.font = '22px Arial'
+					ctx.beginPath()
+					ctx.fillText('Gene Distribution vs Chromosomes', 100, top_margin)
+					ctx.rect(ori_x+20, h-bottom_margin, 23*x_interval+ori_x, 2)
+					ctx.closePath()
+					ctx.fill()
+
+					var grid_w = w - ori_x - 500
+					var grid_h_start = top_margin/2
+					ctx.fillStyle = "#f0f0f0"
+					ctx.beginPath()
+					ctx.fillRect(grid_w, grid_h_start, 350, 100)
+					ctx.closePath()
+					ctx.fill()
+
+					var grid_bar_w = 10
+					var grid_diagram_x = grid_w + 120
+					ctx.font = '11px Arial'
+					ctx.fillStyle = "#000"
+					ctx.beginPath()
+					ctx.fillText('Approved', grid_diagram_x, 16+grid_h_start)
+					ctx.fillText('Pseudogene', grid_diagram_x-65, 50+grid_h_start)
+					ctx.fillText('Protein Coding', grid_diagram_x+30, 35+grid_h_start)
+					ctx.fillText('Non-Coding RNA', grid_diagram_x+40, 65+grid_h_start)
+					ctx.closePath()
+					ctx.fill()
+
+					ctx.fillStyle = color[0]
+					ctx.beginPath()
+					ctx.fillRect(grid_diagram_x+grid_bar_w, 20+grid_h_start, grid_bar_w, 70)
+					ctx.fillRect(grid_diagram_x+grid_bar_w*3, 60+grid_h_start, grid_bar_w-1, 30)
+					ctx.closePath()
+					ctx.fill()
+
+					ctx.strokeStyle = color[0]
+					ctx.lineWidth = 2
+					ctx.beginPath()
+					ctx.strokeRect(grid_diagram_x, 50+grid_h_start, grid_bar_w-1, 39)
+					ctx.strokeRect(grid_diagram_x+grid_bar_w*2, 40+grid_h_start, grid_bar_w-1, 49)
+					ctx.closePath()
+					ctx.stroke()
+
+					/*ctx.lineWidth = 1
+					ctx.strokeStyle = "#666"
+					ctx.beginPath()
+					ctx.moveTo(grid_w+200, 65+grid_h_start)
+					ctx.lineTo(grid_w+210, 55+grid_h_start)
+					ctx.moveTo(grid_w+210, 55+grid_h_start)
+					ctx.lineTo(grid_w+220, 65+grid_h_start)
+					ctx.closePath()
+					ctx.stroke()*/
+
+				for (var i=1; i<=23; i++) {
+						var chr_str
+						if (i == 22) chr_str = 'X'
+						else if (i == 23) chr_str = 'Y'
+						else chr_str = i + ''
+						ctx.font = '18px Arial'
+						ctx.fillStyle = color[(i-1)%color.length]
+						ctx.beginPath()
+						ctx.fillText(chr_str, ori_x+x_interval*i, h-bottom_margin+20)
+						ctx.closePath()
+						ctx.fill()
+				}
+			}
+
+			function set_active() {
+						for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-gene_active[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(gene_active[i-1], ori_x+x_interval*i+5, dot_y_start-5)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.beginPath()
+							ctx.fillStyle = color[(i-1)%color.length]
+							ctx.fillRect(ori_x+x_interval*i, dot_y_start, radius, h-dot_y_start-bottom_margin)
+							ctx.closePath()
+							ctx.fill()
+						}
+			}
+
+			function set_seudo() {
+				for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-gene_seudo[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(gene_seudo[i-1], ori_x+x_interval*i-radius*3, dot_y_start-5)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.lineWidth = 2
+							ctx.beginPath()
+							ctx.strokeStyle = color[(i-1)%color.length]
+							ctx.strokeRect(ori_x+x_interval*i-radius, dot_y_start, radius, h-dot_y_start-bottom_margin)
+							ctx.closePath()
+							ctx.stroke()
+				}
+			}
+
+			function set_coding() {
+				for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-gene_coding[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(gene_coding[i-1], ori_x+x_interval*i+radius, dot_y_start-5)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.lineWidth = 2
+							ctx.beginPath()
+							ctx.strokeStyle = color[(i-1)%color.length]
+							ctx.strokeRect(ori_x+x_interval*i+radius, dot_y_start, radius, h-dot_y_start-bottom_margin)
+							ctx.closePath()
+							ctx.stroke()
+				}
+			}
+
+			function set_rna() {
+				for (var i=1; i<=23; i++) {
+							var dot_y_start = top_margin + dot_top_margin + Math.round(dot_y_range*(1.0-gene_rna[i-1]/max))
+							ctx.fillStyle = "#000000"
+							ctx.font = '11px Arial'
+							ctx.beginPath()
+							ctx.fillText(gene_rna[i-1], ori_x+x_interval*i+radius*2, dot_y_start-5)
+							ctx.closePath()
+							ctx.fill()
+
+							ctx.beginPath()
+							ctx.fillStyle = color[(i-1)%color.length]
+							ctx.fillRect(ori_x+x_interval*i+radius*2, dot_y_start, radius, h-dot_y_start-bottom_margin)
+							ctx.closePath()
+							ctx.fill()
+				}
+			}
+
+			$("#statiscic_link").on('click', function() {
+				$("#statistic_diagram_box").fadeToggle()
+				set_active()
+				set_seudo()
+				set_coding()
+				set_rna()
+				set_basic()
+			})
+
+			$("#filter_selection").on('change', function() {
+				ctx.clearRect(0, 0, w, h)
+				if ($(this).val() == 'All') {
+					set_active()
+					set_seudo()
+					set_coding()
+					set_rna()
+					set_basic()
+				}
+				else if ($(this).val() == 'Approved') {
+					set_active()
+					set_basic()
+				}
+				else if ($(this).val() == 'Protein-Coding') {
+					set_coding()
+					set_basic()
+				}
+				else if ($(this).val() == 'Non-Coding RNA') {
+					set_rna()
+					set_basic()
+				}
+			else if ($(this).val() == 'Pseudogene') {
+					set_seudo()
+					set_basic()
+				}
+			})
+		})

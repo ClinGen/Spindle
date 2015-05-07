@@ -1,0 +1,58 @@
+extends layout
+block content
+	#summarydataboard
+		table
+			tr
+				td
+					ul
+						li Total number of case group : #{numbers[0]}
+						li Total number of control group : #{numbers[1]}
+				td(width="10px") &nbsp;
+				td
+					dl
+						dd
+								select(name="idType" id="idType")
+									option(value="GroupName") Group Name
+									option(value="PMID") PM ID
+									option(value="LogName") Login Name
+								span &nbsp;
+								input(type="text" name="idValue" id="idValue")
+								span(style="font-size:13px") <- Group Name, PM ID, or Curator's Login Name
+	#groupinfobox(style="position:relative;top:100px;width:96%;padding:30px 20px 50px 20px;overflow:auto;display:none")
+	script(type="text/javascript").
+		$(document).ready(function() {
+			$("#idValue").on('input', function() {
+				//alert('here')
+				if ($(this).val() != '') {
+					var url = '/Observations/Groupsearch/' + $("#idType").children("option:selected").val() + '/' + $(this).val()
+					$.get(url, function(data) {
+						//alert(data[0].GroupData.GroupName)
+						//$("#groupinfobox").html('<span>'+data[0].GroupData.GroupName+'</span>')
+						var htmlstr = '<div style="+zoom:1"><table><tr style="background:#29f;color:#eee;height:25px">'
+						htmlstr += '<td style="text-align:center;width:150px">Group Name</td><td style="text-align:center;width:150px">PM ID</td>'
+						htmlstr += '<td style="text-align:center;width:150px">Type</td><td style="text-align:center;width:150px">Creator</td>'
+						htmlstr += '<td style="text-align:center;width:3000px">Gene:Disease</tr>'
+						if (data[0] == 'Error') {
+							htmlstr += 'No relevant group found with input data: <span style="color:red">' + data[1] +', ' + data[2] + '</span>'
+						}
+						else {
+							for (var i=0, j=data.length; i<j; i++) {
+								htmlstr += '<tr style="height:25px">'
+								htmlstr += '<td style="text-align:center;border-bottom:solid #ddd 1px">' + data[i].GroupData.GroupName + '</td>'
+								htmlstr += '<td style="text-align:center;border-bottom:solid #ddd 1px">' + data[i].GroupData.PMID + '</td>'
+								htmlstr += '<td style="text-align:center;border-bottom:solid #ddd 1px">' + data[i].Type + '</td>'
+								htmlstr += '<td style="text-align:center;border-bottom:solid #ddd 1px">' + data[i].Curators[0] + '</td>'
+								htmlstr += '</tr>'
+							}
+						}
+						htmlstr += '</table></div>'
+						$("#groupinfobox").html(htmlstr)
+						$("#groupinfobox").css('display', 'block')
+					})
+				}
+				else {
+					$("#groupinfobox").css('display', 'none')
+				}
+			})
+		})
+	//-script(type="text/javascript" src="/javascripts/diseasesView.js")

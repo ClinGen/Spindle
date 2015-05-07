@@ -7,22 +7,6 @@ block content
 		#wincontent(style="text-align:center;padding-top:15px")
 		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
 	script(type="text/javascript" src="/javascripts/changepwd.js")
-	#summarydataboard(style="display:block;vertical-align:middle;line-height:40px;height:40px")
-		form#associateionentry(action="/Curations" method="post")
-			//-input(type="hidden" id="ordoid")
-			span
-				input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbbbbb;width:120px" value="Gene Symbol")
-			span(style="font-size:15px;font-weight:bold") &nbsp;:&nbsp;
-			span
-				input(type="textarea" id="diseaseterm" name="diseaseterm" style="width:650px;height:18px;font-size:13px;color:#bbbbbb" value="Phenotype Term")
-				//-textarea#diseaseterm(name="diseaseterm" rows=3 style="overflow:auto;resize:none;width:500px;font-size:14px;color:#bbbbbb" value="Disease Term")
-			span &nbsp;
-				//-select(id="diseaseterm" name="diseaseterm" style="font-size:120%;height:25px")
-					option(id="keyword" value="Keyword") Keyword in Disease Name/Synonym
-					option(id="ordoid" value="ORDOID") ORDO ID
-					option(id="omimid" value="OMIMID") OMIM ID
-			span
-				input(type="submit" value="Enter" id="enterbutton" style="height:20px;font-size:16px")
 	#genelist
 	#diseaselist
 	#mainboard(style="position:relative;margin:0 auto;padding-top:90px;padding-bottom:100px")
@@ -117,7 +101,7 @@ block content
 								});
 		else
 			br
-			span(style="font-size:20px") Total number of gene:phenotype association: #{data}
+			span(style="font-size:20px") Total number of gene:disease association: #{data}
 			br
 			br
 			span(style="font-size:16px") Enter gene symbol and keywoord of phenotype term above to access.

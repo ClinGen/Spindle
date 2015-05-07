@@ -1,0 +1,317 @@
+div
+	div(style="position:fixed;width:100%;height:25px;z-index:2")
+		table#title_table(style="background-color:#f0f0f0")
+			tr(style="height:25px")
+				td(style="width:400px;text-align:center") ACTION(S)
+				td(style="width:450px;text-align:center") FUNCTIONAL DATA
+				td(style="width:300px;text-align:center") VARIANT ASSOCIATED
+				td(style="padding-right:10px;text-align:right")
+					a.addnew_functional_link(style="cursor:pointer;font-size:12px") Add New Analysis
+	- var evidence_items = {}
+	- evidence_items.IdentifiedFunction = "Identified Function"
+	- evidence_items.EvidenceFunction = "Evidence for Function"
+	- evidence_items.GeneSymbol = "Gene Sharing Function"
+	- evidence_items.SharedDisease = "Shared Disease (Orphanet)"
+	- evidence_items.Phenotype_Text = "Phenotype (free text)"
+	- evidence_items.Phenotype_HPO = "Phenotype (HPO)"
+	- evidence_items.Explanation = "Explanation"
+	- evidence_items.InteractingGene = "Interacting Gene"
+	- evidence_items.InteractionType = "Interaction Type"
+	- evidence_items.SimilarDisease = "Similar Disease"
+	- evidence_items.CommentInteractingProtein = "Comments"
+	- evidence_items.DiseaseTissue = "Disease Tissue"
+	- evidence_items.UniqueExpression = "Uniquely Normal Expression"
+	- evidence_items.CommentNormalExpression = "Comments on Normal Expression"
+	- evidence_items.AlteredExpression = "Altered Expression"
+	- evidence_items.CommentAlteredExpression = "Comments on Altered Expression"
+	- evidence_items.ExperimentPatientCell = "Experiment on Patient Cells"
+	- evidence_items.DescriptionPatientCell = "Description of Patient Cells"
+	- evidence_items.NormalFunctionGeneProtein = "Normal Function"
+	- evidence_items.EvidenceAlteredFunction = "Altered Function Evidence"
+	div(style="position:relative;top:25px;overflow:auto;padding-top:5px;background-color:#fff;z-index:1")
+		table#fdata_table(style="width:100%;border-collapse:collapse;font-size:11px")
+			if fData && fData.length > 0
+				each f, index in fData
+					- var analysis_creator = f.Curators[0]
+					- var variant_associated = false
+					tr.fdata_lane
+						//-td(id="functional_td_#{f.AnalysisID}" style="width:100%")
+							table(style="width:100%;border-collapse:collapse" border=1)
+								tr
+						td(style="width:400px;vertical-align:top;border-right:solid #f0f0f0 1px")
+										while f.Action.length > 0
+											- var action = f.Action.pop()
+											- var dt = f.DateTime.pop()
+											- var curator = f.Curators.pop()
+											span(style="line-height:20px") #{action}&nbsp;
+											span(style="line-height:20px;color:#888") (#{curator}, #{dt.substring(4,15)})
+											if f.Action.length > 0
+												br
+						td(style="width:450px;vertical-align:top;border-right:solid #f0f0f0 1px")
+										table(style="width:100%;border-collapse:collapse")
+											tr
+												td(style="width:200px;text-align:right") #{f.AnalysisID} PMID:
+												td
+													a(href="http://www.ncbi.nlm.nih.gov/pubmed/#{f.PMID}" target="_blank")= f.PMID
+													span &nbsp;&nbsp;&nbsp;
+													a.pmidclick(style="cursor:pointer;text-decoration:none" title="#{f.PMID}") =>
+													//-span #{evidence_items.IdentifiedFunction}
+											tr
+												td(style="text-align:right") Evidence Type:
+												td #{f.Type}
+
+											each value, key in f.Evidence
+												- var item_name
+												each item, i_key in evidence_items
+													if key == i_key
+														- item_name = item
+														- break
+												tr
+													td(style="vertical-align:top;text-align:right") #{item_name}:
+													td
+														if key == 'Phenotype_HPO'
+															each hpo, hpo_i in value
+																a(href="" target="_blank")= hpo
+																if hpo_i < value.length-1
+																		br
+														else
+															span= value
+												if f.Type == 'Biochemical Function' && key == 'EvidenceFunction' && f.Evidence.GeneSymbol
+													tr
+														td(colspan=2 style="text-align:left;text-decoration:underline") Gene implicated in same disease that shares same function
+												if f.Type == 'Biochemical Function' && ((key == 'EvidenceFunction' && !f.Evidence.GeneSymbol) || key == 'SharedDisease' && (f.Evidence.Phenotype_Text || f.Evidence.Phenotype_HPO))
+													tr
+														td(colspan=2 style="text-align:left;text-decoration:underline") Gene Function Consistent with Phenotype
+						td(style="width:300px;vertical-align:top;border-right:solid #f0f0f0 1px")
+							table.variant_data_table(style="width:100%" border=0)
+								- var variant_associated = false
+								if f.Variant && f.Variant.length > 0
+									each v in f.Variant
+										if v.Active == 'Yes'
+											- variant_associated = true
+											tr
+												td(style="text-align:right;width:80px") ClinVar ID:
+												td(style="text-align:left")
+													a(href="http://www.ncbi.nlm.nih.gov/clinvar/variation/#{v.ClinVarID}" target="_blank") #{v.ClinVarID}
+											tr
+												td(style="text-align:right") dbSNP ID:
+												td(style="text-align:left")
+													a(href="http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs=#{v.dbSNPID}" target="_blank") #{v.dbSNPID}
+											tr
+												td(style="text-align:right;vertical-align:top") Variant HGVS:
+												td(style="text-align:left")
+													if v.VariantHGVS && v.VariantHGVS.length > 0
+														each hgvs, i in v.VariantHGVS
+															span= hgvs
+															if i < v.VariantHGVS.length-1
+																br
+													else
+														span &nbsp;
+											tr
+												td(colspan=2) &nbsp;
+											if analysis_creator == user.LogName
+												tr
+													td(colspan=2 style="text-align:center")
+														a.destroy_variant_link(style="text-align:center;text-decoratioin:none;cursor:pointer" title="#{f.AnalysisID}/#{f.PMID}/#{v.VariantID}") Remove Variant
+											- variant_associated = true
+								if analysis_creator == user.LogName && !variant_associated
+									tr
+										td(style="text-align:center" colspan=2)
+											a.add_variant_link(style="text-decoration:none;cursor:pointer" title="FunctionalData/#{f.AnalysisID}/#{f.PMID}") Add Variant
+						//-td(style="width:250px;vertical-align:top;text-align:center" rowspan=2)
+							if f.Assessment && f.Assessment.length > 0
+								each a, a_i in f.Assessment
+									span #{a.Level}&nbsp;
+									if a.LogName != user.LogName
+										span(style="color:#aaa") (#{a.LogName})
+									else
+										span &nbsp;&nbsp;
+										a(style="text-decoration:none;cursor:pointer") x
+									if a_i < f.Assessment.length-1
+										br
+						td(style="text-align:right;vertical-align:top")
+							if analysis_creator == user.LogName && !variant_associated
+								a.edit_link(style="text-decoration:none;cursor:pointer" title="#{f.AnalysisID}") Edit
+								span &nbsp;|&nbsp;
+								a.delete_link(style="text-decoration:none;cursor:pointer" title="#{f.AnalysisID}") Delete
+							else
+								span &nbsp;
+					tr
+						td(colspan=5)
+							hr(style='width:96%;height:1px;align:center;border:0 none;color:#eee;background-color:#eee')
+			else
+				tr
+					td(style="font-size:16px")
+						span No functional data entered.&nbsp;
+						a.addnew_functional_link(style="cursor:pointer;text-decoration:none") Click
+						span &nbsp;to add a new one.
+	script(type="text/javascript").
+		$(function() {
+			function set_title_table_width() {
+				$("#title_table").css('width', $(window).width() - 70 + 'px')
+			}
+			set_title_table_width()
+			$(window).resize(function() {
+				set_title_table_width()
+			})
+
+			//var orig_bgcolor
+			$(".fdata_lane")
+			.on('mouseover', function() {
+				if ($(this).css('background-color') != 'rgb(238, 238, 153)') $(this).css('background-color', '#cef')
+			})
+			.on('mouseout', function() {
+				if ($(this).css('background-color') != 'rgb(238, 238, 153)') $(this).css('background-color', '#fff')
+			})
+			.on('click', function() {
+				var this_obj = $(this)
+				$(".fdata_lane").each(function() {
+					$(this).css('background-color', '#fff')
+				})
+				if (this_obj.css('background-color') != 'rgb(238, 238, 153)') this_obj.css('background-color', '#ee9')
+				else this_obj.css('background-color', '#cef')
+			})
+
+			$(".addnew_functional_link").on('click', function() {
+				$("input:text").val('')
+				$("input:checkbox").attr('checked', false)
+				$("select option[value=''").attr('selected', 'selected')
+				$("textarea").text('')
+				$("textarea.textarea_text").text('free text').css('color', '#999')
+				$("textarea.textarea_hpo").text('HPO Term').css('color', '#999').prop('rows', 1)
+				$("textarea.disabled").css('background', '#ddd').attr('disabled', 'disabled')
+				$("div.functional_option_content").css('display', 'none')
+				$("#submitbutton").css('display', 'none')
+				$("#fid").val('')
+				$("#functional_Addnew_box").css('display', 'block')
+			})
+
+			$(".edit_link").on('click', function() {
+				//alert($(this).attr('title'))
+				$.get('/Functionaldataanalysis/Analysis/'+$(this).attr('title')+'/Edit', function(data) {
+					if (data) {
+						$("#functional_Addnew_box").css('display', 'block')
+						//$("#functional_Edit_box").css('display', 'block')
+						$("#pmid").val(data.PMID)
+						$("#evid_type option[value='"+data.Type+"']").attr('selected', 'selected')
+						$("div.functional_option_content").each(function() {
+							$(this).css('display', 'none')
+						})
+						if (data.Type == 'Biochemical Function') {
+							$("#identifiedfunction").val(data.Evidence.IdentifiedFunction)
+							$("#evidencefunction").text(data.Evidence.EvidenceFunction)
+							if (data.Evidence.GeneSymbol) $("#geneHGNC").val(data.Evidence.GeneSymbol)
+							if (data.Evidence.SharedDisease) $("#shareddisease").text(data.Evidence.SharedDisease)
+							if (data.Evidence.Phenotype_Text) {
+								$("#phenotype_text").text(data.Evidence.Phenotype_Text)
+								$("#phenotype_text").css('color', '#000')
+							}
+							if (data.Evidence.Phenotype_HPO && data.Evidence.Phenotype_HPO.length > 0) {
+								$("#phenotype_hpo").prop('rows', data.Evidence.Phenotype_HPO.length)
+								var str = ''
+								$.each(data.Evidence.Phenotype_HPO, function(i, v) {
+									str += v
+									if (i < data.Evidence.Phenotype_HPO.length-1) str += '\r\n'
+								})
+								$("#phenotype_hpo").text(str)
+								$("#phenotype_hpo").css('color', '#000')
+							}
+							if (data.Evidence.Explanation) $("#explanation").text(data.Evidence.Explanation)
+							$("#functional_1_content").css('display', 'block')
+						}
+						else if (data.Type == 'Protein Interactions') {
+							$("#interactinggene").val(data.Evidence.InteractingGene)
+							$("#interactiontype").val(data.Evidence.InteractionType)
+							$("#similardisease").val(data.Evidence.SimilarDisease)
+							$("#comment_interact_protein").text(data.Evidence.CommentInteractingProtein)
+							$("#functional_2_content").css('display', 'block')
+						}
+						else if (data.Type == 'Expression') {
+							$("#diseasetissue").text(data.Evidence.DiseaseTissue)
+							if (data.Evidence.UniqueExpression) $("#uniqueExpressed option[value='"+data.Evidence.UniqueExpression+"']").attr('selected', 'selected')
+							if (data.Evidence.CommentNormalExpression) $("#comment_normalexpression").text(data.Evidence.CommentNormalExpression)
+							if (data.Evidence.AlteredExpression) {
+								$("#alteredexpression").attr('checked', 'checked')
+								$("#comment_alteredexpression").text(data.Evidence.CommentAlteredExpression)
+								$("#comment_alteredexpression").attr('disabled', false)
+								$("#comment_alteredexpression").css('background-color', '#fff')
+							}
+							$("#functional_3_content").css('display', 'block')
+						}
+						else if (data.Type == 'Gene Disruption') {
+							if (data.Evidence.ExperimentPatientCell) $("#experiment_patientcell").prop('checked', 'checked')
+							if (data.Evidence.DescriptionPatientCell) $("#description_patientcell").text(data.Evidence.DescriptionPatientCell).css('background-color', '#fff').attr('disabled', false)
+							if (data.Evidence.NormalFunctionGeneProtein) $("#normalfunction_geneprotein").val(data.Evidence.NormalFunctionGeneProtein)
+							if (data.Evidence.EvidenceAlteredFunction) $("#evidence_altertedfunction").text(data.Evidence.EvidenceAlteredFunction)
+							$("#functional_4_content").css('display', 'block')
+						}
+						$("#fid").val(data.AnalysisID)
+						//alert($("#fid").val())
+						$("#submitbutton").css('display', 'block')
+					}
+					else $(location).reload()
+				})
+			})
+
+			$(".delete_link").on('click', function() {
+				if (confirm('Delete the analysis?')) {
+					var str = {
+						"fid": $(this).attr('title'),
+						"symbol": $("#symbol").val(),
+						"ordoid":  $("#ordoid").val(),
+					}
+					$.post('/Functionaldataanalysis/Delete', str, function(data) {
+						if (data) $(location).attr('href', '/Curations/'+ $("#symbol").val()+'/'+ $("#ordoid").val()+'/Functional')
+						else alert('Error: ')
+					})
+				}
+			})
+
+			$(".add_variant_link").on("click", function() {
+				//$("#temp_store").val($(this).attr('title'))
+				$("#variant_addnew_box").css('display', 'block')
+				var temp = $(this).attr('title').split("/")
+				$("#target_item_name").val(temp[0]+'/'+temp[1])
+				$("#target_item_id").val(temp[2])
+				//$("#variantform").attr('action', '/FunctionaldataAnalysis/Associate/')
+			})
+
+			/*$("#variant_add_submit_button").on('click', function() {
+				var url = '/FunctionaldataAnalysis/Associate'
+				var input_data = {
+					"fid": $("#target_item_id").val(),
+					"clinvarid": $("#clinvarid")
+				}
+				$.post(url, input_data, function(status) {
+					if (status) $(widnow).attr('href', '/Curations/')
+					var htmlstr = ''
+					if (newdata) {
+						htmlstr += '<tr><td style="text-align:right;width:80px">CllinVar ID:</td><td>' + newdata.ClinVarID + '</td></tr>'
+						htmlstr += '<tr><td style="text-align:right">dbSNP ID:</td><td>' + newdata.dbSNPID + '</td></tr>'
+						htmlstr += '<tr><td style="text-align:right">Variant HGVS:</td><td>'
+						for (var i=0; i<newdata.VariantHGVS.length; i++) {
+							htmlstr += newdata.VariantHGVS[i]
+							if (i < newdata.VariantHGVS.length-1) htmlstr += '<br />'
+						}
+						htmlstr += '</td></tr>'
+						htmlstr += '<tr><td colspan=2 style="text-align:center"><a class="destroy_variant_link" style="text-decoration:none;cursor:pointer">Remove Variant</a></td></tr>'
+					}
+					else htmlstr += '<tr><td style="color:red">Failed to add variant.</td></tr>'
+					$("")
+				})
+			})*/
+
+			$(".destroy_variant_link").on('click', function() {
+				if (confirm('Remove the association?')) {
+					var temp = $(this).attr('title').split('/')
+					var req_data = {
+						"fid": temp[0],
+						"pmid": temp[1],
+						"vid": temp[2]
+					}
+					$.post('/Functionaldataanalysis/Remove', req_data, function(done) {
+						if (done) $(location).attr('href', '/Functionaldataanalysis/Analysis/'+temp[0])
+					})
+				}
+			})
+		})

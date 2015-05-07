@@ -1,0 +1,179 @@
+div(style="width:444px;border:solid #eee 1px")
+			//-form#variantform(method="post")
+			input(type="hidden" id="target_item_name" name="target_item_name" value="")
+			input(type="hidden" id="target_item_id" name="target_item_id" value="")
+			//-input(type="hidden" id="vid" name="vid" value="")
+			//-input(type="hidden" id="hgvs_str" name="hgvs_str" value="")
+			table(style="width:100%;font-size:12px;" border=0)
+						tr
+							td(colspan=2 style="text-align:right")
+								a#variantboxclose(style="text-decoration:none;cursor:pointer;font-size:16px;color:#fff") X
+						tr
+							td(colspan=2 style="text-align:center;font-size:16px;vertical-align:top") Enter Variant Data
+						tr
+							td(colspan=2)
+						tr
+							td(style="width:150px;vertical-align:top;text-align:right")
+								a(href="http://www.ncbi.nlm.nih.gov/clinvar/" target="_blank" style="color:#03a") ClinVar
+								span &nbsp;ID:
+							td
+								input.variant_id_input(type="text" id="clinvarid" name="clinvarid" style="width:160px")
+						tr
+							td(style="vertical-align:top;text-align:right")
+								a(href="http://www.ncbi.nlm.nih.gov/SNP/" target="_blank" style="color:#03a") dbSNP
+								span &nbsp;ID:
+							td
+								input.variant_id_input(type="text" id="dbsnpid" name="dbsnpid" style="width:160px")
+						tr
+							td(style="vertical-align:top;text-align:right")
+								span Variant&nbsp;
+								a(href="http://www.hgvs.org/mutnomen/" target="_blank" style="color:#03a") HGVS
+								span :
+							td
+								textarea.variant_id_input(cols=30 rows=8 id="varianthgvs" name="varianthgvs" style="overflow:auto")
+						tr
+							td(colspan=2 style="text-align:right")
+						tr
+							td(style="text-align:right")
+								input.variant_form_button(type="button" value="Submit" style="display:none;font-size:14px;float:right")
+							td
+								input.variant_form_button(type="button" value="Reset" style="display:none;font-size:14px")
+						tr
+							td(colspan=2) &nbsp;
+#ajax_resp_data_box(style="display:none;position:absolute;z-index:15;width:400px;height:300px;border:solid #999 1px;background-color:#eee;font-size:11px;padding:5px 5px 5px 0px;overflow-y:auto;overflow-x:hidden")
+script(type='text/javascript').
+	$(function() {
+		$("#variantboxclose").on("click", function() {
+			$("#clinvarid").val('')
+			$("#dbsnpid").val('')
+			$("#varianthgvs").val('')
+			$("#variant_addnew_box").css('display', 'none')
+		})
+
+		$(".variant_id_input").on('input', function() {
+			$("#ajax_resp_data_box").css('display', 'none')
+			var top = $(this).offset().top - $("#variant_addnew_box").offset().top + 19 + 'px'
+			var left = ($(this).offset().left - $("#variant_addnew_box").offset().left - 2).toString() + 'px'
+			if ($(this).val() != '') {
+				var url = '/Variants/'
+				if ($(this).attr('id') == 'clinvarid') {
+						if ((/^[A-Za-z]+$/.test($(this).val()) && $(this).val().length > 3) || /[A-Za-z]+\d+[A-Za-z]/.test($(this).val())) {
+							alert('Format error.')
+							return
+						}
+						else if (/[1-9][0-9]{3}/.test($(this).val())) url += 'ClinVarID/' + $(this).val()
+						//else if ((!/^[A-Za-z]{3}/.test($(this).val()) && !/^[0]{3}/.test($(this).val()) && $(this).val().length>3) ||
+						//		(/^[0]{3}/.test($(this).val()) && $(this).val().length>6) ||
+						//		(/^[A-Za-z]{3}/.test($(this).val()) && $(this).val().length>9)) url += 'ClinVarID/' + $(this).val()
+				}
+				else if ($(this).attr('id') == 'dbsnpid') {
+						if ((/^[A-Za-z]+$/.test($(this).val()) && $(this).val().length > 2) || /[A-Za-z]+\d+[A-Za-z]/.test($(this).val())) {
+							alert('Format error.')
+							return
+						}
+						else if (/[0-9]{4}/.test($(this).val())) url += 'dbSNPID/' + $(this).val()
+						//else if ((!/^[A-Za-z]{2}/.test($(this).val()) && !/^[0]{3}/.test($(this).val()) && $(this).val().length>3) ||
+						//		(/^[0]{3}/.test($(this).val()) && $(this).val().length>5) ||
+						//		(/^[A-Za-z]{3}/.test($(this).val()) && $(this).val().length>9)) url += 'dbSNPID/' + $(this).val()
+				}
+				else if ($(this).attr('id') == 'varianthgvs') {
+						if ((/[1-9]\w{4}/.test($(this).val())) || (/\w+\.\w+\:\w+\.\w+/.test($(this).val())) || (/[a-z]\.\w{5}/.test($(this).val())) || (/\D{5}/.test($(this).val())))
+							url += 'VariantHGVS/' + $(this).val()
+
+				}
+				if (url != '/Variants/') {
+					$.get(url, function(data) {
+						if (data && data.length > 0) {
+							var htmlstr = ''
+							for (var j=0; j<data.length; j++) {
+								htmlstr += '<div class="variant_data_lane" style="width:390px">'
+								htmlstr += '<table style="width:390px;border-collapse:collapse" border=0>'
+								htmlstr += '<tr><td style="width:70px;text-align:right">ClinVar ID:</td><td class="db_clinvarid" style="width:310px">' + data[j].ClinVarID + '</td></tr>'
+								htmlstr += '<tr><td style="width:70px;text-align:right">dbSNP ID:</td><td class="db_dbsnpid" style="width:310px">' + data[j].dbSNPID + '</td></tr>'
+								htmlstr += '<tr><td style="width:70px;text-align:right;vertical-align:top">HGVS:</td><td class="db_hgvs" style="width:310px;word-break:break-all">'
+								if (data[j].VariantHGVS.length == 0) htmlstr += '&nbsp;'
+								else {
+									if (url.indexOf('VariantHGVS') > -1) {
+										for (var i=0; i<data[j].VariantHGVS.length; i++) {
+											var db_lower = data[j].VariantHGVS[i].toLowerCase()
+											var key_lower = url.split('VariantHGVS/')[1].toLowerCase()
+											var start_index = db_lower.indexOf(key_lower)
+											if (start_index != -1) {
+												htmlstr += data[j].VariantHGVS[i].substr(0, start_index) + '<span style="color:red">'
+												htmlstr += data[j].VariantHGVS[i].substr(start_index, key_lower.length) + '</span>'
+												htmlstr += data[j].VariantHGVS[i].substr(start_index+key_lower.length)
+												break
+											}
+										}
+									}
+									else htmlstr += data[j].VariantHGVS[0]
+									if (data[j].VariantHGVS.length > 1) htmlstr += '<br />....'
+								}
+								htmlstr += '</td></tr>'
+								htmlstr += '</table></div><br />'
+							}
+							$("#ajax_resp_data_box").html(htmlstr).css({'display':'block', "top":top, "left":left})
+						}
+					})
+				}
+			}
+			else $(".variant_form_button").css('display', 'none')
+		})
+
+		$("#ajax_resp_data_box")
+		.on('mouseover', 'div.variant_data_lane', function() {
+			$(this).css('background-color', '#9cf')
+		})
+		.on('mouseout', 'div.variant_data_lane', function() {
+			$(this).css('background-color', '#eee')
+		})
+		.on('click', 'div.variant_data_lane', function() {
+			var url = '/Variants/ClinVarID/'+$(this).find('td.db_clinvarid').text()
+			$.get(url, function(vData) {
+				if (vData) {
+					//alert (vData[0].ClinVarID)
+					$("#clinvarid").val(vData[0].ClinVarID)
+					$("#dbsnpid").val(vData[0].dbSNPID)
+					var htmlstr = ''
+					for (var i=0; i<vData[0].VariantHGVS.length; i++) {
+						htmlstr += vData[0].VariantHGVS[i]
+						if (i<vData[0].VariantHGVS.length-1) htmlstr += '\r\n'
+					}
+					$("#varianthgvs").val(htmlstr)
+					$("#ajax_resp_data_box").css('display', 'none')
+					$(".variant_form_button").css('display', 'block')
+				}
+				else {
+					alert('Failed to assign variant data.')
+					return
+				}
+			})
+			//$("#varianthgvs").val($(this).find('td.db_hgvs').text())
+
+		})
+
+		//$("#variantform").submit(function() {
+		$(".variant_form_button").on('click', function() {
+			if ($(this).val() == 'Submit') {
+				//alert($("#target_item_name").val()+'\r\n'+$("#target_item_id").val())
+				var temp = $("#target_item_name").val().split('/')
+				var url = '/Associate'
+				if (temp[0] == 'FunctionalData') url = '/Functionaldataanalysis' + url
+				//alert(url)
+				var input_data = {
+					"pmid": $("#target_item_id").val(),
+					"clinvarid": $("#clinvarid").val()
+				}
+				$.post(url, input_data, function(status) {
+					if (status) $(location).attr('href', '/Functionaldataanalysis/Analysis/'+temp[1])
+					else alert('Failed to associate.')
+				})
+			}
+			else if ($(this).val() == 'Reset') {
+				$("#clinvarid").val('')
+				$("#dbsnpid").val('')
+				$("#varianthgvs").val('')
+				$(".variant_form_button").css('display', 'none')
+			}
+		})
+	})

@@ -1,0 +1,156 @@
+table(style="width:100%;border:none;background:#ddd")
+				tr
+					td(style="text-align:center;font-size:13px") Date
+					td(style="text-align:center;font-size:13px") Parameters
+					td(style="text-align:center;font-size:13px") Returned Results
+					td(style="text-align:center;font-size:13px") Relevant Results
+					td(style="text-align:center;font-size:13px") Independent Clinical Reports
+					td(style="text-align:center;font-size:13px") Time to Complete
+				if data.LiteratureSearch
+					tr
+						if data.LiteratureSearch.Date
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.Date}
+						else
+							td &nbsp;
+						if data.LiteratureSearch.Parameters
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.Parameters}
+						else
+							td &nbsp;
+						if data.LiteratureSearch.ReturnedNumber
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.ReturnedNumber}
+						else
+							td &nbsp;
+						if data.LiteratureSearch.RelevantNumber
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.RelevantNumber}
+						else
+							td &nbsp;
+						if data.LiteratureSearch.ClinicalReportNumber
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.ClinicalReportNumber}
+						else
+							td &nbsp;
+						if data.LiteratureSearch.TimeComplete
+							td(style="text-align:center;font-size:11px") #{data.LiteratureSearch.TimeComplete}
+						else
+							td &nsbp;
+				if creator == user.LogName
+					form(action="/Curations/Literature" method="post" id="litdataform")
+						input(type='hidden' id='symbol' name="symbol" value='#{data.HGNCSymbol}')
+						input(type='hidden' id='ordoid' name="ordoid" value='#{data.ORDOID}')
+						input(type="hidden" id="dateliterature" name="dateliterature")
+						tr(style="text-align:center")
+							td(style="text-align:center;font-size:11px")
+								- var count = 1
+								- var index
+								select(id="literature_month" name="literature_month")
+									while count < 13
+										if count < 10
+											- index = '0' + count
+										else
+											- index = count
+										option(value="#{index}") #{index}
+										- count += 1
+								span &nbsp;/&nbsp;
+								- count = 1
+								select(id="literature_date" name="literature_date")
+									while count < 32
+										if count < 10
+											- index = '0' + count
+										else
+											- index = count
+										option(value="#{index}") #{index}
+										- count += 1
+								span &nbsp;/&nbsp;
+								- count = 2010
+								select(id="literature_year" name="literature_year")
+									while count < 2021
+										option(value="#{count}") #{count}
+										- count += 1
+							td(style="text-align:center;font-size:11px")
+								input(type="text" id="searchparamters" name="searchparamters" style="width:100px")
+							td(style="text-align:center;font-size:11px")
+								input.numeric(type="text" id="returnnumber" name="returnnumber" style="width:70px")
+							td(style="text-align:center;font-size:11px")
+								input.numeric(type="text" id="releventnumber" name="releventnumber" style="width:70px")
+							td(style="text-align:center;font-size:11px")
+								input.numeric(type="text" id="clinicalreportnumber" name="clinicalreportnumber" style="width:70px")
+							td(style="vertical-align:top;text-align:center;font-size:11px")
+								select(name="completetime" id="completetime")
+									option(value='') Select below
+									option(value="< 1 hr" style="font-size:18px;height:25px") < 1 hr
+									option(value='1 - 2 hr' style="font-size:18px;height:25px") 1 - 2 hr
+									option(value="2 - 3 hr" style="font-size:18px;height:25px")  2 - 3 hr
+									option(value='3 - 4 hr' style="font-size:18px;height:25px") 3 - 4 hr
+									option(value="4 - 5 hr" style="font-size:18px;height:25px")  4 - 5 hr
+									option(value='> 5 hr' style="font-size:18px;height:25px") > 5 hr
+						tr
+							td(colspan=6) &nbsp;
+						tr
+							td(colspan=6 style="text-align:left")
+								input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:16px")
+								span &nbsp;&nbsp;
+								input(type="reset" value="Reset" style="height:25px;font-size:16px")
+					script(type="text/javascript").
+						$(document).ready(function() {
+							function setInitial(the_input) {
+								the_input.css('color', '#999')
+								var today = new Date()
+								var month = today.getMonth()+1
+								if (month < 10) month = '0' + month
+								var date = today.getDate()
+								if (date < 10) date = '0' + date
+								var year = today.getFullYear()
+
+								$("#literature_month option[value='"+month+"']").attr('selected', 'selected')
+								$("#literature_date option[value='"+date+"']").attr('selected', 'selected')
+								$("#literature_year option[value='"+year+"']").attr('selected', 'selected')
+
+								if (the_input.attr('id') == 'searchparamters') $("#searchparamters").val('(String)')
+								if (the_input.attr('id') == 'returnnumber') $("#returnnumber").val('(Digit)')
+								if (the_input.attr('id') == 'releventnumber') $("#releventnumber").val('(Digit)')
+								if (the_input.attr('id') == 'clinicalreportnumber') $("#clinicalreportnumber").val('(Digit)')
+							}
+
+							setInitial($("#searchparamters"))
+							setInitial($("#returnnumber"))
+							setInitial($("#releventnumber"))
+							setInitial($("#clinicalreportnumber"))
+
+							$("input:text")
+							.on('focus', function () {
+								$(this).css('color', '#000')
+								if ($(this).val() == '(String)' || $(this).val() == '(Digit)') $(this).val('')
+							})
+							.on('blur', function() {
+								if ($(this).val() == '') setInitial($(this))  //alert($(this).attr('id'))
+							})
+							.on('input', function() {
+								if ($(this).attr('class') == 'numeric' && $(this).val() != '' && !/^\d+$/.test($(this).val())) alert('Please enter digit only.')
+								//else if ($(this).val() == '') setInitial($(this))
+								//else if (/(Digit)/.test($(this).val())) $(this).val().replace('(Digit)', '')
+							})
+
+							$("#litdataform").submit(function() {
+								var no_err = true
+								/*var pttn = /^[0-1][0-9]\/[0-3][0-9]\/20[1-3]\d$/
+								if ($("input.date").val() != '' && !pttn.test($("input.date").val())) {
+									$("input.date").focus()
+									alert('Plese enter a date with format DD/MM/YYYY')
+									no_err = false
+								}*/
+
+								$("input.numeric").each(function() {
+									if ($(this).val() != '(Digit)' && !$.isNumeric($(this).val())) {
+										$(this).focus()
+										alert('Please enter positive integer.')
+										no_err = false
+									}
+								})
+								$("input:text").each(function() {
+									if ($(this).val() == '(String)' || $(this).val() == '(Digit)') $(this).val('')
+								})
+								$("#dateliterature").val($("#literature_month").val()+'/'+$("#literature_date").val()+'/'+$("#literature_year").val())
+								//alert($("#dateliterature").val())
+								//return false
+								return no_err
+							})
+						})

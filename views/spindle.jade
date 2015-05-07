@@ -1,38 +1,72 @@
 extends layout
 block content
-	unless data
+	unless user
 		p(style="font-size:175d%; color:red") Must enter log name and password to access.
 		p Click Spindle above to access login.
 	else
-		if data.Active === 'Yes'
-			#pwdwin
-				#closepoint(style="text-align:right")
-					a(href="javascript:void(0)" id="closelink" title="Close") X
-				span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
-				#wincontent(style="text-align:center;padding-top:15px")
-				span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
-			script(type="text/javascript" src="/javascripts/changepwd.js")
-			br
-			table(style="padding-left:50px; padding-top:50px;width:90%")
-					//-tr
-						td(colspan=3) #{data._id}
-					tr
-						td(colspan=3) #{data.Name}&nbsp;(#{data.Title}),&nbsp;&nbsp;#{data.WorkingInstitute},&nbsp;&nbsp;#{data.ContactInfo}
-					tr
-						td(colspan=3) &nbsp;
-					tr
-						td(colspan=3 style="font-size:150%") Curation Record
-					tr
-						td.title(style="font-size:125%" width="250px" height="25px") Log in
-						td.title(style="font-size:125%" width="250px" height="25px") Log Out
-						td.title(style="font-size:125%" height="25px") Curation Item
-							- var i = 0
-							for d in data.LoginRecord
-								- var log = d.split(', ');
-								- i++
-								tr(height="25px")
-									td #{log[0].split(' GMT-0800')[0]+log[0].split(' GMT-0800')[1]}
-									td #{log[1].split(' GMT-0800')[0]+log[1].split(' GMT-0800')[1]}
-									td(align="center")
-										a(href="#") #{log[2]}
+		#mainboard(style="padding-bottom:70px")
+				br
+				table(style="padding-left:50px;padding-top:50px;width:90%;font-size:12px")
+						tr
+							td(colspan=3) #{user.Name}&nbsp;(#{user.Title}),&nbsp;&nbsp;#{user.WorkingInstitute},&nbsp;&nbsp;#{user.ContactInfo}
+						tr
+							td(colspan=3) &nbsp;
+						tr
+							td(colspan=3 style="font-size:150%") Curation History
+						tr
+							td.title(style="font-size:125%" width="250px" height="25px") Log in #{user.LoginRecord.length}
+							td.title(style="font-size:125%" width="250px" height="25px") Log out
+							td.title(style="font-size:125%" height="25px") Action(s)
+						while user.LoginRecord.length > 0
+							- var l = user.LoginRecord.pop()
+							- l.Login = l.Login.replace(' GMT-0800', '')
+							- l.Login = l.Login.replace(' GMT-0700', '')
+							if l.Logout.indexOf(' GMT') > -1
+								- l.Logout = l.Logout.replace(' GMT-0800', '')
+								- l.Logout = l.Logout.replace(' GMT-0700', '')
+							tr
+								td(style='border-bottom:solid #ddd 1px;vertical-align:top;color:#666')= l.Login+', '+user.LoginRecord.length
+								td(style='border-bottom:solid #ddd 1px;vertical-align:top;color:#666')= l.Logout
+								td(style='border-bottom:solid #ddd 1px;color:#666')
+									while l.Action.length > 0
+										- var action = l.Action.pop()
+										if action.indexOf('Delete') > -1 || action.indexOf('inactive') > -1 || action.indexOf('Inactive') > -1
+											span #{action}
+										else
+											- var link, temp
+											if action.indexOf('Gene_Disease pair') > -1
+												- link = '/Curations/'
+												- temp = action.match(/\S+:\d+/)[0].split(':')
+												- link += temp[0] + '/' + temp[1]
+												if action.indexOf('Literature Search') > -1
+													- link += '/Literature'
+												//- var temp = action.match(/\s\w+:\w+/)[0].split(' ')[1].split(':')
+											else if action.indexOf('Functional Data') > -1 || action.indexOf('functional data') > -1 || action.indexOf('Analysis') > -1
+												- link = '/Functionaldataanalysis/'
+												if /Analysis \d+/.test(action)
+													- link += 'Analysis/' + action.match(/Analysis \d+/)[0].split(' ')[1]
+											else if action.indexOf('Case Group Study') > -1
+												- link += '/Group/'
+												if /Group \d+/.test(action)
+													- link += action.match(/Group \d+/)[0].split(' ')[1]
+												if action.indexOf('group data') > -1
+													- link += '/Group'
+												else if action.indexOf('method') > -1
+													- link += '/Method'
+												else if action.indexOf('Segregation') > -1
+													- link += '/Segregation/' + action.match(/Segregation \d+/)[0].split(' ')[1]
+											//-else if action.indexOf('Case Control Study') > -1
+											a(href="#{link}" style="text-decoration:none") #{action}
+										br
+							tr
+								td(colspan=3)
+				script(type='text/javascript').
+					$(document).ready(function() {
+						/*
+						$("#tolastaction").click(function() {
+							var str = $.cookie('LastGeneCuration@'+"#{user.LogName}")
+							//alert(str)
+							$(location).attr('href', str)
+						})*/
+					})
 			script(type="text/javascript" src="/javascripts/spindleView.js")

@@ -1,33 +1,99 @@
 extends layout
 block content
-	#pwdwin
-		#closepoint(style="text-align:right")
-			a(href="javascript:void(0)" id="closelink" title="Close") X
-		span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
-		#wincontent(style="text-align:center;padding-top:15px")
-		span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
-	script(type="text/javascript" src="/javascripts/changepwd.js")
 	#summarydataboard
 		table
 			tr
 				td
 					ul
-						li Total number of diseases with ORDO ID : #{data[0]}
-						li Total number of diseases with OMIM ID : #{data[1]}
-				td(width="30px") &nbsp;
+						li Total number of diseases with Orphanet ID : #{numbers[0]}
+						li Total number of diseases with OMIM ID : #{numbers[1]}
+				td(width="10px") &nbsp;
 				td
 					dl
-						dd Search ORDO disease data:
+						dd Search Orphanet disease data:
 						dd
-							select(name="idType" id="idType")
-								option(value="FullName+Synonym") Key Word in Name/Synonym
-								option(value="ORDOID") ORDO ID
-								option(value="OMIMID") OMIM ID
-							span &nbsp;
-							input(type="text" name="idValue" id="idValue")
-							span &nbsp;
-							input(id="searchbutton" type="button" value="Enter")
+							form(action='/Diseases' method="get")
+								select(name="idType" id="idType")
+									option(value="FullName+Synonym") Key Word in Name/Synonym
+									option(value="ORDOID") Orphanet ID
+									option(value="OMIMID") OMIM ID
+								span &nbsp;
+								input(type="text" name="idValue" id="idValue" style="width:300px")
+								span &nbsp;
+								input(id="searchbutton" type="submit" value="Submit")
+								//-input(id="searchbutton" type="button" value="Enter")
 		#reporttitle(style="font-size:125%; bottom:0px" valign="bottom")
-		//-#maincontent
-	table#databoard
-	script(type="text/javascript" src="/javascripts/diseasesView.js")
+			if data
+				span Orphanet records matched: #{data.length}
+	div(style="width:100%;overflow:auto")
+		div(style="+zoom:1;")
+			if data
+				table#databoard(style="width:95%;border-collapse:collapse" width="95%")
+					for d, i in data
+						tr.odd(style="height:25px;width:100%")
+							td(rowspan=5 style="width:30px;text-align:center") #{i+1}
+							td(style="font-weight:bold;width:110px") Disease Name:
+							td(style="font-weight:bold")
+								- var term = d.FullName.toLowerCase()
+								- var v = idValue.toLowerCase()
+									if idType == 'FullName+Synonym' && term.indexOf(v) == 0
+										- var str = v.substring(0,1).toUpperCase() + v.substring(1)
+										span(style="color:red") #{str}
+										span #{d.FullName.substring(v.length, term.length)}
+									else if idType == 'FullName+Synonym' && term.indexOf(v) > 0
+										- var j = term.indexOf(v)
+										- var str = d.FullName.substring(j, j+v.length)
+										- var temp = d.FullName.split(str)
+										span #{temp[0]}
+										span(style="color:red") #{str}
+										span #{temp[1]}
+									else
+										span #{d.FullName}
+								div(style="float:right")
+									a.transfer(title="#{d.FullName+' -- Orphanet ID: '+d.ORDOID}") ^
+						tr.followcontent
+							td(style="vertical-align:top") Synonym(s)
+							td
+								for s in d.Synonym
+									- var term = s.toLowerCase()
+									- var v = idValue.toLowerCase()
+									if idType == 'FullName+Synonym' && term.indexOf(v) == 0
+										- var str = v.substring(0,1).toUpperCase() + v.substring(1)
+										span(style="color:red") #{str}
+										span #{s.substring(v.length, term.length)}
+									else if idType == 'FullName+Synonym' && term.indexOf(v) > 0
+										- var j = term.indexOf(v)
+										- var str = s.substring(j, j+v.length)
+										- var temp = s.split(str)
+										span #{temp[0]}
+										span(style="color:red") #{str}
+										span #{temp[1]}
+									else
+										span #{s}
+									br
+						tr
+							td Orphanet ID
+							td
+								a(style="text-decoration:none" target="_blank" href="http://www.orpha.net/consor/cgi-bin/OC_Exp.php?lng=EN&Expert=#{d.ORDOID}") #{d.ORDOID}
+						tr
+							td OMIM ID
+							td
+								for omim in d.OMIMID
+									a(style="text-decoration:none" target="_blank" href="http://omim.org/entry/#{omim}") #{omim}
+									span ,&nbsp;&nbsp;
+						tr
+							td Type
+							td #{d.Type}
+						tr
+							td(colspan=3) &nbsp;
+			else if error
+				p Invalid input data: #{idType}, #{idValue}
+	script(type="text/javascript").
+		$(document).ready(function() {
+			$(".transfer").on('click', function() {
+				$("#diseaseterm").val($(this).attr('title'))
+				$("#diseaseterm").css('color','#000')
+				$.cookie('diseaseterm', $(this).attr('title'), { path: '/' })
+			})
+		})
+	//-script(type="text/javascript" src="/javascripts/diseasesView.js")

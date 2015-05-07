@@ -2,46 +2,131 @@ doctype html
 html
 	head
 		title Spindle
+		link(rel="shortcut icon" href="/images/favicon.ico")
 		link(rel='stylesheet', href='/stylesheets/style.css')
+		//-script(type="text/javascript" src="/javascripts/jquery-2.1.3.min.js")
 		script(src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js")
+		script(type="text/javascript").
+			!window.jQuery && document.write("<script type='text/javascript' src='/javascripts/jquery-2.1.3.min.js'></scr"+"ipt>")
+		script(type="text/javascript" src="/javascripts/jquery.cookie.js")
 	body
-		#head
-			#logolink.floatleft
+		div#top_blue_bar(style="position:fixed;top:0px;left:0px;width:100%;height:5px;background:#159;z-index:10")
+		#head(style="width:100%")
+			#ClinGen_Logo.floatleft(style="position:absolute;top:2px;z-index:11")
+				a(href="http://www.clinicalgenome.org/" target="_blank")
+					img#clingen_logo_img(src="/images/ClinGenLogo-rainbow.png" style="padding-left:10px;height:40px;opacity:1")
+					img#clingen_logo_img(src="/images/ClinGenLogo.png" style="padding-left:10px;height:40px;opacity:1")
+			//-img.floatleft(src="/images/spindle-logo-9.png" style="height:90px;margin:3px 0 0 10px;opacity:0.5")
+			//-#logolink.floatleft
 				a#spindleLogo(href='/') SPINDLE
-			#toplinks.floatleft
-				table
-					tr
-						td
-							a(href='/Curators' id="curators_link") Curators
-							span &nbsp;
-							a(href='/Genes' id="genes_link") Genes
-							span &nbsp;
-							a(href='/Diseases' id="diseases_link") Diseases
-							span &nbsp;
-							a(href='/Curations' style="color:grey" id="curations_link") Curations
-							span &nbsp;
-							a(href="javascript:void(0)" id="changepwd" title="Click") Password
-							span &nbsp;
-							a(href='/Logout' id="logout_link") Logout
-			//-#userinfo.floatleft
-				table
-					tr
-						td(style="text-align:right")
-							a(href="#") user_name
-							span &nbsp;
-							a(href="#") icon
-			//-	span &nbsp;&nbsp;
-				a(href='/Curators' id="curators_link") Curators
-				span &nbsp;&nbsp;
-				a(href='/Genes' id="genes_link") Genes
-				span &nbsp;&nbsp;
-				a(href='/Diseases' id="diseases_link") Diseases
-				span &nbsp;&nbsp;
-				a(href='/Curations' style="color:grey" id="curations_link") Curations
-				span(style="padding-left:300px") &nbsp;&nbsp;
-				a(href="javascript:void(0)" id="changepwd" title="Click") Password
-				span &nbsp;&nbsp;
-				a(href='/Logout' id="logout_link") Logout
-		block content
+			//-#pairbox.floatleft(style="display:none")
+				form#associationentry(action="/Curations" method="post")
+					span
+						input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbbbbb;width:120px" value="Gene Symbol")
+					span(style="font-size:15px;font-weight:bold") &nbsp;:&nbsp;
+					span
+						input(type="text" id="diseaseterm" name="diseaseterm" style="height:18px;font-size:13px;color:#bbbbbb" value="Disease Keyword")
+						//-input(type="text" id="diseaseterm" name="diseaseterm" style="width:650px;height:18px;font-size:13px;color:#bbbbbb" value="Disease Keyword")
+					span &nbsp;
+					span
+						input(type="submit" value="Submit" id="enterbutton" style="height:20px;font-size:16px")
+					script(type="text/javascript").
+						$(document).ready(function() {
+							if ($.cookie('genesymbol') && $.cookie('genesymbol') != 'Gene Symbol') {
+								$("#genesymbol").val($.cookie('genesymbol'))
+								$("#genesymbol").css('color',"#000")
+							}
+							if ($.cookie('diseaseterm') && $.cookie('diseaseterm') != 'Disease Keyword') {
+								$("#diseaseterm").val($.cookie('diseaseterm'))
+								$("#diseaseterm").css('color',"#000")
+							}
+							$("#associationentry").on("submit", function() {
+								$.cookie('genesymbol', 'Gene Symbol', {maxAge:0, path:'/'})
+								$.cookie('diseaseterm', 'Disease Keyword', {maxAge:0, path:'/'})
+								$("#genesymbol").css('color','#aaa')
+								$("#diseaseterm").css('color','#aaa')
+								return true
+							})
+						})
+			//-div(style="position:absolute;float:right;top:0px;right:5px;z-index:13")
+			#userinfo(style="")
+					if user
+						a(href="/" style="text-decoration:none;font-size:16px") #{user.LogName}
+						span(style="font-size:16px;vertical-align:middle") &nbsp;&nbsp;&nbsp;
+						a#alltoplinks(title="Links" style="font-size:28px;font-weight:bold;text-decoration:none;vertical-align:top;cursor:pointer") ::
+			//-#clingen_search_box(style="position:relative;float:right;margin:0;padding:0px;width:300px;height:25px;border:solid #999 1px;background-color:#fff;border-radius:15px;vertical-align:top")
+			input(type="image" src="/images/search-image.png" style="position:relative;float:right;margin:18px 20px 0 5px;width:15px;border:none;background-color:#cdcdcd")
+			input(type="text" id="clingen_search" value="Search ClinGen" style="position:relative;float:right;margin-top:10px;padding-left:10px;width:250px;height:25px;border:solid #999 1px;border-radius:15px")
+			#toplinks(style="")
+				//-li(style='height:30px;vertical-align:middle')
+					a(href='/' style="text-decoration:none" id="group_link") My Curation History
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Curations' style="text-decoration:none" id="curations_link") G:D Associations
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Genes' id="genes_link" style='text-decoration:none') Gene Search
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Diseases' id="diseases_link" style='text-decoration:none') Disease Search
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Variants' id="variant_link" style='text-decoration:none') Variants Search
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Curators' id="curators_link" style='text-decoration:none') Curators
+				hr(style='height:1px;border:none;border-top:1px dashed #aaa;width:126px')
+				li(style='height:30px;vertical-align:middle')
+					a(href="javascript:void(0)" id="changepwd" style='text-decoration:none') Password
+				li(style='height:30px;vertical-align:middle')
+					a(href='/Logout' id="logout_link" style='text-decoration:none') Logout
+
+		//-#ClinGen_Logo(style="position:absolute;top:10px;right:100px;z-index:11")
+			a(href="http://www.clinicalgenome.org/" target="_blank")
+				img#clingen_logo_img(src="/images/ClinGenLogo-rainbow.png" style="height:50px;opacity:1")
+		#pwdwin
+			#closepoint(style="text-align:right")
+				a(href="javascript:void(0)" id="closelink" title="Close") X
+			span(style="font-size:125%;padding-top:15px; text-align:center; display: block") Change Password
+			#wincontent(style="text-align:center;padding-top:15px")
+			span#winalert(style="color:red; font-size:16px; text-align:center; display:block;padding-top:15px")
+		#genelist
+		#diseaselist
+		#maincontent
+			br
+			block content
 		#foot
-			span Copy right, Date, ....
+			table(style="width:100%;height:100%;border-collapse:collapse")
+				tr(style="height:100%")
+					td(style="padding-left:20px;vertical-align:middle;font-size:14px;color:#ddd")
+						a(href="http://www.stanford.edu/site/terms.html" target="_blank" style="cursor:pointer;text-decoration:none;color:#ddd") Terms of Use
+						br
+						span &copy; Stanford University, Stanford, CA 94305.
+					td(style="text-align:right;padding-right:20px;vertical-align:middle")
+						table(style="height:100%;float:right;border-collapse:collapse")
+							tr
+								td(style="vertical-align:bottom")
+									a(href="http://genetics.stanford.edu/" target="_blank")
+										img(src="/images/department-logo-white-small.png" alt="ClinGen-Logo" height="30")
+								td(style="vertical-align:bottom")
+									a(href="http://med.stanford.edu//" target="_blank")
+										img(src="/images/medicalschool-logo.png" alt="ClinGen-Logo" height="35")
+								td(style="text-align:center;vertical-align:bottom")
+									a(href="http://www.stanford.edu/" target="_blank" style="text-decoration:none;color:#ccb")
+										span(style="font-size:14px;vertical-align:bottom") Stanford
+										br
+										span(style="font-size:10px;vertical-align:top") University
+								//-td(style="vertical-align:bottom")
+									a(href="http://www.clinicalgenome.org/" target="_blank")
+										img(src="/images/ClinGen-Logo-White-Small.png" alt="ClinGen-Logo" height="35")
+		script(type='text/javascript').
+			function passterm(obj) {
+				$("#diseaseterm").css("color","#000000");
+				$("#diseaseterm").val(obj.text);
+				$("#diseaselist").css("display", "none");
+				$("#ordoid").val() = obj.title;
+			}
+			function passsymbol(obj) {
+				$("#genesymbol").css("color","#000000");
+				$("#genesymbol").val(obj.text);
+				$("#genelist").css("display", "none");
+			}
+
+			//$("#clingen_logo_img").on('click')
+		script(type="text/javascript" src="/javascripts/changepwd.js")
+		script(type="text/javascript" src="/javascripts/layoutView.js")

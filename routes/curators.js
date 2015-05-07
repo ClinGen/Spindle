@@ -9,8 +9,8 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 router.get('/', function(req, res) {
-	var db = req.db;
-	db.bind('Curator');
+	var db = req.db
+	//db.bind('Curator');
 /*
 	var cookie = 'No Cookie';
     for ( var c in req.cookies ) {
@@ -60,18 +60,24 @@ router.get('/', function(req, res) {
 		});
 	}
 */
-	db.Curator.find({"Token":req.cookies.Spindle}).toArray(function(err, user) {
-		db.Curator.find().toArray(function(err, curators) {
-			if (err) console.log(err);
-						var ec = cg = exp = 0;
-						for (var i=0; i<curators.length; i++) {
-							if (curators[i].Title == "Expert Curator") exp++;
-							else if (curators[i].Title == "ClinGen Curator") cg++;
-							else if (curators[i].Title == "External Curator") ec++;
-						}
-						res.render('curators', {exp:exp, ec:ec, cg:cg, user:user[0], data:curators});
-		});
-	});
-});
+	//db.Curator.find({"Token":req.cookies.Spindle}).toArray(function(err, user) {
+		db.collection('Curator').find().toArray(function(err, curators) {
+			if (err) {
+				throw err
+				return
+			}
+			var exp = cg = ec = 0
+			var curator_data = []
+			for (var i=0; i<curators.length; i++) {
+				if (curators[i].Title == "Expert Curator") exp++
+				else if (curators[i].Title == "ClinGen Curator") cg++
+				else if (curators[i].Title == "External Curator") ec++
+				if (curators[i].LogName.indexOf('kgliu') == -1) curator_data.push(curators[i])
+			}
+			//res.render('curators', {exp:exp, ec:ec, cg:cg, user:req.cookies.Spindle.split('-')[0], data:curators});
+			res.render('curators', { user:{LogName:req.cookies.Spindle.split('-')[0]}, data:curator_data })
+		})
+	//})
+})
 
 module.exports = router;

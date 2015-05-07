@@ -1,0 +1,243 @@
+extends segregation
+block segregation_variant_content
+	tr
+		td#variantbox(style="width:100%;background:#ddd" colspan=2)
+			form#variantform(action='/Casegroupstudy/Variant/Edit' method='post')
+				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
+				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
+				input(type='hidden' name='groupid' value='#{group.GroupID}')
+				input(type='hidden' name='sid' value='#{item.SegregationID}')
+				input(type='hidden' name='vid' value='#{item.Variant.VariantID}')
+				table(style="border-top:solid #ddd 1px;width:100%")
+					tr
+						td(colspan=2 style="font-size:14px") VARIANT:
+						td(style="width:200px") &nbsp;
+					tr
+						td(style="width:450px")
+							table(style="font-size:13px")
+								tr
+									td(style="vertical-align:top;text-align:right;width:170px")
+										a(href="http://www.ncbi.nlm.nih.gov/clinvar/" target="_blank") ClinVar
+										span &nbsp;ID:
+									td(style="")
+										if item.Variant.ClinVarID
+											a(href="http://www.ncbi.nlm.nih.gov/clinvar/#{item.Variant.ClinVarID.split('.')[0]}" target="_blank" style="font-size:80%") #{item.Variant.ClinVarID}
+										if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+											br
+											input(type="text" id="clinvarid" name="clinvarid" style="width:160px")
+								tr
+									td(style="vertical-align:top;text-align:right")
+										a(href="http://www.ncbi.nlm.nih.gov/SNP/" target="_blank") dbSNP
+										span &nbsp;ID:
+									td
+										if item.Variant
+											a(href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=#{item.Variant.dbSNPID}" target="_blank" style="font-size:80%") #{item.Variant.dbSNPID}
+										if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+											br
+											input(type="text" id="dbsnpid" name="dbsnpid" style="width:160px")
+								tr
+									td(style="vertical-align:top;text-align:right")
+										span Variant&nbsp;
+										a(href="http://www.hgvs.org/mutnomen/" target="_blank") HGVS
+										span :
+									td
+										if item.Variant.VariantHGVS
+											- var temp = item.Variant.VariantHGVS.split(',')
+											for t in temp
+												span(style="font-size:80%") #{t}
+												br
+										if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+											textarea(cols=40 rows=2 id="varianthgvs" name="varianthgvs")
+								tr
+									td(style="vertical-align:top;text-align:right") Variant Type:
+									td
+										if item.Variant.VariantType && item.Variant.VariantType != ''
+											- var link = item.Variant.VariantType.split('SO:')
+											span(style="font-size:80%") #{link[0]}
+											a(href="http://www.sequenceontology.org/browser/current_svn/term/#{'SO:'+link[1]}" target="_blank" style="font-size:80%") #{'SO:'+link[1]}
+											br
+										if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+											select(id="varianttype" name="varianttype")
+																		option(value='') Select
+																		option(value='Complex SO:0001784') Complex SO:0001784
+																		option(value='Complex chromosomal mutation SO:1000146') Complex chromosomal mutation SO:1000146
+																		option(value='Copy number gain SO:0001742') Copy number gain SO:0001742
+																		option(value='Copy number loss SO:0001743') Copy number loss SO:0001743
+																		option(value='Copy number variation SO:0001019') Copy number variation SO:0001019
+																		option(value='Deletion SO:0000159') Deletion SO:0000159
+																		option(value='Duplication SO:1000035') Duplication SO:1000035
+																		option(value='Indel SO:1000032') Indel SO:1000032
+																		option(value='Insertion SO:0000667') Insertion SO:0000667
+																		option(value='Interchromosomal breakpoint SO:0001873') Interchromosomal breakpoint SO:0001873
+																		option(value='Intrachromosomal breakpoint SO:0001874') Intrachromosomal breakpoint SO:0001874
+																		option(value='Inversion SO:1000036') Inversion SO:1000036
+																		option(value='Microsatellite SO:0000289') Microsatellite SO:0000289
+																		option(value='Mobile element insertion SO:1001837') Mobile element insertion SO:1001837
+																		option(value='Monomeric repeat SO:0001934') Monomeric repeat SO:0001934
+																		option(value='Multiple nucleotide polymorphism SO:0001013') Multiple nucleotide polymorphism SO:0001013
+																		option(value='Novel sequence insertion SO:1001838') Novel sequence insertion SO:1001838
+																		option(value='Sequence alteration SO:0001059') Sequence alteration SO:0001059
+																		option(value='Single nucleotide variant SO:0001483') Single nucleotide variant SO:0001483
+																		option(value='Tandem duplication SO:1000173') Tandem duplication SO:1000173
+																		option(value='Translocation SO:0000199') Translocation SO:0000199
+								tr
+									td(style="vertical-align:top;text-align:right") Molecular Consequence:
+									td
+										if item.Variant.MolecularConsequence != ''
+											- var link = item.Variant.MolecularConsequence.split('SO:')
+											span(style="font-size:80%") #{link[0]}
+											a(href="http://www.sequenceontology.org/browser/current_svn/term/#{'SO:'+link[1]}" target="_blank" style="font-size:80%") #{'SO:'+link[1]}
+											br
+										if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+											select(id="mconsequence" name="mconsequence")
+																		option(value='') Select
+																		option(value='Frameshift variant SO:0001589') Frameshift variant SO:0001589
+																		option(value='Intron SO:0001627') Intron SO:0001627
+																		option(value='Missense variant SO:0001583') Missense variant SO:0001583
+																		option(value='Nonsense SO:0001587') Nonsense SO:0001587
+																		option(value='Splice acceptor variant SO:0001574') Splice acceptor variant SO:0001574
+																		option(value='Splice donor variant SO:0001575') Splice donor variant SO:0001575
+																		option(value='Stop lost SO:0001578') Stop lost SO:0001578
+																		option(value='Synonymous variant SO:0001819') Synonymous variant SO:0001819
+																		option(value='5 prime UTR variant SO:0001623') 5 prime UTR variant SO:0001623
+																		option(value='3 prime UTR variant SO:0001624') 3 prime UTR variant SO:0001624
+																		option(value='2KB upstream variant SO:0001636') 2KB upstream variant SO:0001636
+																		option(value='500B downstream variant SO:0001634') 500B downstream variant SO:0001634
+						td(style="border-left:solid #ddd 1px;vertical-align:top;width:690px")
+							table(style="100%")
+								tr
+									td(colspan=3)
+										span(style="font-size:14px") Pathogenic Evidence:
+										if item.Variant.PathogenicEvidence
+											br
+											each pe, i in item.Variant.PathogenicEvidence
+												span(style="font-size:11px;padding-left:20px")= pe
+												if i%2 != 0
+													br
+												else if i < item.Variant.PathogenicEvidence.length-1
+													span(style="font-size:12px") ,&nbsp;
+								tr
+									td(colspan=3) &nbsp;
+								if  item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+									tr(style="font-size:12px")
+										td(style="text-align:right") Simple Case Report&nbsp;
+											input(type="checkbox" name="pathevidence" value='Simple Case Report')
+										td(style="text-align:right") Case w/ Control&nbsp;
+											input(type="checkbox" name="pathevidence" value='Case w/ Control')
+										td(style="text-align:right") Functional&nbsp;
+											input(type="checkbox" name="pathevidence" value='Functional')
+									tr(style="font-size:12px")
+										td(style="text-align:right") In Silico Prediction
+											input(type="checkbox" name="pathevidence" value='In Silico Prediction')
+										td(style="text-align:right") Gene Region
+											input(type="checkbox" name="pathevidence" value='Gene Region')
+										td(style="text-align:right") Type of Variant
+											input(type="checkbox" name="pathevidence" value='Type of Variant')
+									tr(style="font-size:12px")
+										td(style="text-align:right") Segregation Data
+											input(type="checkbox" name="pathevidence" value='Segregation Data')
+										td(style="text-align:right" colspan=2) Lack of Variant(s) in Controls
+											input(type="checkbox" name="pathevidence" value='Lack of Variant(s) in Controls')
+									script(type="text/javascript").
+										$(document).ready(function() {
+																		var arr = "#{item.Variant.PathogenicEvidence}"
+																		$("input:checkbox").each(function() {
+																			if (arr.indexOf($(this).val()) > -1) $(this).attr("checked", "checked")
+																		})
+										})
+						td(style='vertical-align:top;border-left:solid #ddd 1px;width:250px')
+							- var assessable = true
+							if item.Variant.Assessment
+								each assess in item.Variant.Assessment
+									if assess.LogName == user.LogName
+										- assessable = false
+							if assessable
+								select(id="vassessment" name="vassessment")
+																	option(value="") Add Assessment
+																	option(value="Strongly Supports") Strongly Supports
+																	option(value="Moderately Supports") Moderately Supports
+																	option(value="Weakly Supports") Weakly Supports
+																	option(value="Contradictory") Contradictory
+							else
+								span Assessment
+							br
+							br
+							#vassessmentbox
+								if item.Variant.Assessment && item.Variant.Assessment.length > 0
+									for a in item.Variant.Assessment
+										if a.LogName == user.LogName
+											li(style='font-size:12px;height:25px') #{a.Level}&nbsp;&nbsp;
+												a#deletevassessment(style="text-decoration:none;cursor:pointer") Delete
+										else
+											li(style='font-size:12px;height:25px') #{a.Level}
+												span(style="color:#999") &nbsp;#{a.LogName}
+							script(type='text/javascript').
+																$(document).ready(function() {
+																	$("#vassessment").change(function() {
+																		if ($(this).children('option:selected').val() != '') {
+																			var datastr = {
+																				"symbol":"#{group.HGNCSymbol}",
+																				"ordoid":"#{group.ORDOID}",
+																				"groupid":"#{group.GroupID}",
+																				"sid":"#{item.SegregationID}",
+																				"item":"variant",
+																				"assessment":$(this).children('option:selected').val()
+																			}
+																			$.post('/Casegroupstudy/Assessment', datastr, function(data) {
+																				if (data) location.reload()
+																			})
+																		}
+																	})
+																	$("#deletevassessment").click(function() {
+																		var datastr = {
+																				"symbol":"#{group.HGNCSymbol}",
+																				"ordoid":"#{group.ORDOID}",
+																				"groupid":"#{group.GroupID}",
+																				"sid":"#{item.SegregationID}",
+																				"item":"variant"
+																		}
+																		$.post('/Casegroupstudy/Variantassessment/Delete', datastr, function(data) {
+																			if (data) window.location.reload()
+																		})
+																	})
+																})
+					tr
+						td(colspan=3) &nbsp;
+					if item.LogName == user.LogName && (!item.Variant.Assessment || item.Variant.Assessment.length == 0)
+						tr
+							td(colspan=3 style="text-align:left")
+								input(type="submit" value="Submit" id="subbttn" style="height:25px;font-size:18px;cursor:pointer")
+								span &nbsp;
+								input(type="reset" value="Reset" style="height:25px;font-size:18px;cursor:pointer")
+								if !item.Variant.Assessment || item.Variant.Assessment.length == 0
+									span &nbsp;
+									input#deletevariant(type="button" value="Delete" style="height:25px;font-size:18px;cursor:pointer")
+					script(type="text/javascript").
+						$(document).ready(function() {
+							$("#segreform").submit(function() {
+											var no_err = true
+											$("input.numeric").each(function() {
+												if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+													no_err = false
+													alert('Please enter positive integer.')
+													$(this).focus()
+												}
+											})
+											return no_err
+							})
+
+							$("#deletevariant").click(function() {
+								if (confirm('Delete the current variant?')) {
+									var datastr = {
+										"symbol":"#{group.HGNCSymbol}",
+										"ordoid":"#{group.ORDOID}",
+										"groupid":"#{group.GroupID}",
+										"sid":"#{item.SegregationID}",
+										"item":"variant",
+									}
+									$.post('/Casegroupstudy/Delete', datastr, function(data) {
+										if (data) $(location).attr('href', '/Casegroupstudy/Group/#{group.GroupID}/Segregation/#{item.SegregationID}')
+									})
+								}
+							})
+						})

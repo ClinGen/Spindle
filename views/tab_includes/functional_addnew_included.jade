@@ -1,0 +1,507 @@
+div(style="width:715;height:500px;border:solid #fff 1px;padding:5px 5px 10px 10px")
+	div(style="float:right")
+		a.close_link(style="text-decoration:none;cursor:pointer;font-size:18px;color:#e33" title="functional_Addnew_box") X
+	form#functionalform(method="post")
+		input(type='hidden' name='symbol' value="#{data.HGNCSymbol}")
+		input(type='hidden' name='ordoid' value="#{data.ORDOID}")
+		input(type='hidden' name='fid' id='fid' value='')
+		table(style="width:100%;text-align:left")
+			tr
+				td(style="vertical-align:top")
+							span PMID:&nbsp;
+							input(type='text' name='pmid' id='pmid' style="width:70px")
+							span(style="font-size:80%") &nbsp;(Digit)&nbsp;&nbsp;&nbsp;&nbsp;
+							span Evidence Type:&nbsp;
+							select(name='evid_type' id='evid_type')
+								option(value='') Select
+								option(value='Biochemical Function') Biochemical Function
+								option(value='Protein Interactions') Protein Interactions
+								option(value='Expression') Expression
+								option(value='Gene Disruption') Gene Disruption
+								//-option(value='Model Systems') Model Systems
+								//-option(value='Rescue') Rescue
+			tr
+				td(style="padding-left:50px")
+					a#check_pmid_link(style="text-decoration:none;cursor:pointer;display:none;font-size:12px" title="") Click to check PMID
+			tr
+				td(style="width:380px;vertical-align:top")
+					#functional_1_content.functional_option_content
+						table(style="width:100%")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="width:150px;vertical-align:top")
+									span Identified Function:&nbsp;
+									br
+									input(type="text" id="identifiedfunction" name="identifiedfunction" style="float:right")
+									br
+									br
+									br
+									br
+									span Evidence for Function:
+									textarea(cols=30 rows=8 id="evidencefunction" name="evidencefunction")
+								td(style="padding-left:20px")
+									table(style="width:100%;border-collapse:collapse")
+										tr
+											td(colspan=3 style="font-weight:bold") Enter Evidence for A and/or B
+										tr
+											td(colspan=3) &nbsp;
+										tr
+											td(rowspan=7 style="width:10px") &nbsp;
+											td(colspan=2 style="padding-left:10px")
+												span A.&nbsp;
+												span(style="text-decoration:underline") Gene implicated in same disease that shares same function
+										tr
+											td(style="text-align:right") Gene Symbol (HGNC):
+											td(style="width:200px")
+												input(type="text" id="geneHGNC" name="geneHGNC" style="width:165px")
+										tr
+											td(style="text-align:right;vertical-align:top") Shared Disease (Orphanet):
+											td
+												textarea(cols=25 rows=3 id="shareddisease" name="shareddisease")
+										tr
+											td(colspan=2) &nbsp;
+										tr
+											td(colspan=2 style="padding-left:10px")
+												span B.&nbsp;
+												span(style="text-decoration:underline") Gene Function Consistent with Phenotype
+										tr
+											td(style="text-align:right;vertical-align:top") Phenotype:&nbsp;
+											td
+												textarea.textarea_text(cols=25 rows=2 id="phenotype_text" name="phenotype_text" style="color:#999")
+												br
+												textarea.textarea_hpo(cols=20 rows=1 id="phenotype_hpo" name="phenotype_hpo" style="resize:none;color:#999")
+												a.hpo_add_link(style="text-decoration:none;cursor:pointer;font-size:16px" title="phenotype_hpo") +
+										tr
+											td(style="text-align:right;vertical-align:top") Explanation:&nbsp;
+											td
+												textarea(cols=25 rows=7 id="explanation" name="explanation")
+							//-tr
+								td(style="vertical-align:topd")
+									span Evidence for Function:
+									textarea(cols=30 rows=8 id="evidencefunction" name="evidencefunction")
+					#functional_2_content.functional_option_content
+						table(style="width:100%")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right") Interaction Gene (HGNC):
+								td
+									input(type="text" id="interactinggene" name="interactinggene")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right")
+									span Interaction Type
+									br
+									span (IntAct Controlled Vocabulary)
+								td(style="vertical-align:top")
+									input(type="texp" id="interactiontype" name="interactiontype")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right")
+									span Similar Disease in which
+									br
+									span Interacting Gene Involved
+									br
+									span (Orphanet)
+								td(style="vertical-align:top")
+									input(type="text" id="similardisease" name="similardisease")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right;vertical-align:top")
+									span Comments Regarding Disease
+									br
+									span Similar of Interacting Protein
+								td
+									textarea(cols=30 rows=8 id="comment_interact_protein" name="comment_interact_protein")
+					#functional_3_content.functional_option_content
+						table(style="width:100%")
+							tr
+								td(style="vertical-align:top;width:200px")
+									span Disease Tissue Expressed:
+									br
+									textarea(cols=30 rows=8 id="diseasetissue" name="diseasetissue")
+								td(style="padding-left:60px")
+									table(style="width:100%")
+										tr
+											td(colspan=2 style="font-weight:bold") Enter Evidence for A and/or B
+										tr
+											td(colspan=2) &nbsp;
+										tr
+											td(colspan=2 style="padding-left:20px")
+												span A.&nbsp;
+												span(style="text-decoration:underline") Normal Expression
+										tr
+											td(style="text-align:right") Uniquely Expressed?
+											td(style="width:100px")
+												select(id="uniqueExpressed" name="uniqueExpressed")
+													option(value='') Select
+													option(value="Yes") Yes
+													option(value='No') No
+										tr
+											td(style="text-align:right;vertical-align:top") Comments:
+											td
+												textarea(cols=30 rows=7 id="comment_normalexpression" name="comment_normalexpression")
+										tr
+											td(colspan=2) &nbsp;
+										tr
+											td(colspan=2 style="padding-left:20px")
+												span B.&nbsp;
+												span(style="text-decoration:underline") Altered Expression?
+												span &nbsp;&nbsp;&nbsp;Yes&nbsp;
+												input(type="checkbox" id="alteredexpression" name="alteredexpression" value="Yes")
+										tr
+											td(style="text-align:right;vertical-align:top") Comments:
+											td
+												textarea.disabled(cols=30 rows=7 id="comment_alteredexpression" name="comment_alteredexpression")
+					#functional_4_content.functional_option_content
+						table(style="width:100%;padding-left:50px")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(colspan=2)
+									span Experiment on Patient Cells with Candidate Mutation?&nbsp;&nbsp;&nbsp;
+									span Yes&nbsp;
+									input(type="checkbox" id="experiment_patientcell" name="experiment_patientcell" value="Yes")
+							tr
+								td(style="text-align:right;vertical-align:top") Patient Cell Type:
+								td
+									textarea.disabled(cols=30 rows=8 id="description_patientcell" name="description_patientcell")
+							tr(style="height:50px")
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right;width:320px") Normal Function of Gene/Protein:&nbsp;
+								td
+									input(type="text" id="normalfunction_geneprotein" name="normalfunction_geneprotein" style="width:195px")
+							tr
+								td(style="vertical-align:top") Evidence for Altered Function in Patient Cells:&nbsp;
+								td
+									textarea(cols=30 rows=8 id="evidence_altertedfunction" name="evidence_altertedfunction")
+
+					#functional_5_content.functional_option_content
+						table(style="width:100%;padding-left:20px")
+							tr
+								td(style="text-align:right") Model System:
+								td
+									select(id="modelsystem" name="modelsystem")
+										option(value='') Select
+										option(value="Model Organism") Model Organism
+										option(value="Engineered Equivalent") Engineered Equivalent
+							tr
+								td(style="text-align:right") System Description:
+								td
+									select(id="systemdescription" name="systemdescription")
+										option(value='') Select
+										option(value="Model Organism") Model Organism (Taxon IDs)
+										option(value="Engineered Equivalent") Engineered Equivalent - Controlled Vocabulary?
+							tr
+								td(style="text-align:right;vertical-align:top") Type of Gene Disruption:
+								td
+									textarea(cols=30 rows=6 id="type_genedisruption" name="type_genedisruption")
+							tr
+								td(style="text-align:right;vertical-align:top") Observed Phenotype in Model or Engineered System:
+								td
+									textarea.textarea_text(cols=25 rows=2 id="phenotype_model_text" name="phenotype_model_text" style="color:#999")
+									br
+									textarea.textarea_hpo(cols=20 rows=1 id="phenotype_model_hpo" name="phenotype_model_hpo" style="resize:none;color:#999")
+									a.hpo_add_link(style="text-decoration:none;cursor:pointer;font-size:16px" title="phenotype_model_hpo") +
+							tr
+								td(style="text-align:right;vertical-align:top") Observed Phenotype in Disease State:
+								td
+									textarea.textarea_text(cols=25 rows=2 id="phenotype_diseasestate_text" name="phenotype_diseasestate_text" style="color:#999")
+									br
+									textarea.textarea_hpo(cols=20 rows=1 id="phenotype_diseasestate_hpo" name="phenotype_diseasestate_hpo" style="resize:none;color:#999")
+									a.hpo_add_link(style="text-decoration:none;cursor:pointer;font-size:16px" title="phenotype_diseasestate_hpo") +
+							tr
+								td(style="text-align:right;vertical-align:top") Comments:&nbsp;
+								td
+									textarea(cols=30 rows=6 id="comment_modelsystem" name="comment_modelsystem")
+					#functional_6_content.functional_option_content
+						table(style="width:100%;padding-left:20px")
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(style="text-align:right") Experimental System:
+								td
+									select(id="experimentalsystem" name="experimentalsystem")
+										option(vallue='') Select
+										option(value="Patient Cells") Patient Cells
+										option(value="Engineered Equivalent") Engineered Equivalent
+							tr
+								td(style="text-align:right") System Description:
+								td
+									select(id="systemDescription" name="systemDescription")
+										option(value='') Select
+										option(value="Patient Cells") Patient Cells - Controlled Vocabulary
+										option(value="Engineered Equivalent") Engineered Equivalent - Controlled Vocabulary
+							tr
+								td(colspan=2) &nbsp;
+							tr
+								td(colspan=2)
+									span Does Wild-type Rescue?&nbsp;&nbsp;&nbsp;&nbsp;
+									span Yes&nbsp;
+									input(type="checkbox" id="wildtype_rescue" name="wildtype_rescue" value="Yes")
+							tr
+								td(style="text-align:right;vertical-align:top") Phenotype Rescued:
+								td
+									textarea.textarea_text(cols=25 rows=2 id="phenotype_rescued_text" name="phenotype_rescued_text" style="color:#999")
+									br
+									textarea.textarea_hpo(cols=20 rows=1 id="phenotype_rescued_hpo" name="phenotype_rescued_hpo" style="resize:none;color:#999")
+									a.hpo_add_link(style="text-decoration:none;cursor:pointer;font-size:16px" title="phenotype_rescued_hpo") +
+							tr
+								td(style="text-align:right;vertical-align:top") Comments:
+								td
+									textarea.disabled(cols=30 rows=6 id="comment_wildtyperescue" name="comment_wildtyperescue")
+							tr
+								td(style="text-align:right") Does Patient Variant Rescue?
+								td
+									select(id="variant_rescue" name="variant_rescue" disabled)
+										option(value='') Select
+										option(value="Yes") Yes
+										option(value="No") No
+							tr
+								td(style="text-align:right;vertical-align:top") Comments:
+								td
+									textarea.disabled(cols=30 rows=6 id="comment_variantrescue" name="comment_variantrescue")
+			tr
+				td#submitbutton(style="vertical-align:bottom;display:none")
+					input(type="submit" value="Submit" style="font-size:125%;cursor:pointer")
+					span &nbsp;&nbsp;
+					input(type="reset" value="Reset" style="font-size:125%;cursor:pointer")
+script(type="text/javascript").
+	$(function() {
+		function set_initial() {
+			$("input:text").val('')
+			$("input:checkbox").attr('checked', false)
+			$("select option[value=''").attr('selected', 'selected')
+			$("textarea").text('')
+			$("textarea.textarea_text").text('free text').css('color', '#999')
+			$("textarea.textarea_hpo").text('HPO Term').css('color', '#999').prop('rows', 1)
+			$("textarea.disabled").css('background', '#ddd').attr('disabled', 'disabled')
+			$("div.functional_option_content").css('display', 'none')
+			$("#submitbutton").css('display', 'none')
+		}
+		set_initial()
+
+		$("a.close_link").on('click', function() {
+			var item = "#" + $(this).attr("title")
+			$(item).css('display', 'none')
+		})
+
+		$("#pmid").on('input', function() {
+			if ($(this).val() == '') {
+				$("#submitbutton").css('display', 'none')
+				$("#check_pmid_link").css('display', 'none')
+			}
+			else if (!/^\d+$/.test($(this).val())) {
+				alert('Please enter digit only.')
+				$(this).focus()
+				$("#submitbutton").css('display', 'none')
+				$("#check_pmid_link").css('display', 'none')
+			}
+			else {
+				if ($("#evid_type").val() != '') $("#submitbutton").css('display', 'block')
+				$("#check_pmid_link").attr('title', $(this).val())
+				$("#check_pmid_link").css('display', 'block')
+			}
+		})
+
+		$("#check_pmid_link").on('click', function() {
+			$("#article_pmid_box").css('display', 'block')
+			var urlstr = '/Observations/pmid/' + $(this).attr('title')
+			$.get(urlstr, function(data) {
+				if (data.Error) {
+					$("#abstractbox").html(data.Error)
+					$("#abstractbox").css('color','#f83')
+					$("#abstractbox").css('font-size','16px')
+					$("#pmid_from_NCBI").html('PMID: '+'<spam style="color:#f83">'+data.Pmid+'</sapm>')
+				}
+				else {
+					$("#pmid_from_NCBI").html('PMID: ' + data.Pmid)
+					$("#titlebox").html(data.Title)
+					$("#journalbox").html(data.Journal.Title)
+					$("#datebox").html(data.Journal.PubDate.Month + " " + data.Journal.PubDate.Year)
+					$("#authorbox").html(data.FirstAuthor.LastName + " " + data.FirstAuthor.Initials)
+					$("#abstractbox").html(data.Abstract)
+				}
+			})
+		})
+
+		$("#evid_type").on('change', function() {
+			var the_option = $(this).val()
+			//alert(the_option)
+			$("div.functional_option_content").each(function() {
+				$(this).css('display', 'none')
+			})
+			if (the_option == 'Biochemical Function') $("#functional_1_content").css('display', 'block')
+			else if (the_option == 'Protein Interactions') $("#functional_2_content").css('display', 'block')
+			else if (the_option == 'Expression') $("#functional_3_content").css('display', 'block')
+			else if (the_option == 'Gene Disruption') $("#functional_4_content").css('display', 'block')
+			else if (the_option == 'Model Systems') $("#functional_5_content").css('display', 'block')
+			else if (the_option == 'Rescue') $("#functional_6_content").css('display', 'block')
+
+			if (the_option != '' && $("#pmid").val() != '') $("#submitbutton").css('display', 'block')
+			else $("#submitbutton").css('display', 'none')
+		})
+
+		$(".textarea_text")
+		.on('focus', function() {
+							//alert($(this).text())
+							if ($(this).text() == 'free text') {
+								$(this).text('')
+								$(this).css('color', '#000')
+							}
+		})
+		.on('blur', function() {
+							if ($(this).text() == '') {
+								$(this).text('free text')
+								$(this).css('color', '#999')
+							}
+		})
+
+		$(".textarea_hpo")
+		.on('focus', function() {
+							//alert($(this).val())
+							if ($(this).text() == 'HPO Term') {
+								$(this).text('')
+								$(this).css('color', '#000')
+							}
+		})
+		.on('blur', function() {
+							if ($(this).text() == '') {
+								$(this).text('HPO Term')
+								$(this).css('color', '#999')
+							}
+		})
+
+		$(".hpo_add_link").on('click', function() {
+							var item = "#" + $(this).attr("title")
+							//alert(item)
+							if ($(item).val() != 'HPO Term' && $(item).val().substr(-1) != '\n') {
+								var temp = $(item).val()+'\n'
+								var cnt = $(item).prop('rows') + 1
+								$(item).prop('rows', cnt)
+								$(item).val(temp)
+								$(item).focus()
+							}
+							else $(item).focus()
+		})
+
+		$("#alteredexpression").change(function() {
+							//alert('here')
+							if ($(this).prop('checked')) {
+								$("#comment_alteredexpression").attr('disabled', false)
+								$("#comment_alteredexpression").css('background', '#fff')
+							}
+							else {
+								$("#comment_alteredexpression").attr('disabled', 'disabled')
+								$("#comment_alteredexpression").css('background', '#ddd')
+							}
+		})
+
+		$("#experiment_patientcell").change(function() {
+			if ($(this).prop('checked')) {
+				$("#description_patientcell").attr('disabled', false)
+				$("#description_patientcell").css('background', '#fff')
+			}
+			else {
+				$("#description_patientcell").attr('disabled', 'disabled')
+				$("#description_patientcell").css('background', '#ddd')
+			}
+		})
+
+		$("#wildtype_rescue").change(function() {
+			if ($(this).prop('checked')) {
+				$("#comment_wildtyperescue").attr('disabled', false)
+				$("#variant_rescue").attr('disabled', false)
+				$("#comment_variantrescue").attr('disabled', false)
+				$("#comment_wildtyperescue").css('background', '#fff')
+				$("#comment_variantrescue").css('background', '#fff')
+			}
+			else {
+				$("#comment_wildtyperescue").attr('disabled', 'disabled')
+				$("#variant_rescue").attr('disabled', 'disabled')
+				$("#comment_variantrescue").attr('disabled', 'disabled')
+				$("#comment_wildtyperescue").css('background', '#ddd')
+				$("#comment_variantrescue").css('background', '#ddd')
+			}
+		})
+
+		$("#functionalform").submit(function() {
+							//alert($("#evid_type").val())
+							/*$("input.text").each(function() {
+								$(this).val() = $(this).val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '')
+							})
+							$("textarea").each(function() {
+								$(this).val() = $(this).val().replace(/(^\s+)|(\s+$)/g, '').replace(/(^")|("$)/g, '').replace(/(^')|('$)/g, '')
+							})*/
+
+							//var no_err = true
+							if ($("#evid_type").val() == 'Biochemical Function') {
+								if ($("#identifiedfunction").val() == '') {
+													alert('Please enter data.')
+													$("#identifiedfunction").focus()
+													return false
+								}
+								else if ($("#evidencefunction").val() == '') {
+													alert('Please enter data.')
+													$("#evidencefunction").focus()
+													return false
+								}
+								else if (($("#geneHGNC").val() == '' || $("#shareddisease").val() == '') && ($("#phenotype_text").val() == '' || $("#phenotype_hpo").val() == '' || $("#explanation").val() == '')) {
+													alert('Must enter data at A or B')
+													return false
+								}
+							}
+							else if ($("#evid_type").val() == 'Protein Interactions') {
+								$(".evid_type_2").each(function() {
+									if ($(this).val() == '') {
+										alert('Please enter data.')
+										$(this).focus()
+										return false
+									}
+								})
+							}
+							else if ($("#evid_type").val() == 'Expression') {
+								if ($("#diseasetissue").val() == '') {
+									alert('Please enter data.')
+									$("#diseasetissue").focus()
+									return false
+								}
+								else if ($("#uniqueExpressed").val() == '' && !$("#alteredexpression").prop("checked")) {
+									alert('Must enter data at A or B')
+									return false
+								}
+								else if ($("#alteredexpression").prop("checked") && $("#comment_alteredexpression").val() == '') {
+									alert('Please enter Conmments for Altered Expression.')
+									$("#comment_alteredexpression").focus()
+									return false
+								}
+							}
+							else if ($("#evid_type").val() == 'Gene Disruption') {
+								if ($("#experiment_patientcell").prop('checked') && $("#description_patientcell").val() == '') {
+									alert('Please enter Protein Cell Type.')
+									$("#description_patientcell").focus()
+									return false
+								}
+								else if ($("#normalfunction_geneprotein").val() == '') {
+									alert('Please enter Normal Function data.')
+									$("#normalfunction_geneprotein").focus()
+									return false
+								}
+								else if ($("#evidence_altertedfunction").val() == '') {
+									alert('Please enter evidence data for Altered Function.')
+									$("#evidence_altertedfunction").focus()
+									return false
+								}
+							}
+							//alert($("#fid").val())
+							if ($("#fid").val() == '') $("#functionalform").attr("action", "/Functionaldataanalysis/Addnew")
+							else $("#functionalform").attr("action", "/Functionaldataanalysis/Edit")
+							//alert($("#functionalform").attr("action"))
+							return true
+		})
+	})

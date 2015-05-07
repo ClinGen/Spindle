@@ -1,0 +1,109 @@
+Spindel 1.0
+Database schema
+Feb 02 2015
+
+Curator
+{
+	_id (uniquw: true, index: true)
+	Name
+	Title
+	WorkingInstitute
+	Token (unique: true)
+	AuthLevel
+	ContactInfo
+	LogName (unique: true, index: true)
+	PassWord
+	Active
+	LoginRecord: [
+		{
+			Login
+			Logout
+			Action: []
+		}
+	]
+}
+
+CaseStudy
+{
+	GroupID:"1",
+	HGNCSymbol:"NGLY1",
+	ORDOID:"137",
+	Active:"Yes",
+	Curators:["kgliuExp"],
+	DateTime:["Mon Feb 02 2015 16:46:29 GMT-0800 (PST)"],
+	Action:["Enter group data"],
+	GroupData:{
+		"CaseGroupName" : "Trio2",
+		"PMID" : "22581936",
+		"NumberOfCase" : "4",
+		"NumberOfAffectedAlleles" : "2",
+		"NumberOfProbands" : "1",
+		"MeanAgeOfCases" : "3",
+		"MedianAgeOfCases" : "3",
+		"AgeOfOnset" : "3",
+		"SexRatio" : "1:0",
+		"CountryOfOrigin" : "USA",
+		"Ethnicity" : "n",
+		"Race" : "White",
+		"SporadicalFamilial" : "No",
+		"PrimaryOutcome" : "Developmental delay, multifocal epilepsy, involuntarymovements, abnormal liver function, absent tears",
+		"OtherAttributes" : "Normal chromosomal microarray"
+	},
+	Method:{
+		"GroupName" : null,
+		"PrevTest" : "Yes",
+		"PrevTestDescription" : "Chromosomes, chromosome microarray, Niemann-Pick type C, hepatocerebral mDNA depletion panel (POLG1,DGUOK, MPV17), ataxia with oculomotor apraxia type 2(SETX), Allgrove Syndrome, ataxia telangectasia (ATM),Rett (MECP2), alphad1 antitrypsin (AAT), congenitaldisorder of glycosylation (transferrin isoelectric focusingand N-glycan analysis), metabolic tests (Tay Sachs,Sandhoff, mannosidosis, mucolipidosis II, Krabbe,metachromatic leukodystrophy, adrenoleukodystrophy,GAMT, plasma amino acids, plasma acylcarnitine, urineorganic acids).",
+		"GenomeWideStudy" : "Yes",
+		"GenotypingMethod" : "WES",
+		"EntireGeneSequencing" : "Yes",
+		"CopyNumberAssessed" : "Yes",
+		"SpecMutationsGenotyped" : "Yes",
+		"SpecMutationsGenotypedMethod" : "Screening for compound heterozygous variants revealed that patient 2 had inherited a frameshift variant in the last exon of NGLY1 from his mother, and a nonsense mutation in exon 8 from his father",
+		"GermlineData" : "Yes",
+		"TumorData" : "No",
+		"FamilyHistory" : "No"
+	},
+	Segregation:[
+		{
+			"SegregationID" : "",
+			"PedigreeName" : "",
+			"PedigreeSize" : "3",
+			"PedigreePopulation" : "CEU",
+			"PedigreeDescription" : "Regular segregation analysis",
+			"SegregationPattern" : "Autosomal recessive",
+			"PhPGenP" : "1",
+			"PhPGenN" : "0",
+			"PhPGenU" : "0",
+			"PhNGenP" : "0",
+			"PhNGenN" : "2",
+			"PhNGenU" : "0",
+			"PhUGenP" : "0",
+			"PhUGenN" : "0",
+			"PhUGenU" : "0",
+			"AddSegInfo" : "",
+			"Variant" : ""
+			"Assessment" : ""
+		}
+	]
+	Note:[
+		{
+			"NoteID":
+			"From":
+			"To":
+			"DateTime":
+			"Content":
+			"Status":
+
+		}
+	]
+}
+
+Variant: {
+	"VariantID":"",
+	"ClinVarID":"",
+	"dbSNPID":"",
+	"VariantHGVS":"",
+	"VariantType":"",
+	"PathogenicEvidence":"",
+	"Active":""
+}

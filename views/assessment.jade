@@ -1,21 +1,24 @@
 extends casegroup
 block casegroup_content
-	- var n = parseInt(studyid) - 1
 	tr
 		td(style="font-size:18px")
 			a(href='/Casegroupstudy/#{data.HGNCSymbol}/#{data.ORDOID}' style='text-decoration:none') Case Group Study
-			sapn &nbsp;>>&nbsp;
-			a(href='#' style='text-decoration:none') Study #{studyid}
+			sapn &nbsp;>>&nbsp;Group #{group.GroupID},&nbsp;
+			a(href='/Casegroupstudy/Group/#{group.GroupID}/Group' style='text-decoration:none') #{group.GroupData.CaseGroupName}
 			sapn &nbsp;>> Assessment
-		td(style="text-align:right;font-size:12px")
-			a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}" style='text-decoration:none') Add A New Study
+		td(style="text-align:right;font-size:14px")
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Method") Method
+			span &nbsp; | &nbsp;
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Segregation") Segregation
+			span &nbsp; | &nbsp;
+			a(href="/Casegroupstudy/Group/#{group.GroupID}/Variant") Variant
 	tr
 		td(colspan=2) &nbsp;
 	tr
 		td(style="vertical-align:top")
-			if casegroupstudy[n].Assessments
+			if group.Assessments
 				table
-					for m, k in casegroupstudy[n].Assessments
+					for m, k in group.Assessments
 						tr
 							td(style="sont-size:13px") Assessment: #{k+1}
 						for val, key in m
@@ -23,14 +26,16 @@ block casegroup_content
 								td(style="sont-size:12px") #{key}: #{val}
 						tr
 							td &nbsp;
-		td
+		td(style="width:550px")
 			form(action="/casegroupstudy/Assessment" method="post")
 				input(type="hidden" name="symbol" value="#{data.HGNCSymbol}")
 				input(type="hidden" name="ordoid" value="#{data.ORDOID}")
-				input(type="hidden" name="id" value="#{studyid}")
+				input(type="hidden" name="gid" value="#{group.GroupID}")
 				table(style="width:100%")
 					tr
 						td(colspan=2 style="font-size:125%") Add a new assessment
+					tr
+						td(colspan=2) &nbsp;
 					tr
 						td Select:
 						td
@@ -43,10 +48,12 @@ block casegroup_content
 							span &nbsp;&nbsp;&nbsp;Not Support
 								input(type="radio" id="lvl" name="lvl" value="Not Support")
 					tr
+						td(colspan=2) &nbsp;
+					tr
 						td(colspan=2) Reason
 					tr
 						td(colspan=2)
-							textarea(cols=70 rows=20 id="reason" name="reason")
+							textarea(cols=80 rows=15 id="reason" name="reason")
 					tr
 						td(colspan=2) &nbsp;
 					tr

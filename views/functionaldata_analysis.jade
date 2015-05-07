@@ -1,0 +1,567 @@
+extends observations
+block observation_content
+	form(id="functionalform" action="/Functionaldataanalysis/Edit" method="post")
+		input(type='hidden' name='symbol' value="#{data.HGNCSymbol}")
+		input(type='hidden' name='ordoid' value="#{data.ORDOID}")
+		input(type='hidden' name='fid' value="#{analysis.AnalysisID}")
+		table(style="width:100%;border-collapse:collapse")
+			tr
+				td(style="font-size:18px" colspan=2)
+					a(href='/Functionaldataanalysis/#{data.HGNCSymbol}/#{data.ORDOID}' style="text-decoration:none") Functional Data Analysis
+					span &nbsp;>> #{analysis.SectionName}&nbsp;
+					span(style="font-size:80%;color:#999") Data entered by #{analysis.Curators[0]}
+				td(style="text-align:right;font-size:13px")
+					- var deletable = true
+					if analysis.Curators[0] != user.LogName
+						- deletable =false
+					if analysis.Assessment && analysis.Assessment.length > 0
+						- deletable =false
+					if analysis.Variant && analysis.Variant.length > 0
+						- deletable =false
+					if deletable
+						a#deletelink(style="font-size:13px;cursor:pointer;text-decoration:underline") Delete This Analysis
+						span &nbsp;|&nbsp;
+					a(href="/Functionaldataanalysis/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}") Add New Analysis
+			tr
+				td(colspan=3) &nbsp;
+			tr
+				td(style="width:380px;vertical-align:top")
+					table(style="width:100%")
+						tr
+							td(style='vertical-align:top;text-align:right;width:100px') PMID:
+							td
+								if analysis.PMID
+									a(href="http://www.ncbi.nlm.nih.gov/pubmed/#{analysis.PMID}" target="_blank" style="font-size:13px") #{analysis.PMID}
+									span &nbsp;&nbsp;
+									a#pmidclick(style="text-decoration:none;cursor:pointer;font-size:12px" title="More") =>
+								if analysis.Curators[0] == user.LogName && (!analysis.Assessment || analysis.Assessment.length == 0)
+									br
+									input(type='text' id='pmid' name='pmid' style="width:70px")
+									span(style="font-size:80%") &nbsp;(Digit)
+						tr
+							td(style='vertical-align:top;text-align:right') Type:
+							td
+								span(style="font-size:13px") #{analysis.Type}
+								if analysis.Curators[0] == user.LogName && (!analysis.Assessment || analysis.Assessment.length == 0)
+									br
+									select(name='type' id='type')
+										option(value='') Select
+										option(value='Biochemical function') Biochemical function
+										option(value='Experimental protein Interactions') Experimental protein Interactions
+										option(value='Expression') Expression
+										option(value='Gene disruption') Gene disruption
+										option(value='Model systems') Model systems
+										option(value='Rescue') Rescue
+						tr
+							td(style='vertical-align:top;text-align:right') Description:
+							td
+								if analysis.Curators[0] == user.LogName && (!analysis.Assessment || analysis.Assessment.length == 0)
+									textarea(cols=40 rows=10 id='desc' name='desc') #{analysis.Description}
+								else
+									span(style="font-size:13px;width:300px") #{analysis.Description}
+				td(style="width:160px;vertical-align:top;border-left:solid #ccc 1px;border-right:solid #ccc 1px")
+					table(style="width:100%;height:100%")
+						tr
+							td
+								- var assessable = true
+								if analysis.Assessment
+									each assess in analysis.Assessment
+										if assess && assess.LogName == user.LogName
+											- assessable = false
+								if assessable
+									select(id="assessment" name="assessment")
+										option(value='') Add Assessment
+										option(value='Strongly Supports') Strongly Supports
+										option(value='Moderately Supports') Moderately Supports
+										option(value='Weakly Supports') Weakly Supports
+										option(value="Contradictory") Contradictory
+								else
+									span Assessment
+								br
+								#assessmentbox
+									if analysis.Assessment
+										each a in analysis.Assessment
+											span(style="font-size:20px") .
+											span(style="font-size:12px") &nbsp;#{a.Level}&nbsp;
+											if a && a.LogName == user.LogName
+												a#deleteassessment(style="text-decoration:none;cursor:pointer;font-size:12px") x
+											else
+												br
+												span(style="float:right;font-size:11px;text-align:right;color:#999") &nbsp;#{a.LogName}
+											br
+									script(type='text/javascript').
+										$(document).ready(function() {
+											$("#assessment").change(function() {
+												if ($(this).children('option:selected').val() != '') {
+													var datastr = {
+														"symbol":"#{analysis.HGNCSymbol}",
+														"ordoid":"#{analysis.ORDOID}",
+														"fid":"#{analysis.AnalysisID}",
+														"item":"analysis",
+														"assessment":$(this).children('option:selected').val()
+													}
+													$.post('/Functionaldataanalysis/Assessment', datastr, function(data) {
+														if (data) window.location.reload()
+													})
+												}
+											})
+											$("#deleteassessment").click(function() {
+												var datastr = {
+														"symbol":"#{analysis.HGNCSymbol}",
+														"ordoid":"#{analysis.ORDOID}",
+														"fid":"#{analysis.AnalysisID}",
+														"item":"analysis"
+												}
+												$.post('/Functionaldataanalysis/Assessment/Delete', datastr, function(data) {
+														if (data) window.location.reload()
+												})
+											})
+										})
+				td(style="vertical-align:top")
+					table(style="width:100%;border-collapse:collapse")
+						tr
+							td(style="width:150px") VARIANT:
+							td(colspan=2 style="text-align:right")
+								a#openlink(style="text-decoration:underline;cursor:pointer;font-size:12px") Add New Variant
+						if analysis.Variant
+							each v, v_index in analysis.Variant
+								if v.Active == 'Yes'
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") ClinVar ID:
+										td= v.ClinVarID
+										td(style="text-align:right;width:120px")
+											if v.Curator == user.LogName && (!v.Assessment || v.Assessment.length == 0)
+												a.variantedit(title="#{v.VariantID}" style="text-decoration:underline;cursor:pointer") Edit
+												span &nbsp;|&nbsp;
+												a.variantdelete(title="#{v.VariantID}" style="text-decoration:underline;cursor:pointer") Delete
+											else
+												span(style="color:#999")= v.Curator
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") dbSNP ID:
+										td(colspan=2)= v.dbSNPID
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") Variant HGVS:
+										td(colspan=2)= v.VariantHGVS
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") Variant Type:
+										td(colspan=2)= v.VariantType
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") Molecular Consequence:
+										td(colspan=2)= v.MolecularConsequence
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") Pathogenic Evidence:
+										td(colspan=2)
+											if v.PathogenicEvidence && v.PathogenicEvidence.length > 0
+												each pe, i in v.PathogenicEvidence
+													span= pe
+													if i < v.PathogenicEvidence.length-1
+														span ,&nbsp;
+									tr(style="background:#ddd;font-size:11px")
+										td(style="vertical-align:top;text-align:right") Assessment:
+										td
+											if v.Assessment && v.Assessment.length > 0
+												each assess, a_index in v.Assessment
+													span #{assess.Level}&nbsp;
+													if assess.LogName == user.LogName
+														- var v_a_index = (v_index).toString() + "," + (a_index).toString()
+														a.deletevariantassessment(style="text-decoration:none;cursor:pointer" title="#{v.VariantID}") X
+													else
+														span(style="color:#999") &nbsp;added by #{assess.LogName}
+													if a_index < v.Assessment.length-1
+														br
+										td(style="text-align:right")
+											- var assessable = true
+											if v.Assessment
+												each assess in v.Assessment
+													if assess && assess.LogName == user.LogName
+														- assessable = false
+											if assessable
+												a.addvariantassessment(title="#{v.VariantID}" style="text-decoration:underline;cursor:pointer") Add New Assessment
+
+									tr
+										td(colspan=3) &nbsp;
+			tr
+				td(colspan=3) &nbsp;
+			if analysis.Curators[0] == user.LogName && (!analysis.Assessment || analysis.Assessment.length == 0)
+				tr
+					td(colspan=3)
+						input(type="submit" value="Submit" style="font-size:125%")
+						span &nbsp;&nbsp;
+						input(type="reset" value="Reset" style="font-size:125%")
+	script(type="text/javascript").
+		$().ready(function(){
+			$("#deletelink").click(function(){
+				if (confirm('Delete the current functional data analysis?')) {
+					var datastr = {
+						"symbol":"#{analysis.HGNCSymbol}",
+						"ordoid":"#{analysis.ORDOID}",
+						"fid":"#{analysis.AnalysisID}",
+						"item":"analysis",
+					}
+					$.post('/Functionaldataanalysis/Delete', datastr, function(data) {
+						if (data) $(location).attr('href', '/Functionaldataanalysis/'+"#{analysis.HGNCSymbol}"+'/'+"#{analysis.ORDOID}")
+					})
+				}
+			})
+
+			$("#functionalform").submit(function() {
+				if ($("#pmid").val() != '') {
+					if (!/^\d+$/.test($("#pmid").val())) {
+						alert('Please enter positive integer.')
+						$("#pmid").focus()
+						return false
+					}
+				}
+			})
+		})
+	if analysis.PMID
+		#pmidbox(style="display:none;position:absolute;width:400px;height:500px;top:300px;right:10px;z-index:12;background:#369;opacity:0.8;box-shadow:10px 10px 5px #888;margin-right:30px")
+				div(style='width:390px;height:488px;margin:5px 4px 5px 4px;border:solid #bbb 1px')
+						span#pmid(style="floar:left;font-size:12px;color:#ff0;padding-left:5px")
+						div(style="float:right;padding:5px 5px 0px 0px")
+							a#pmidboxclose(style="text-decoration:none;cursor:pointer;font-size:16px;font-weight:bold;color:#ff0") X
+						br
+						div(style="padding: 0 10px 0 10px;color:#eee;font-size:13px")
+							br
+							dt Title:
+							dd#titlebox
+							br
+							dt Journal:
+							dd#journalbox
+							br
+							span Date:&nbsp;&nbsp;
+							span#datebox
+							br
+							br
+							span(style="width:90px") First Author:&nbsp;&nbsp;
+							span#authorbox
+							br
+							br
+							span Abstract:
+							#abstractbox(style="width:350px;height:218px;overflow:auto;margin:10px 5px 5px 5px;padding:5px 5px 5px 5px")
+				script(type="text/javascript").
+					$().ready(function(){
+						$("#pmidclick").on("click", function() {
+							$("#variantbox").css("display", "none")
+							$("#pmidbox").fadeIn(3000, function() {
+								var urlstr = '/Observations/pmid/' + '#{analysis.PMID}'
+								$.get(urlstr, function(data) {
+									if (data.Error) {
+										$("#abstractbox").html(data.Error)
+										$("#abstractbox").css('color','#f83')
+										$("#abstractbox").css('font-size','16px')
+										$("#pmid").html('PMID: '+'<spam style="color:#f83">'+data.Pmid+'</sapm>')
+									}
+									else {
+										$("#pmid").html('PMID: ' + data.Pmid)
+										$("#titlebox").html(data.Title)
+										$("#journalbox").html(data.Journal.Title)
+										$("#datebox").html(data.Journal.PubDate.Month + " " + data.Journal.PubDate.Year)
+										$("#authorbox").html(data.FirstAuthor.LastName + " " + data.FirstAuthor.Initials)
+										$("#abstractbox").html(data.Abstract)
+									}
+								})
+							})
+						})
+						$("#pmidboxclose").on("click", function() {
+							$("#pmidbox").fadeOut()
+						})
+						$("#pmidbox").on("mouseenter", function() {
+							$("#pmidbox").css('opacity', 1)
+						})
+						$("#pmidbox").on("mouseleave", function() {
+							$("#pmidbox").css('opacity', 0.8)
+						})
+
+						$("#groupform").submit(function() {
+							var no_err = true
+							$("input.numeric").each(function() {
+								if ($(this).val() != '' && !$.isNumeric($(this).val())) {
+									alert('Please enter positive number.')
+									$(this).focus()
+									no_err = false
+								}
+							})
+							var pttn = /^\d+:\d+$/
+							if ($("input.ratio").val() != '' && !pttn.test($("input.ratio").val())) {
+								alert('Plese enter a ratio like 1:1')
+								$("input.ratio").focus()
+								no_err = false
+							}
+							return no_err
+						})
+					})
+	#variantbox(style="display:none;position:absolute;width:450px;padding:10px 10px 10px 10px;top:250px;left:320px;background:#c77;box-shadow:10px 10px 5px #888")
+		form#variantform(name="variantform" action="/Functionaldataanalysis/Variant/Addnew" method="post")
+			input(type="hidden" name="symbol" value="#{analysis.HGNCSymbol}")
+			input(type="hidden" name="ordoid" value="#{analysis.ORDOID}")
+			input(type="hidden" name="fid" value="#{analysis.AnalysisID}")
+			input(type="hidden" id="vid" name="vid" value="")
+			table(style="font-size:12px;")
+						tr
+							td(colspan=2 style="text-align:right")
+								a#variantboxclose(style="text-decoration:none;cursor:pointer;font-size:16px;color:#fff") X
+						tr
+							td(style="vertical-align:top;text-align:right")
+								a(href="http://www.ncbi.nlm.nih.gov/clinvar/" target="_blank" style="color:#03a") ClinVar
+								span &nbsp;ID:
+							td
+								input(type="text" id="clinvarid" name="clinvarid" style="width:160px")
+						tr
+							td(style="vertical-align:top;text-align:right")
+											a(href="http://www.ncbi.nlm.nih.gov/SNP/" target="_blank" style="color:#03a") dbSNP
+											span &nbsp;ID:
+							td
+											input(type="text" id="dbsnpid" name="dbsnpid" style="width:160px")
+						tr
+							td(style="vertical-align:top;text-align:right")
+											span Variant&nbsp;
+											a(href="http://www.hgvs.org/mutnomen/" target="_blank" style="color:#03a") HGVS
+											span :
+							td
+											textarea(cols=30 rows=2 id="varianthgvs" name="varianthgvs")
+						tr
+							td(style="vertical-align:top;text-align:right") Variant Type:
+							td
+											select(id="varianttype" name="varianttype")
+													option(value='') Select
+													option(value='Complex SO:0001784') Complex SO:0001784
+													option(value='Complex chromosomal mutation SO:1000146') Complex chromosomal mutation SO:1000146
+													option(value='Copy number gain SO:0001742') Copy number gain SO:0001742
+													option(value='Copy number loss SO:0001743') Copy number loss SO:0001743
+													option(value='Copy number variation SO:0001019') Copy number variation SO:0001019
+													option(value='Deletion SO:0000159') Deletion SO:0000159
+													option(value='Duplication SO:1000035') Duplication SO:1000035
+													option(value='Indel SO:1000032') Indel SO:1000032
+													option(value='Insertion SO:0000667') Insertion SO:0000667
+													option(value='Interchromosomal breakpoint SO:0001873') Interchromosomal breakpoint SO:0001873
+													option(value='Intrachromosomal breakpoint SO:0001874') Intrachromosomal breakpoint SO:0001874
+													option(value='Inversion SO:1000036') Inversion SO:1000036
+													option(value='Microsatellite SO:0000289') Microsatellite SO:0000289
+													option(value='Mobile element insertion SO:1001837') Mobile element insertion SO:1001837
+													option(value='Monomeric repeat SO:0001934') Monomeric repeat SO:0001934
+													option(value='Multiple nucleotide polymorphism SO:0001013') Multiple nucleotide polymorphism SO:0001013
+													option(value='Novel sequence insertion SO:1001838') Novel sequence insertion SO:1001838
+													option(value='Sequence alteration SO:0001059') Sequence alteration SO:0001059
+													option(value='Single nucleotide variant SO:0001483') Single nucleotide variant SO:0001483
+													option(value='Tandem duplication SO:1000173') Tandem duplication SO:1000173
+													option(value='Translocation SO:0000199') Translocation SO:0000199
+						tr
+							td(style="vertical-align:top;text-align:right") Molecular Consequence:
+							td
+											select(id="mconsequence" name="mconsequence")
+													option(value='') Select
+													option(value='Frameshift variant SO:0001589') Frameshift variant SO:0001589
+													option(value='Intron SO:0001627') Intron SO:0001627
+													option(value='Missense variant SO:0001583') Missense variant SO:0001583
+													option(value='Nonsense SO:0001587') Nonsense SO:0001587
+													option(value='Splice acceptor variant SO:0001574') Splice acceptor variant SO:0001574
+													option(value='Splice donor variant SO:0001575') Splice donor variant SO:0001575
+													option(value='Stop lost SO:0001578') Stop lost SO:0001578
+													option(value='Synonymous variant SO:0001819') Synonymous variant SO:0001819
+													option(value='5 prime UTR variant SO:0001623') 5 prime UTR variant SO:0001623
+													option(value='3 prime UTR variant SO:0001624') 3 prime UTR variant SO:0001624
+													option(value='2KB upstream variant SO:0001636') 2KB upstream variant SO:0001636
+													option(value='500B downstream variant SO:0001634') 500B downstream variant SO:0001634
+						tr
+							td(colspan=2 style="text-align:right") &nbsp;
+						tr
+							td(colspan=2) PATHOGENIC EVIDENCE:
+						tr
+							td(colspan=2)
+								table(style="width:100%;font-size:12px")
+												tr
+													td(style="text-align:right") Simple Case Report&nbsp;
+															input(type="checkbox" name="pathevidence" value='Simple Case Report')
+													td(style="text-align:right") Case w/ Control&nbsp;
+															input(type="checkbox" name="pathevidence" value='Case w/ Control')
+													td(style="text-align:right") Functional&nbsp;
+															input(type="checkbox" name="pathevidence" value='Functional')
+												tr
+													td(style="text-align:right") In Silico Prediction
+															input(type="checkbox" name="pathevidence" value='In Silico Prediction')
+													td(style="text-align:right") Gene Region
+															input(type="checkbox" name="pathevidence" value='Gene Region')
+													td(style="text-align:right") Type of Variant
+															input(type="checkbox" name="pathevidence" value='Type of Variant')
+												tr
+													td(style="text-align:right") Segregation Data
+															input(type="checkbox" name="pathevidence" value='Segregation Data')
+													td(style="text-align:right" colspan=2) Lack of Variant(s) in Controls
+															input(type="checkbox" name="pathevidence" value='Lack of Variant(s) in Controls')
+						tr
+							td(colspan=2 style="text-align:right") &nbsp;
+						tr
+							td(colspan=2 style="text-align:right")
+								select(id="vassessment" name="vassessment")
+									option(value='') Add Assessment
+									option(value='Strongly Supports') Strongly Supports
+									option(value='Moderately Supports') Moderately Supports
+									option(value='Weakly Supports') Weakly Supports
+									option(value="Contradictory") Contradictory
+						tr(style="height:30px;vertical-align:bottom")
+							td(colspan=2 style="text-align:left")
+								input(type="submit" value="Submit" style="font-size:14px")
+								span &nbsp;
+								input(type="reset" value="Reset" style="font-size:14px")
+			script(type="text/javascript").
+				$().ready(function() {
+					$("#variantform").submit(function() {
+						var data_entered = false
+						$("input.text").each(function() {
+							if ($(this.val() != '')) {
+								data_entered = true
+								break
+							}
+						})
+						$("select").each(function() {
+							if ($(this).val() != '') {
+								data_entered =true
+								break
+							}
+						})
+						if ($("#varianthgvs").val() != '') {
+							data_entered = true
+						}
+						if (!data_entered) {
+							alert('Please enter data.')
+							return false
+						}
+						else {
+							//$("#variantform").attr("action", "/Functionaldataanalysis/Variant/Addnew")
+							alert('data_entered')
+						}
+						//return data_entered
+					})
+				})
+		#variantlist(style="z-index:12;display:none;position:absolute;width:200px;top:40px;left:340px;border:solid #999 1px;font-size:11px;background:#dde;padding-left:5px")
+	script(type="text/javascript").
+		$().ready(function(){
+			$("#variantboxclose").on("click", function() {
+				$("#variantbox").css("display", "none")
+			})
+			$("#openlink").on("click", function() {
+				$("#variantbox").css("display", "block")
+				$("#pmidbox").css('display', 'none')
+				$("#vassessment").css('display', 'none')
+			})
+
+			/*$("#dbsnpid").on('input', function() {
+						if ($(this).val().length > 5) {
+							//alert('dbSNP ID')
+							var url = '/Functionaldataanalysis/Variant/dbSNP/' + $(this).val()
+							//var htmlstr = 'dbSNP ID: ' + $(this).val()
+							var htmlstr = ''
+							$.get(url, function(data) {
+								if (data != "Not found") {
+									htmlstr += data.length
+									for (var j=0; j<data.length; j++) {
+										htmlstr += '<span>dbSNP ID: ' + data[j].dbSNPID + '</span><br />'
+										htmlstr += '<span>ClinVar ID: ' + data[j].ClinVarID + '</span><br />'
+										htmlstr += '<span>Variant HGVS: ' + data[j].VariantHGVS + '</span><br />'
+										htmlstr += '<span>Type: ' + data[j].VariantType + '</span><br />'
+										htmlstr += '<span>Molecular Consequence: ' + data[j].MolecularConsequence + '</span><br />'
+										htmlstr += '<span>Pathogenic Evidence: '
+										for (var i=0; i<data[j].PathogenicEvidence.length; i++) {
+											htmlstr += data[j].PathogenicEvidence[i]
+											if (i < data[j].PathogenicEvidence.length-1) htmlstr += ', '
+										}
+										htmlstr += '</span><br /><br />'
+									}
+									$("#variantlist").html(htmlstr)
+									$("#variantlist").css('display', 'block')
+								}
+							})
+						}
+			})*/
+			$("a.variantdelete").on('click', function() {
+				if(confirm('Delete the variant?')) {
+					var datastr = {
+						"symbol":"#{analysis.HGNCSymbol}",
+						"ordoid":"#{analysis.ORDOID}",
+						"fid":"#{analysis.AnalysisID}",
+						"variantid":$(this).attr('title')
+					}
+					$.post('/Functionaldataanalysis/Variant/Delete', datastr, function(data) {
+						if (data) window.location.reload()
+					})
+				}
+			})
+
+			$("a.variantedit").on('click', function() {
+				$("#variantbox").css("display", "none")
+				var url = '/Functionaldataanalysis/Analysis/#{analysis.AnalysisID}/Variant/' + $(this).attr('title')
+				//alert(url)
+				$.get(url, function(data) {
+					$("#dbsnpid").val(data.dbSNPID)
+					$("#dbsnpid").attr("disabled",false)
+					$("#dbsnpid").css('background', '#fff')
+					$("#clinvarid").val(data.ClinVarID)
+					$("#clinvarid").attr("disabled",false)
+					$("#clinvarid").css('background', '#fff')
+					$("#varianthgvs").val(data.VariantHGVS)
+					$("#varianthgvs").attr("disabled",false)
+					$("#varianthgvs").css('background', '#fff')
+					$("#varianttype option[value='" + data.VariantType + "']").attr("selected", "selected")
+					$("#varianttype").attr("disabled",false)
+					$("#mconsequence option[value='" + data.MolecularConsequence + "']").attr("selected", "selected")
+					$("#mconsequence").attr("disabled",false)
+					$("input:checkbox").each(function() {
+						if (data.PathogenicEvidence.indexOf($(this).val()) > -1) $(this).attr("checked", "checked")
+						$(this).attr("disabled",false)
+					})
+					$("#vassessment").css('display', 'none')
+					$("#variantform").attr("action", "/Functionaldataanalysis/Variant/Edit")
+					$("#vid").val(data.VariantID)
+					$("#variantbox").css("display", "block")
+				})
+			})
+
+			$("a.addvariantassessment").on('click', function() {
+				$("#variantbox").css("display", "none")
+				var url = '/Functionaldataanalysis/Analysis/#{analysis.AnalysisID}/Variant/' + $(this).attr('title')
+				//alert(url)
+				$.get(url, function(data) {
+					$("#dbsnpid").val(data.dbSNPID)
+					$("#dbsnpid").attr("disabled",true)
+					$("#dbsnpid").css('background', '#c77')
+					$("#clinvarid").val(data.ClinVarID)
+					$("#clinvarid").attr("disabled",true)
+					$("#clinvarid").css('background', '#c77')
+					$("#varianthgvs").val(data.VariantHGVS)
+					$("#varianthgvs").attr("disabled",true)
+					$("#varianthgvs").css('background', '#c77')
+					$("#varianttype option[value='" + data.VariantType + "']").attr("selected", "selected")
+					$("#varianttype").attr("disabled",true)
+					$("#mconsequence option[value='" + data.MolecularConsequence + "']").attr("selected", "selected")
+					$("#mconsequence").attr("disabled",true)
+					$("input:checkbox").each(function() {
+						if (data.PathogenicEvidence.indexOf($(this).val()) > -1) $(this).attr("checked", "checked")
+						$(this).attr("disabled",true)
+					})
+					$("#vassessment").css('display', 'block')
+					$("#vassessment").css('float', 'right')
+					$("#variantform").attr("action", "/Functionaldataanalysis/Variant/Edit")
+					$("#vid").val(data.VariantID)
+					$("#variantbox").css("display", "block")
+				})
+			})
+
+			$("a.deletevariantassessment").on('click', function() {
+					var temp = $(this).attr('title').split(',')
+					var datastr = {
+						"symbol":"#{analysis.HGNCSymbol}",
+						"ordoid":"#{analysis.ORDOID}",
+						"fid":"#{analysis.AnalysisID}",
+						"vid": $(this).attr('title'),
+						//"assessment_index": temp[1]
+					}
+					$.post('/Functionaldataanalysis/Variant/Assessment/Delete', datastr, function(data) {
+						if (data) window.location.reload()
+					})
+			})
+		})
+
+
+
+

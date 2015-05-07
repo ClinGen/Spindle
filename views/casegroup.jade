@@ -1,62 +1,83 @@
 extends observations
 block observation_content
-		table(style="width:100%" border=0)
-			if studyid
+		table(style="width:100%;border-collapse:collapse;border:none")
+			if group || groupid
 				block casegroup_content
 			else
 				tr
 					td(style="font-size:18px") Case Group Study >> General Info
 					td(style="text-align:right;font-size:13px")
-						a(href="/Casegroupstudy/Addnewstudy/#{data.HGNCSymbol}/#{data.ORDOID}") Add A New Study
+						a(href="/Casegroupstudy/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}") Add New Case Group
 				unless casegroupstudy
 					tr
 						td(colspan=2) &nbsp;
 					tr
-						td(colspan=2) No Case Group Study data. Click Add A New Study above to enter new data.
+						td(colspan=2)
+							span No Case Group Study data. Click&nbsp;
+							a(href='/Casegroupstudy/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}') Add New Case Group
+							span &nbsp;to enter new data.
 				else
 					tr
 						td(colspan=2) &nbsp;
-					- var i = 0
 					for c in casegroupstudy
-						- i += 1
-						tr
-							td(colspan=2 style='background:#dcdcdc')
-								span Study #{i}:
-								span(sytle="width=50px") &nbsp;&nbsp;&nbsp;&nbsp;
-								span(style="font-size:13px")
-									a(href="/Casegroupstudy/Study/#{i}/Group/Addnew/#{data.HGNCSymbol}/#{data.ORDOID}") Add New Group
-								br
-								br
-								span(style="padding-left:20px") Case Group (#{c.CaseGroup.length}):&nbsp;
-								for g in c.CaseGroup
-									a(href="/Casegroupstudy/Study/#{c.CaseStudyID}/Group/#{g.CaseGroupName}/#{data.HGNCSymbol}/#{data.ORDOID}") #{g.CaseGroupName}
-									span ,&nbsp;
-								br
-								br
-								span(style="padding-left:20px")
-									a(href="/Casegroupstudy/Study/#{i}/Method/#{data.HGNCSymbol}/#{data.ORDOID}" style="text-decoration:none") Study Method:&nbsp;
-								if c.Method
-									br
-									for v, k in c.Method
-										if k == 'GenomeWideStudy' || k == 'GenotypingMethod' || k == 'EntireGeneSequencing' || k == 'CopyNumberAssessed'
-											span(style='font-size:13px;padding-left:30px') #{k}:&nbsp;#{v};&nbsp;&nbsp;&nbsp;
-								br
-								br
-								span(style="padding-left:20px")
-									a(href="/Casegroupstudy/Study/#{i}/Segregation/#{data.HGNCSymbol}/#{data.ORDOID}" style="text-decoration:none") Segregation Analysis:&nbsp;
-								if c.Segregation
-									br
-									for v, k in c.Segregation
-										if k.indexOf('Ph') > -1
-											span(style='font-size:13px;padding-left:30px') #{k}:&nbsp;#{v};&nbsp;&nbsp;&nbsp;
-								br
-								br
-								span(style="padding-left:20px")
-										a(href="/Casegroupstudy/Study/#{i}/Assessment/#{data.HGNCSymbol}/#{data.ORDOID}" style="text-decoration:none") Assessment(s)
-								if c.Assessments
-									br
-									for v in c.Assessments
-										span(style='font-size:13px;padding-left:30px') #{v.Level},&nbsp;&nbsp;&nbsp;
-								br
+						tr(style='background:#dcdcdc')
+							td
+								- var dt = c.DateTime[0].split(' GMT-0800 ')
+									span Group #{c.GroupID}:&nbsp;
+									a(href="/Casegroupstudy/Group/#{c.GroupID}/Group") #{c.GroupData.GroupName}
+									span(style="font-size:13px;color:#999") &nbsp;&nbsp;Initialized by&nbsp;#{c.Curators[0]} at #{dt[0]} #{dt[1]}
+							td(style="text-align:right;font-size:13px;width:150px")
+								a(href='/Casegroupstudy/Group/#{c.GroupID}/Segregation/Addnew') New Segregation
+						tr(style='background:#dcdcdc')
+							td(colspan=2 style="padding-left:20px;font-size:13px")
+								span PMID:#{c.GroupData.PMID},&nbsp;&nbsp;# of Case:#{c.GroupData.NumberOfCase},&nbsp;&nbsp;
+								span # of Alleles:#{c.GroupData.NumberOfAffectedAlleles},&nbsp;&nbsp;# of Probands: #{c.GroupData.NumberOfProbands},&nbsp;&nbsp;
+								span Mean Age: #{c.GroupData.MeanAgeOfCases},&nbsp;&nbsp;Sex Ratio: #{c.GroupData.SexRatio}
+						if c.Method
+							tr(style='background:#dcdcdc')
+								td(colspan=2 style="padding-left:20px;font-size:13px")
+									a(href="/Casegroupstudy/Group/#{c.GroupID}/Method") Method
+									span :&nbsp;Previous Teseting:#{c.Method.PrevTest},&nbsp;Genome Wide Study:#{c.Method.GenomeWideStudy},&nbsp;Genotyping Method:#{c.Method.GenotypingMethod},
+									span &nbsp;Entire Gene Sequencing:#{c.Method.EntireGeneSequencing}, Germline Data:#{c.Method.GermlineData}, Family History:#{c.Method.FamilyHistory}
+						if c.Segregation
+							tr(style='background:#dcdcdc')
+								td(colspan=2 style="padding-left:20;font-size:13px" )
+									table(style="width:100%;border:none;padding-left:8px")
+										for seg in c.Segregation
+											if seg.Active == 'Yes'
+												tr
+													td(style='width:100px')
+														a(href="/Casegroupstudy/Group/#{c.GroupID}/Segregation/#{seg.SegregationID}") Segregation #{seg.SegregationID}
+													td
+														for s, k in seg
+															if k.indexOf('Ph') > -1
+																span #{k}: #{s},&nbsp;&nbsp;
+												if seg.Variant
+													tr
+														td(style='text-align:right') Variant:
+														td
+															if seg.Variant.ClinVarID
+																span ClinVar ID:&nbsp;
+																a(href="http://www.ncbi.nlm.nih.gov/clinvar/#{seg.Variant.ClinVarID.split('.')[0]}" target="_blank") #{seg.Variant.ClinVarID}
+															else if seg.Variant.dbSNPID
+																span dbSNP ID:&nbsp;
+																a(href="http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=#{seg.Variant.dbSNPID}" target="_blank") #{seg.Variant.dbSNPID}
+															else if seg.Variant.VariantHGVS
+																span Variant HGVS: #{seg.Variant.VariantHGVS}
+															if seg.Variant.PathogenicEvidence && seg.Variant.PathogenicEvidence.length > 0
+																span ;&nbsp;&nbsp;#{seg.Variant.PathogenicEvidence[0]}
+															if seg.Variant.Assessment && seg.Variant.Assessment.length > 0
+																	span ;&nbsp;&nbsp;#{seg.Variant.Assessment[0].Level}
+												if seg.Assessment && seg.Assessment.length > 0
+													tr
+														td(style='text-align:right') Assessment:
+														td
+															for a, k in seg.Assessment
+																if a
+																	span #{a.Level}
+																	span ,&nbsp;&nbsp;
+																	if k > 5
+																		span ...
+																		- break
 						tr
 							td(colspan=2) &nbsp;

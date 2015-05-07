@@ -8,9 +8,10 @@ module.exports = function(req, user) {
 	}
 	var today = new Date();
 	var thisMS = today.getTime();
-	var midNumber = parseInt(str.substr(0,20))/thisMS;
-	var split = (midNumber + '').split('.');
-	var token = parseInt(split[0] + split[1]).toString(16);
+	//var midNumber = parseInt(str.substr(0,20))/thisMS;
+	//var split = (midNumber + '').split('.');
+	//var token = parseInt(split[0] + split[1]).toString(16);
+	var token = thisMS.toString()
 	return user.LogName.split('@')[0] + '-' + token + '-' + getClientIP(req);
 /*
 

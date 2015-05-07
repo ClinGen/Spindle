@@ -1,11 +1,12 @@
 $(document).ready(function() {
 	$('#changepwd').click(function() {
+		$("#toplinks").css('display', 'none');
 		$('#pwdwin').fadeIn(50, function() {
 			var htmlstr = '<table align="center" valign="center">';
 			htmlstr += '<tr><td>Current Password:</td><td><input type="password" id="pwd" name="pwd" /></td></tr>';
 			htmlstr += '<tr><td>New Password:</td><td><input type="password" id="newpwd" name="newpwd" /></td></tr>';
 			htmlstr += '<tr><td>Enter Again:</td><td><input type="password" id="newpwd2" name="newpwd2" /></td></tr>';
-			htmlstr += '<tr><td><input type="button" value="Enter" id="pwdsendbnt" /></td><td><input type="button" value="Reset" id="resetbnt" /></td></tr>';
+			htmlstr += '<tr><td><input type="button" value="Submit" id="pwdsendbnt" /></td><td><input type="button" value="Reset" id="resetbnt" /></td></tr>';
 			htmlstr += '</table>';
 			$("#wincontent").html(htmlstr);
 			$("#winalert").html("");

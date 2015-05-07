@@ -1,0 +1,43 @@
+			/*db.CaseStudy.update({"CaseStudyID":req.body.id}, {$set:{"CaseGroup":newgp, "ActionRecord":newrecord}}, function(err) {
+				if (err) console.log(err);
+				db.CaseStudy.find({"HGNCSymbol": req.body.symbol, "ORDOID": req.body.ordoid}).toArray(function(err, casegroupstudy) {
+					if (err) console.log(err);
+					db.bind("Curation");
+					db.Curation.update({});
+					db.Curation.find({"HGNCSymbol": req.body.symbol, "ORDOID": req.body.ordoid}).toArray(function(err, curationData) {
+						if (err) console.log(err);
+						var obs = curationData[0].Observations.CaseStudy;
+						obs[obs.length] = {
+							"CaseStudyID": req.body.id,
+							"LogName": req.cookies.Spindle.split('-')[0],
+							"DateTime": Date().toString()
+						};
+						var status = curationData[0].Status;
+						if (status == 'Creation') status = "Observation";
+						db.Curation.update({"HGNCSymbol":req.body.symbol, "ORDOID": req.body.ordoid}, {$set:{"Observations.CaseStudy":obs, "Status":status}}, function(err) {
+							if (err) console.log(err);
+							db.bind('Curator');
+							db.Curator.find({"LogName":req.cookies.Spindle.split('-')[0]}).toArray(function(err, user) {
+								if (err) console.log(err);
+								db.Curator.find({"LogName":curationData[0].LogName}).toArray(function(err, creator) {
+									if (err) console.log(err);
+									db.bind('Curation');
+									var newjob = curationData[0].Curators;
+									newjob[newjob.length] = {
+											"Name": user[0].Name,
+											"LogName": user[0].LogName,
+											"Contribution": "curation @ Case Study ID: " + req.body.id,
+											"DateTime": Date().toString()
+									};
+									db.Curation.update({"HGNCSymbol":req.body.symbol, "ORDOID": req.body.ordoid},{$set:{"Curators":newjob}}, function(err) {
+										if (err) console.log(err);
+										//if (newstudy) res.render('casegroup', { data:curationData[0], user:user[0], creator:creator[0] });
+										//else
+										res.render('casegroup_group', { group:req.body.groupname, studyid:req.body.id, data:curationData[0], user:user[0], creator:creator[0], casegroupstudy:casegroupstudy});
+									});
+								});
+							});
+						});
+					});
+				});
+			});*/
