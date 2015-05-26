@@ -11,6 +11,7 @@
     "debug": "~2.1.1",
     "express": "~4.10.6",
     "jade": "~1.8.2",
+    "mongoskin": "^1.4.13",
     "morgan": "~1.5.1",
     "q": "^1.1.2",
     "serve-favicon": "~2.2.0"
