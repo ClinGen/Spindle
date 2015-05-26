@@ -15,17 +15,17 @@ html
 			#ClinGen_Logo.floatleft(style="position:absolute;top:2px;z-index:11")
 				a(href="http://www.clinicalgenome.org/" target="_blank")
 					img#clingen_logo_img(src="/images/ClinGenLogo-rainbow.png" style="padding-left:10px;height:40px;opacity:1")
-					img#clingen_logo_img(src="/images/ClinGenLogo.png" style="padding-left:10px;height:40px;opacity:1")
+					//-img#clingen_logo_img(src="/images/ClinGenLogo.png" style="padding-left:10px;height:40px;opacity:1")
 			//-img.floatleft(src="/images/spindle-logo-9.png" style="height:90px;margin:3px 0 0 10px;opacity:0.5")
 			//-#logolink.floatleft
 				a#spindleLogo(href='/') SPINDLE
-			//-#pairbox.floatleft(style="display:none")
+			#pairbox.floatleft(style="display:none;position:absolute;left:80px")
 				form#associationentry(action="/Curations" method="post")
 					span
-						input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbbbbb;width:120px" value="Gene Symbol")
+						input(type="text" id="genesymbol" name="genesymbol" style="font-size:13px;height:18px;color:#bbb;width:120px;border-radius:8px" value="Gene Symbol")
 					span(style="font-size:15px;font-weight:bold") &nbsp;:&nbsp;
 					span
-						input(type="text" id="diseaseterm" name="diseaseterm" style="height:18px;font-size:13px;color:#bbbbbb" value="Disease Keyword")
+						input(type="text" id="diseaseterm" name="diseaseterm" style="height:18px;font-size:13px;color:#bbbbbb;border-radius:8px" value="Disease Keyword")
 						//-input(type="text" id="diseaseterm" name="diseaseterm" style="width:650px;height:18px;font-size:13px;color:#bbbbbb" value="Disease Keyword")
 					span &nbsp;
 					span

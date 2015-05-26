@@ -73,6 +73,7 @@ $(document).ready(function() {
 		var obj = $(this)
 		if (obj.val() == '') {
 			$("#genelist").css("display","none")
+			//$("#genesymbol").css('color', '#bbb').val('Gene Symbol')
 		}
 		else {
 			var url = '/Curations/Symbol/' + obj.val()
@@ -91,6 +92,9 @@ $(document).ready(function() {
 				}
 			});
 		}
+	})
+	.on('blur', function() {
+		if ($(this).val() == '') $(this).val('Gene Symbol').css('color', '#bbb')
 	});
 
 	$("#diseaseterm")
@@ -121,7 +125,7 @@ $(document).ready(function() {
 			})
 		}
 	})
-	.on('input',function() {
+	.on('input', function() {
 		$("#genelist").css("display", "none")
 		var obj = $(this)
 		if (obj.val() == '') {
@@ -142,6 +146,9 @@ $(document).ready(function() {
 			})
 		}
 	})
+	.on('blur', function() {
+		if ($(this).val() == '') $(this).val('Disease Term').css('color', '#bbb')
+	});
 
 	var g, d
 	function gone() {

@@ -6,7 +6,40 @@ var util = require('util')
 var http = require("http")
 
 router.get('/', function(req, res) {
-	res.render('variant_all', {user:{LogName:req.cookies.Spindle.split('-')[0]}})
+	var db = req.db
+	db.collection('Variant').count({"Active":"Yes"}, function(err, clinvarCount) {
+		if (err) {
+			throw err
+			return
+		}
+		db.collection('Variant').count({"dbSNPID":{$ne:[]}}, function(err, dbsnpCount) {
+		//db.collection('Variant').count({"dbSNPID":{$exists:true}, $where:"this.dbSNPID.length>0"}, function(err, dbsnpCount) {
+			if (err) {
+				throw err
+				return
+			}
+			db.collection('Variant').count({"VariantHGVS":{$ne:[]}}, function(err, hgvsCount) {
+				if (err) {
+					throw err
+					return
+				}
+				db.collection('Variant').count({"ClinicalSignificance":"Pathogenic"}, function(err, pathogenicCount) {
+					if (err) {
+						throw err
+						return
+					}
+					db.collection('Variant').count({"AlleleFrequency.0.Value":{$ne:""}}, function(err, alleleFreqCount) {
+						if (err) {
+							throw err
+							return
+						}
+						res.render('variant_all', {clinvar:clinvarCount, dbsnp:dbsnpCount, hgvs:hgvsCount, pathogenic:pathogenicCount, allelefreq:alleleFreqCount, user:{LogName:req.cookies.Spindle.split('-')[0]}})
+						//res.send({clinvar:clinvarCount, dbsnp:dbsnpCount, hgvs:hgvsCount, pathogenic:pathogenicCount, allelefreq:alleleFreqCount})
+					})
+				})
+			})
+		})
+	})
 })
 
 router.get('/Count', function(req, res) {
@@ -31,14 +64,20 @@ router.get('/Count', function(req, res) {
 						throw err
 						return
 					}
-					res.send({clinvar:clinvarCount, dbsnp:dbsnpCount, hgvs:hgvsCount, pathogenic:pathogenicCount})
+					db.collection('Variant').count({"AlleleFrequency.0.Value":{$ne:""}}, function(err, alleleFreqCount) {
+						if (err) {
+							throw err
+							return
+						}
+						res.send({clinvar:clinvarCount, dbsnp:dbsnpCount, hgvs:hgvsCount, pathogenic:pathogenicCount, allelefreq:alleleFreqCount})
+					})
 				})
 			})
 		})
 	})
 })
 
-// get vatiants ids for ajax request
+// get vatiants ids for ajax request from variant_all_View.js
 router.get('/:id_name/:id_value', function(req, res) {
 	var db = req.db
 	if (req.params.id_name == 'VariantID') {
@@ -61,6 +100,7 @@ router.get('/:id_name/:id_value', function(req, res) {
 					throw err
 					return false
 				}
+console.log(vData.length)
 				if (vData && vData.length>0) res.send(vData)
 				else res.send(false)
 			})
@@ -95,8 +135,19 @@ router.get('/:id_name/:id_value', function(req, res) {
 				else res.send(false)
 			})
 		}
-		else if (req.params.id_name == 'Gene') {
-			db.collection('Variant').find({"GeneSymbols":{$regex:pttn, $options:"i"}}).toArray(function(err, vData) {
+		else if (req.params.id_name == 'GenePart') {
+			db.collection('Variant').find({"GeneSymbols.Symbol":{$regex:pttn, $options:"i"}}).toArray(function(err, vData) {
+				if (err) {
+					throw err
+					return false
+				}
+				if (vData && vData.length>0) res.send(vData)
+				else res.send(false)
+			})
+		}
+		else if (req.params.id_name == 'GeneFull') {
+			var gene_symbol = req.params.id_value.toUpperCase()
+			db.collection('Variant').find({"GeneSymbols.Symbol":gene_symbol}).toArray(function(err, vData) {
 				if (err) {
 					throw err
 					return false

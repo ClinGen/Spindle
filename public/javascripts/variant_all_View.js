@@ -9,14 +9,14 @@ $(function() {
 				}
 				set_variant_box_height()
 
-				$.get('/Variants/Count', function(counts) {
+				/*$.get('/Variants/Count', function(counts) {
 					if (counts) {
 						$("#clinvar_count_box").text(counts.clinvar)
 						$("#dbsnp_count_box").text(counts.dbsnp)
 						$("#hgvs_count_box").text(counts.hgvs)
 						$("#pathogenic_count_box").text(counts.pathogenic)
 					}
-				})
+				})*/
 				var data = []
 				$("#id_name").on('change', function() {
 					$("#id_value").val('').focus()
@@ -41,21 +41,16 @@ $(function() {
 							htmlstr += '<td style="width:300px;vertical-align:top"><table style="width:100%;border-collapse:collapse">'
 							htmlstr += '<tr><td colspan=2><div style="width:298px;overflow:hidden;font-weight:bold">'
 							htmlstr += '<a title="' + data[j].VariantName + '" style="text-decoration:none;cursor:pointer;color:#000">'
-							//var temp
-							//if (data[j].VariantName.length > 43) htmlstr += data[j].VariantName.substr(0, 43) + '<br /><span style="float:right">' + data[j].VariantName.substr(43) + '</span>'
-							//else
 							htmlstr += data[j].VariantName
 							htmlstr += '</a></div></td></tr><tr><td colspan=2></td></tr>'
-							htmlstr += '<tr><td style="width:80px;text-align:right">ClinVare ID:</td><td>'
-							htmlstr += '<a class="clinvarid_link" href="http://www.ncbi.nlm.nih.gov/clinvar/variation/'
-							htmlstr += data[j].ClinVarSubmissionID + '" target="_blank" title="' + data[j].ClinVarID + '">' + data[j].ClinVarID + '</a></td></tr>'
-							htmlstr += '<tr><td style="width:80px;text-align:right;vertical-align:top">dbSNP ID:</td><td>'
+							htmlstr += '<tr><td style="width:120px;text-align:right">ClinVare ID:</td><td>'
+							htmlstr += '<a class="clinvarid_link" href="http://www.ncbi.nlm.nih.gov/clinvar/'
+							htmlstr += data[j].ClinVarID + '" target="_blank" title="' + data[j].ClinVarID + '">' + data[j].ClinVarID + '</a></td></tr>'
+							/*
+							htmlstr += '<tr><td style="width:80px;text-align:right">dbSNP ID:</td><td>'
 							if (data[j].dbSNPID) {
-								for (var k=0; k<data[j].dbSNPID.length; k++) {
-									htmlstr += '<a class="dbsnpid_link" href="http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs='
-									htmlstr += data[j].dbSNPID[k] + '" target="_blank" title ="' + data[j].dbSNPID[k] + '">rs' + data[j].dbSNPID[k] + '</a>'
-									if (k < data[j].dbSNPID.length-1) htmlstr += '<br />'
-								}
+								htmlstr += '<a class="dbsnpid_link" href="http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs='
+								htmlstr += data[j].dbSNPID + '" target="_blank" title ="' + data[j].dbSNPID + '">rs' + data[j].dbSNPID + '</a>'
 							}
 							htmlstr += '</td></tr>'
 							htmlstr += '<tr><td style="width:80px;text-align:right;vertical-align:top">Variant Type:</td><td>' + data[j].VariantType + '</td></tr>'
@@ -67,6 +62,32 @@ $(function() {
 							}
 							htmlstr += '</td></tr>'
 							htmlstr += '</table></td>'
+							*/
+							htmlstr += '<tr><td style="text-align:right;vertical-align:top">Other Names:</td><td>'
+							for (var i=0; i<data[j].OtherNames.length; i++) {
+										htmlstr += data[j].OtherNames[i]
+										if (i < data[j].OtherNames.length-1) htmlstr += '<br />'
+							}
+							htmlstr += '</td></tr>'
+							htmlstr += '<tr><td style="text-align:right;vertical-align:top">dbSNP | <a hreg="http://evs.gs.washington.edu/EVS/" target="_blank" style="text-decoration:underline;cursor:pointer">ESP</a> '
+							htmlstr += 'A_F:</td><td style="vertical-align:top">'
+							//htmlstr += '<tr><td style="text-align:right;vertical-align:top">dbSNP ID:</td><td>'
+							if (data[j].dbSNPID) {
+								for (var k=0; k<data[j].dbSNPID.length; k++) {
+									htmlstr += '<a class="dbsnpid_link" href="http://www.ncbi.nlm.nih.gov/projects/SNP/snp_ref.cgi?rs='
+									htmlstr += data[j].dbSNPID[k] + '" target="_blank" title ="' + data[j].dbSNPID[k] + '">rs' + data[j].dbSNPID[k] + '</a> |'
+									for (var a_i=0; a_i<data[j].AlleleFrequency.length; a_i++) {
+										if (data[j].AlleleFrequency[a_i].Value != '' && data[j].AlleleFrequency[a_i].Source[0].ID == data[j].dbSNPID[k]) {
+											htmlstr += ' ' + data[j].AlleleFrequency[a_i].Value
+											break
+										}
+									}
+									if (k < data[j].dbSNPID.length-1) htmlstr += '<br />'
+								}
+							}
+							htmlstr += '</td></tr>'
+							htmlstr += '</table></td>'
+
 							htmlstr += '<td style="width:350px;vertical-align:top">'
 							if (data[j].VariantHGVS.length == 0) htmlstr += '&nbsp;'
 							else {
@@ -157,15 +178,14 @@ $(function() {
 					$("#statistic_diagram_box").css('display', 'none')
 				})
 				.on('input', function() {
-					if (/[^A-Za-z0-9_\.\s\-]/.test($(this).val())) {
+					/*if (/[^A-Za-z0-9_\.\s\-]/.test($(this).val())) {
 						alert('Please enter letter, digit, . or _ only.')
 						return
-					}
+					}*/
 					var search = false
 					if ($("#id_name").val() == 'ClinVarID') {
 						if ($(this).val() != '' && !/^[R][C]{0,1}[V]{0,1}|[r][c]{0,1}[v]{0,1}\d*$/.test($(this).val()) && !/^\d*$/.test($(this).val())) alert('Format error.')
-						//else if (/^(RVC)|(rvc)\d*[1-9][0-9]{3}/.test($(this).val()) || /[1-9][0-9]{3}/.test($(this).val())) search = true
-						else if (/[1-9][0-9]{3}/.test($(this).val()) || /[0]{3}[1-9]$/.test($(this).val()) || /[0]{2}[1-9][0-9]$/.test($(this).val()) || /[0][1-9][0-9]{2}/.test($(this).val())) search = true
+						else if (/^(RVC)|(rvc)\d*[1-9][0-9]{3}/.test($(this).val()) || /[1-9][0-9]{3}/.test($(this).val())) search = true
 					}
 					else if ($("#id_name").val() == 'dbSNPID') {
 						if ($(this).val() != '' && (/^[r][s]/.test($(this).val()) || /^\d/.test($(this).val())) && /[1-9][0-9]{3}/.test($(this).val())) search = true
@@ -182,14 +202,14 @@ $(function() {
 						if ($(this).val().length > 3) search = true
 					}
 					else if ($("#id_name").val() == 'Gene') {
-						if ($(this).val().length > 3) search = true
+						if ($(this).val().length > 2) search = true
 					}
 					if (search) {
 						var search_key
 						if ($("#id_name").val() == 'dbSNPID' && /^(rs)/.test($("#id_value").val())) search_key = $("#id_value").val().replace('rs', '')
 						else search_key = $("#id_value").val()
 						var url = '/Variants/' + $("#id_name").val() + '/' + search_key
-						var htmlstr
+						var htmlstr = ''
 						$.get(url, function(vdata) {
 							var max_to_present = 500
 							if (vdata && vdata.length <= max_to_present) {
@@ -211,30 +231,32 @@ $(function() {
 								$("#matching_all_count_box").html('# of Matching: 0')
 								$("#filter_box").css('display', 'none')
 							}
-							$("#variant_all_content_box").css('display', 'block')
-							$("#db_data_table").html(htmlstr)
-							$("#db_data_table").css('width', $("#title_table").css('width'))
 
-							var title_table_width = parseInt($("#title_table").css('width').replace('px', ''))
-							var data_table_width = parseInt($("#db_data_table").css('width').replace('px', ''))
-							if (vdata.length > 0 && vdata.length <= max_to_present && title_table_width < data_table_width) {
-								$("#title_table").css('width', (data_table_width-2)+'px')
-								$("#summary_table").css('width', (data_table_width-2)+'px')
-								$("#variant_all_content_box").css('width', (data_table_width+20)+'px')
-								//$(".overflow_box").each(function() {
-								//	$(this).css('overflow', 'auto')
-								//})
-							}
-							else if (vdata.length > 0 && vdata.length <= max_to_present) {
-								$("#db_data_table").css('width', (title_table_width+2)+'px')
-								$("#summary_table").css('width', (title_table_width+2)+'px')
-								$("#variant_all_content_box").css('width', (title_table_width+22)+'px')
-								//$(".overflow_box").each(function() {
-								//	$(this).css('overflow', 'auto')
-								//})
-							}
-							else $("#summary_table").css('width', '1000px')
+							if (htmlstr != '') {
+								$("#variant_all_content_box").css('display', 'block')
+								$("#db_data_table").html(htmlstr)
+								$("#db_data_table").css('width', $("#title_table").css('width'))
 
+								var title_table_width = parseInt($("#title_table").css('width').replace('px', ''))
+								var data_table_width = parseInt($("#db_data_table").css('width').replace('px', ''))
+								if (vdata.length > 0 && vdata.length <= max_to_present && title_table_width < data_table_width) {
+									$("#title_table").css('width', (data_table_width-2)+'px')
+									$("#summary_table").css('width', (data_table_width-2)+'px')
+									$("#variant_all_content_box").css('width', (data_table_width+20)+'px')
+									//$(".overflow_box").each(function() {
+									//	$(this).css('overflow', 'auto')
+									//})
+								}
+								else if (vdata.length > 0 && vdata.length <= max_to_present) {
+									$("#db_data_table").css('width', (title_table_width+2)+'px')
+									$("#summary_table").css('width', (title_table_width+2)+'px')
+									$("#variant_all_content_box").css('width', (title_table_width+22)+'px')
+									//$(".overflow_box").each(function() {
+									//	$(this).css('overflow', 'auto')
+									//})
+								}
+								else $("#summary_table").css('width', '1000px')
+							}
 						})
 					}
 					else {

@@ -1,6 +1,6 @@
 $(function() {
 				var w = $(window).width() - 140
-				var h = $(window).height() - 300
+				var h = $(window).height() - 230
 				$("#diagram_control_box").attr('width', w)
 				$("#statistic_diagram").attr('width', w).attr('height', h)
 				var ctx = $('#statistic_diagram')[0].getContext("2d")
@@ -14,18 +14,26 @@ $(function() {
 				var dot_bottom_margin = 50
 				var dot_y_range = h - top_margin - dot_top_margin - bottom_margin
 				var color = ["#ee3333", "#00aa00", "#6633ff", "#aa9933", "#cc66dd", "#00aaee"]
-				var variant_count = [10564, 13366, 7815, 4253, 7160, 4782, 7894, 4560, 5020, 5261, 9336, 7031, 8825, 4178, 4060, 7243, 10584, 2153, 5177, 2192, 1536, 9316, 3456]
-				var max = Math.max.apply(null, variant_count)
-				var pathogenic_count = [2562, 2918, 2721, 843, 1431, 867, 1845, 919, 1113, 999, 2536, 1533, 1987, 918, 1169, 1229, 2989, 612, 1170, 585, 377, 3825, 93]
 				var radius = 10
 
+				//ClinVar RCV IDs (April data) grouped and counted by Chr
+				var variant_count = [10564, 13366, 7815, 4253, 7160, 4782, 7894, 4560, 5020, 5261, 9336, 7031, 8825, 4178, 4060, 7243, 10584, 2153, 5177, 2192, 1536, 9316, 3456]
+				var max = Math.max.apply(null, variant_count)
+				//ClilnVar pathogenic RCV grouped and counted by Chr
+				var pathogenic_count = [2562, 2918, 2721, 843, 1431, 867, 1845, 919, 1113, 999, 2536, 1533, 1987, 918, 1169, 1229, 2989, 612, 1170, 585, 377, 3825, 93]
+
+				//HGNC Locus types
 				var locus_type_orig = ['gene with protein product', 'RNA, long non-coding', 'withdrawn', 'pseudogene', 'virus integration site', 'readthrough', 'phenotype only', 'unknown',
 						'region', 'RNA, pseudogene', 'endogenous retrovirus', 'fragile site', 'immunoglobulin gene', 'immunoglobulin pseudogene', 'transposable element', 'RNA, micro',
 						'RNA, ribosomal', 'RNA, transfer', 'complex locus constituent', 'protocadherin', 'RNA, cluster', 'RNA, misc', 'RNA, small nuclear', 'RNA, small cytoplasmic',
 						'RNA, small nucleolar', 'RNA, Y', 'T cell receptor gene', 'T cell receptor pseudogene', 'RNA, vault']
+				//ClinVar RCV grouped and counted by HGNC Locus type
 				var clinvar_gene_locustype_count_orig = [18713, 2041, 0, 	136, 0, 109, 0, 	147, 1, 47, 	9, 0, 	183, 1, 	0, 1804, 19, 421, 26, 38, 2, 	3, 59, 3, 410, 4, 191, 0, 4]
+				//ClinVar pathogenic RCV grouped and counted by HGNC Locus type
 				var clinvar_gene_pathogenic_locustype = [18345, 1985, 0, 	133, 0, 106, 0, 	144, 1, 46, 	9, 0, 	183, 1, 	0, 1776, 19, 417, 26, 38, 2, 	3, 59, 3, 405, 4, 191, 0, 4]
+				//HGNC gene grouped and counted by Locus type
 				var hgnc_gene_locustype = 				[19013, 2711, 4280, 8848, 8, 115, 598, 307, 44, 3475, 	97, 117, 228, 202, 4,	1879, 39, 637, 27, 39, 124, 3, 65, 3, 458, 4, 208, 35, 4]
+
 				var gene_max = Math.max.apply(null, clinvar_gene_locustype_count_orig)
 				var gene_y_range = 637
 
@@ -122,7 +130,7 @@ $(function() {
 				}
 
 				function draw_gene_locustype() {
-					var bottom_margin = 200
+					var bottom_margin = 100, top_margin = 30, dot_top_margin = 0
 					var x_interval = Math.round((w - ori_x - 50)/(clinvar_gene_locustype_count_orig.length+1))
 					var y_highdot_range = Math.round((h - top_margin - dot_top_margin - bottom_margin)/3)
 					var y_most_range = h - top_margin - dot_top_margin - y_highdot_range - 50 - bottom_margin //Math.round((h - top_margin - dot_top_margin - bottom_margin - 100)*2/3)
@@ -185,11 +193,11 @@ $(function() {
 						ctx.stroke()
 
 
-						if (hgnc_gene_locustype[i] < 10) number_spance = 10
+						/*if (hgnc_gene_locustype[i] < 10) number_spance = 10
 						else if (hgnc_gene_locustype[i] < 100) number_spance = 15
 						else if (hgnc_gene_locustype[i] < 1000) number_spance = 20
 						else if (hgnc_gene_locustype[i] < 10000) number_spance = 25
-						else number_spance = 30
+						else number_spance = 30*/
 						ctx.fillStyle = "#999"
 						ctx.beginPath()
 						if (hgnc_gene_locustype[i] <= gene_y_range) {
@@ -199,7 +207,7 @@ $(function() {
 							dot_y_start = top_margin + dot_top_margin + Math.round(y_highdot_range * (1 - hgnc_gene_locustype[i]/gene_max))
 						}
 						ctx.fillRect(ori_x+x_interval*(i+1)-radius-5, dot_y_start, 5, h-dot_y_start-bottom_margin)
-						ctx.fillText(hgnc_gene_locustype[i], ori_x+x_interval*(i+1)-radius-number_spance, dot_y_start-5)
+						//ctx.fillText(hgnc_gene_locustype[i], ori_x+x_interval*(i+1)-radius-number_spance, dot_y_start-5)
 						ctx.closePath()
 						ctx.fill()
 
@@ -220,7 +228,7 @@ $(function() {
 					ctx.fillStyle = '#000000'
 					ctx.font = '22px Arial'
 					ctx.beginPath()
-					ctx.fillText('ClinVar Gene (All '+gene_sum+' / Pathogenic '+patho_sum+') Distribution vs HGNC Locus Type ('+locus_type_orig.length+') -- HGNC Total ('+hgnc_sum+')', 100, top_margin)
+					ctx.fillText('ClinVar Gene (All '+gene_sum+' / Pathogenic '+patho_sum+') Distribution vs HGNC Locus Type ('+locus_type_orig.length+') -- HGNC Total ('+hgnc_sum+')', 250, top_margin+10)
 					ctx.closePath()
 					ctx.fill()
 
@@ -232,7 +240,7 @@ $(function() {
 					ctx.closePath()
 					ctx.stroke()
 
-					ctx.font = '14px Arial'
+					ctx.font = '10px Arial'
 					for (var i=0; i<clinvar_gene_locustype_count_orig.length; i++) {
 						ctx.translate(ori_x+x_interval*(i+1), h-bottom_margin+10)
 						ctx.rotate(Math.PI/2)
@@ -241,6 +249,25 @@ $(function() {
 						ctx.fillText(locus_type_orig[i], 0, 0)
 						ctx.rotate(Math.PI*3/2)
 						ctx.translate(-(ori_x+x_interval*(i+1)), -(h-bottom_margin+10))
+						ctx.closePath()
+						ctx.fill()
+
+						var number_spance
+						var dot_y_start
+						if (hgnc_gene_locustype[i] < 10) number_spance = 10
+						else if (hgnc_gene_locustype[i] < 100) number_spance = 15
+						else if (hgnc_gene_locustype[i] < 1000) number_spance = 20
+						else if (hgnc_gene_locustype[i] < 10000) number_spance = 25
+						else number_spance = 30
+						if (hgnc_gene_locustype[i] <= gene_y_range) {
+							dot_y_start = top_margin + dot_top_margin + y_highdot_range + 50 + Math.round(y_most_range*(1.0-hgnc_gene_locustype[i]/gene_y_range))
+						}
+						else {
+							dot_y_start = top_margin + dot_top_margin + Math.round(y_highdot_range * (1 - hgnc_gene_locustype[i]/gene_max))
+						}
+						ctx.fillStyle = "#999"
+						ctx.beginPath()
+						ctx.fillText(hgnc_gene_locustype[i], ori_x+x_interval*(i+1)-radius-number_spance, dot_y_start-5)
 						ctx.closePath()
 						ctx.fill()
 					}
